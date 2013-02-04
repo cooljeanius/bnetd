@@ -11,6 +11,16 @@
 		613D92C416BFB8C4008BA576 /* bnetd.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 613D92C316BFB8C4008BA576 /* bnetd.1 */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		613D930516BFB9CB008BA576 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 613D930116BFB8FC008BA576 /* src.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 613D92CF16BFB8FB008BA576;
+			remoteInfo = src;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		613D92BC16BFB8C4008BA576 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -28,6 +38,7 @@
 		613D92BE16BFB8C4008BA576 /* bnetd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bnetd; sourceTree = BUILT_PRODUCTS_DIR; };
 		613D92C116BFB8C4008BA576 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		613D92C316BFB8C4008BA576 /* bnetd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bnetd.1; sourceTree = "<group>"; };
+		613D930116BFB8FC008BA576 /* src.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = src.xcodeproj; path = "../../../../../opt/local/var/macports/build/_opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_net_bnetd/bnetd/work/bnetd-0.4.25/src/src.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,10 +71,18 @@
 		613D92C016BFB8C4008BA576 /* bnetd */ = {
 			isa = PBXGroup;
 			children = (
+				613D930116BFB8FC008BA576 /* src.xcodeproj */,
 				613D92C116BFB8C4008BA576 /* main.c */,
 				613D92C316BFB8C4008BA576 /* bnetd.1 */,
 			);
 			path = bnetd;
+			sourceTree = "<group>";
+		};
+		613D930216BFB8FC008BA576 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -80,6 +99,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				613D930616BFB9CB008BA576 /* PBXTargetDependency */,
 			);
 			name = bnetd;
 			productName = bnetd;
@@ -105,6 +125,12 @@
 			mainGroup = 613D92B516BFB8C4008BA576;
 			productRefGroup = 613D92BF16BFB8C4008BA576 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 613D930216BFB8FC008BA576 /* Products */;
+					ProjectRef = 613D930116BFB8FC008BA576 /* src.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				613D92BD16BFB8C4008BA576 /* bnetd */,
@@ -122,6 +148,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		613D930616BFB9CB008BA576 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = src;
+			targetProxy = 613D930516BFB9CB008BA576 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		613D92C516BFB8C4008BA576 /* Debug */ = {

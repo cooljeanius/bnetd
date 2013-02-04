@@ -1,0 +1,12 @@
+*.DS_Store
+*.cache
+*/stamp-h1
+*.log
+*~
+*.status
+*.pbxuser
+*.perspectivev3
+*/xcuser/*
+*.xcuserstate
+*.xcuserdatad
+*.o

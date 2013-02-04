@@ -10,9 +10,9 @@
 
 int main(int argc, const char * argv[])
 {
-
+    printf("argc = %i \n", argc);
     // insert code here...
-    printf("Hello, World!\n");
+    printf("This doesn't actually do anything. I just needed to throw this into an Xcode project somehow.\n");
     return 0;
 }
 

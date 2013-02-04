@@ -1,0 +1,239 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		613D92D116BFB8FB008BA576 /* aclocal.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
+		613D92D216BFB8FB008BA576 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
+		613D92D316BFB8FB008BA576 /* autoconf */ = {isa = PBXFileReference; lastKnownFileType = folder; path = autoconf; sourceTree = "<group>"; };
+		613D92D416BFB8FB008BA576 /* autom4te.cache */ = {isa = PBXFileReference; lastKnownFileType = folder; path = autom4te.cache; sourceTree = "<group>"; };
+		613D92D516BFB8FB008BA576 /* autoscan.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = autoscan.log; sourceTree = "<group>"; };
+		613D92D616BFB8FB008BA576 /* bnetd */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bnetd; sourceTree = "<group>"; };
+		613D92D716BFB8FB008BA576 /* bniutils */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bniutils; sourceTree = "<group>"; };
+		613D92D816BFB8FB008BA576 /* bnpass */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bnpass; sourceTree = "<group>"; };
+		613D92D916BFB8FB008BA576 /* bnpcap */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bnpcap; sourceTree = "<group>"; };
+		613D92DA16BFB8FB008BA576 /* bnproxy */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bnproxy; sourceTree = "<group>"; };
+		613D92DB16BFB8FB008BA576 /* bntrackd */ = {isa = PBXFileReference; lastKnownFileType = folder; path = bntrackd; sourceTree = "<group>"; };
+		613D92DC16BFB8FB008BA576 /* ChangeLog */ = {isa = PBXFileReference; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
+		613D92DD16BFB8FB008BA576 /* client */ = {isa = PBXFileReference; lastKnownFileType = folder; path = client; sourceTree = "<group>"; };
+		613D92DE16BFB8FB008BA576 /* common */ = {isa = PBXFileReference; lastKnownFileType = folder; path = common; sourceTree = "<group>"; };
+		613D92DF16BFB8FB008BA576 /* compat */ = {isa = PBXFileReference; lastKnownFileType = folder; path = compat; sourceTree = "<group>"; };
+		613D92E016BFB8FB008BA576 /* config.cache */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.cache; sourceTree = "<group>"; };
+		613D92E116BFB8FB008BA576 /* config.guess */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = config.guess; sourceTree = "<group>"; };
+		613D92E216BFB8FB008BA576 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		613D92E316BFB8FB008BA576 /* config.h.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
+		613D92E416BFB8FB008BA576 /* config.h.in~ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "config.h.in~"; sourceTree = "<group>"; };
+		613D92E516BFB8FB008BA576 /* config.h.win32 */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.h.win32; sourceTree = "<group>"; };
+		613D92E616BFB8FB008BA576 /* config.h.win32borland */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.h.win32borland; sourceTree = "<group>"; };
+		613D92E716BFB8FB008BA576 /* config.h.win32msvc++ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "config.h.win32msvc++"; sourceTree = "<group>"; };
+		613D92E816BFB8FB008BA576 /* config.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.log; sourceTree = "<group>"; };
+		613D92E916BFB8FB008BA576 /* config.status */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = config.status; sourceTree = "<group>"; };
+		613D92EA16BFB8FB008BA576 /* config.sub */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = config.sub; sourceTree = "<group>"; };
+		613D92EB16BFB8FB008BA576 /* configure */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
+		613D92EC16BFB8FB008BA576 /* configure.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.ac; sourceTree = "<group>"; };
+		613D92ED16BFB8FB008BA576 /* configure.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.in; sourceTree = "<group>"; };
+		613D92EE16BFB8FB008BA576 /* configure.scan */ = {isa = PBXFileReference; lastKnownFileType = text; path = configure.scan; sourceTree = "<group>"; };
+		613D92EF16BFB8FB008BA576 /* configure.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = configure.sh; sourceTree = "<group>"; };
+		613D92F016BFB8FB008BA576 /* COPYING */ = {isa = PBXFileReference; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		613D92F116BFB8FB008BA576 /* d2cs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = d2cs; sourceTree = "<group>"; };
+		613D92F216BFB8FB008BA576 /* d2dbs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = d2dbs; sourceTree = "<group>"; };
+		613D92F316BFB8FB008BA576 /* debug */ = {isa = PBXFileReference; lastKnownFileType = folder; path = debug; sourceTree = "<group>"; };
+		613D92F416BFB8FB008BA576 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
+		613D92F516BFB8FB008BA576 /* libtool */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = libtool; sourceTree = "<group>"; };
+		613D92F616BFB8FB008BA576 /* m4 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = m4; sourceTree = "<group>"; };
+		613D92F716BFB8FB008BA576 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		613D92F816BFB8FB008BA576 /* Makefile.BORLAND */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.BORLAND; sourceTree = "<group>"; };
+		613D92F916BFB8FB008BA576 /* Makefile.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
+		613D92FA16BFB8FB008BA576 /* MSVC++.mak */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = "MSVC++.mak"; sourceTree = "<group>"; };
+		613D92FB16BFB8FB008BA576 /* NEWS */ = {isa = PBXFileReference; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; };
+		613D92FC16BFB8FB008BA576 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		613D92FD16BFB8FB008BA576 /* stamp-h1 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "stamp-h1"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		613D92CA16BFB8FB008BA576 = {
+			isa = PBXGroup;
+			children = (
+				613D92D116BFB8FB008BA576 /* aclocal.m4 */,
+				613D92D216BFB8FB008BA576 /* AUTHORS */,
+				613D92D316BFB8FB008BA576 /* autoconf */,
+				613D92D416BFB8FB008BA576 /* autom4te.cache */,
+				613D92D516BFB8FB008BA576 /* autoscan.log */,
+				613D92D616BFB8FB008BA576 /* bnetd */,
+				613D92D716BFB8FB008BA576 /* bniutils */,
+				613D92D816BFB8FB008BA576 /* bnpass */,
+				613D92D916BFB8FB008BA576 /* bnpcap */,
+				613D92DA16BFB8FB008BA576 /* bnproxy */,
+				613D92DB16BFB8FB008BA576 /* bntrackd */,
+				613D92DC16BFB8FB008BA576 /* ChangeLog */,
+				613D92DD16BFB8FB008BA576 /* client */,
+				613D92DE16BFB8FB008BA576 /* common */,
+				613D92DF16BFB8FB008BA576 /* compat */,
+				613D92E016BFB8FB008BA576 /* config.cache */,
+				613D92E116BFB8FB008BA576 /* config.guess */,
+				613D92E216BFB8FB008BA576 /* config.h */,
+				613D92E316BFB8FB008BA576 /* config.h.in */,
+				613D92E416BFB8FB008BA576 /* config.h.in~ */,
+				613D92E516BFB8FB008BA576 /* config.h.win32 */,
+				613D92E616BFB8FB008BA576 /* config.h.win32borland */,
+				613D92E716BFB8FB008BA576 /* config.h.win32msvc++ */,
+				613D92E816BFB8FB008BA576 /* config.log */,
+				613D92E916BFB8FB008BA576 /* config.status */,
+				613D92EA16BFB8FB008BA576 /* config.sub */,
+				613D92EB16BFB8FB008BA576 /* configure */,
+				613D92EC16BFB8FB008BA576 /* configure.ac */,
+				613D92ED16BFB8FB008BA576 /* configure.in */,
+				613D92EE16BFB8FB008BA576 /* configure.scan */,
+				613D92EF16BFB8FB008BA576 /* configure.sh */,
+				613D92F016BFB8FB008BA576 /* COPYING */,
+				613D92F116BFB8FB008BA576 /* d2cs */,
+				613D92F216BFB8FB008BA576 /* d2dbs */,
+				613D92F316BFB8FB008BA576 /* debug */,
+				613D92F416BFB8FB008BA576 /* INSTALL */,
+				613D92F516BFB8FB008BA576 /* libtool */,
+				613D92F616BFB8FB008BA576 /* m4 */,
+				613D92F716BFB8FB008BA576 /* Makefile */,
+				613D92F816BFB8FB008BA576 /* Makefile.BORLAND */,
+				613D92F916BFB8FB008BA576 /* Makefile.in */,
+				613D92FA16BFB8FB008BA576 /* MSVC++.mak */,
+				613D92FB16BFB8FB008BA576 /* NEWS */,
+				613D92FC16BFB8FB008BA576 /* README */,
+				613D92FD16BFB8FB008BA576 /* stamp-h1 */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		613D92CF16BFB8FB008BA576 /* src */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 613D92FE16BFB8FB008BA576 /* Build configuration list for PBXLegacyTarget "src" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/opt/local/var/macports/build/_opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_net_bnetd/bnetd/work/bnetd-0.4.25/src";
+			dependencies = (
+			);
+			name = src;
+			passBuildSettingsInEnvironment = 1;
+			productName = src;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		613D92CB16BFB8FB008BA576 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 613D92CE16BFB8FB008BA576 /* Build configuration list for PBXProject "src" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 613D92CA16BFB8FB008BA576;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				613D92CF16BFB8FB008BA576 /* src */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		613D92CC16BFB8FB008BA576 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		613D92CD16BFB8FB008BA576 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		613D92FF16BFB8FB008BA576 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = (
+					"-g",
+					"-DHAVE_CONFIG_H",
+					"-DBNETD_DEFAULT_CONF_FILE=\\\"/opt/local/etc/bnetd/bnetd.conf\\\"",
+					"-DD2CS_DEFAULT_CONF_FILE=\\\"/opt/local/etc/bnetd/d2cs.conf\\\"",
+					"-DD2DBS_DEFAULT_CONF_FILE=\\\"/opt/local/etc/bnetd/d2dbs.conf\\\"",
+					"-I\".\"",
+				);
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = bnetd;
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		613D930016BFB8FB008BA576 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = (
+					"-g",
+					"-O2",
+					"-DHAVE_CONFIG_H",
+					"-DBNETD_DEFAULT_CONF_FILE=\\\"/opt/local/etc/bnetd/bnetd.conf\\\"",
+					"-DD2CS_DEFAULT_CONF_FILE=\\\"/opt/local/etc/bnetd/d2cs.conf\\\"",
+					"-DD2DBS_DEFAULT_CONF_FILE=\\\"/opt/local/etc/bnetd/d2dbs.conf\\\"",
+					"-I\".\"",
+				);
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = bnetd;
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		613D92CE16BFB8FB008BA576 /* Build configuration list for PBXProject "src" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				613D92CC16BFB8FB008BA576 /* Debug */,
+				613D92CD16BFB8FB008BA576 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		613D92FE16BFB8FB008BA576 /* Build configuration list for PBXLegacyTarget "src" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				613D92FF16BFB8FB008BA576 /* Debug */,
+				613D930016BFB8FB008BA576 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 613D92CB16BFB8FB008BA576 /* Project object */;
+}
