@@ -49,6 +49,9 @@
 /* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME
 
+/* Define if the C complier supports __func__ */
+#undef HAVE_FUNC
+
 /* Define to 1 if you have the `getenv' function. */
 #undef HAVE_GETENV
 
@@ -364,6 +367,9 @@
 
 /* Define to 1 if you have the `_mkdir' function. */
 #undef HAVE__MKDIR
+
+/* define if your compiler has __attribute__ */
+#undef HAVE___ATTRIBUTE__
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
