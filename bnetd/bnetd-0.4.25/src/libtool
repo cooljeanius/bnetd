@@ -2,7 +2,7 @@
 
 # libtool - Provide generalized library-building support services.
 # Generated automatically by config.status (bnetd) 0.4.25
-# Libtool was configured on host gl00b05044:
+# Libtool was configured on host gl00b05042.cats.gwu.edu:
 # NOTE: Changes made to this file will be lost: look at ltmain.sh.
 #
 #   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2003, 2004, 2005,
@@ -39,6 +39,15 @@ available_tags="CXX "
 
 # ### BEGIN LIBTOOL CONFIG
 
+# Assembler program.
+AS="as"
+
+# DLL creation program.
+DLLTOOL="dlltool"
+
+# Object dumper program.
+OBJDUMP="objdump"
+
 # Which release of libtool.m4 was used?
 macro_version=2.4.2
 macro_revision=1.3337
@@ -66,12 +75,12 @@ PATH_SEPARATOR=":"
 
 # The host system.
 host_alias=
-host=i386-apple-darwin11.4.2
+host=x86_64-apple-darwin11.4.2
 host_os=darwin11.4.2
 
 # The build system.
-build_alias=i386-apple-darwin11.4.2
-build=i386-apple-darwin11.4.2
+build_alias=
+build=x86_64-apple-darwin11.4.2
 build_os=darwin11.4.2
 
 # A sed program that does not truncate output.
@@ -119,9 +128,6 @@ to_host_file_cmd=func_convert_file_noop
 # convert $build files to toolchain format.
 to_tool_file_cmd=func_convert_file_noop
 
-# An object symbol dumper.
-OBJDUMP="false"
-
 # Method to check whether dependent libraries are shared objects.
 deplibs_check_method="pass_all"
 
@@ -133,9 +139,6 @@ file_magic_glob=""
 
 # Find potential files using nocaseglob when deplibs_check_method = "file_magic".
 want_nocaseglob="no"
-
-# DLL creation program.
-DLLTOOL="false"
 
 # Command to associate shared and link libraries.
 sharedlib_from_linklib_cmd="printf %s\\n"

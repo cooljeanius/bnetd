@@ -10,3 +10,7 @@
 *.xcuserstate
 *.xcuserdatad
 *.o
+*/bin/*
+*/sbin/*
+*/libtool
+*/config.h
