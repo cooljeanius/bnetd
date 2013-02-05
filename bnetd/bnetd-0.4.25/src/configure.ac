@@ -191,10 +191,10 @@ AX_C_VAR_FUNC
 AX_COMPILER_VENDOR
 
 # Checks for libraries.
-AC_CHECK_LIB(m, pow, [LIBS="$LIBS -lm"])
-AC_CHECK_LIB(nsl, gethostbyname, [LIBS="$LIBS -lnsl"])
-AC_CHECK_LIB(socket, socket, [LIBS="$LIBS -lsocket"])
-AC_CHECK_LIB(resolv, inet_aton, [LIBS="$LIBS -lresolv"])
+AC_CHECK_LIB([m], [pow], [LIBS="$LIBS -lm"])
+AC_CHECK_LIB([nsl], [gethostbyname], [LIBS="$LIBS -lnsl"])
+AC_CHECK_LIB([socket], [socket], [LIBS="$LIBS -lsocket"])
+AC_CHECK_LIB([resolv], [inet_aton], [LIBS="$LIBS -lresolv"])
 # FIXME: Replace `main' with a function in `-lpcap':
 AC_CHECK_LIB([pcap], [main])
 
