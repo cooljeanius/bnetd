@@ -1,49 +1,67 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # $Id: Portfile 40550 2008-10-06 20:34:21Z jmr@macports.org $
 
-PortSystem 1.0
+PortSystem           1.0
+PortGroup            github 1.0
 
-name		bnetd
-version		0.4.25
-revision	1
-categories	net games
-platforms	darwin
-maintainers	nomaintainer
-license         GPL-2+
-description	daemon that emulates Blizzards Battle.net service
-long_description	${description}. Currently broken.
+github.setup         cooljeanius bnetd 0.4.27.2 v
+name                 bnetd
+version              0.4.27.2
+categories           net games
+platforms            darwin
+maintainers          gwmail.gwu.edu:egall greenend.org.uk:owen openmaintainer
+license              GPL-2+
+description          Daemon that emulates Blizzards Battle.net service
+long_description     ${description}. Currently broken.
 
-homepage	http://www.chiark.greenend.org.uk/~owend/free/bnetd.html
-master_sites	http://www.chiark.greenend.org.uk/~owend/free/
-checksums	md5 8a27ad997fabfb6d1dc514bb14c01bed
-patchfiles	patch-d2cs-cmdline_parse.c.diff \
-		patch-d2dbs-cmdline_parse.c.diff \
-		patch-d2dbs-main.c.diff
+homepage             http://www.chiark.greenend.org.uk/~owend/free/bnetd.html
+master_sites         http://www.chiark.greenend.org.uk/~owend/free/
+checksums            md5 8a27ad997fabfb6d1dc514bb14c01bed
 
-worksrcdir	${worksrcdir}/src
+fetch.type 	     git
+git.url              git://github.com/cooljeanius/bnetd.git
 
-configure.args  --mandir=${prefix}/share/man/ \
-		--sysconfdir=${prefix}/etc/bnetd/ \
-		--localstatedir=${prefix}/var/bnetd/ \
-                --with-warn
+post-extract {
+    worksrcdir       ${worksrcdir}/bnetd/bnetd-${version}/src
+}
+
+depends_build-append port:autoconf-archive
+depends_lib-append   port:libpcap \
+                     port:rpl
+
+use_autoreconf       yes
+
+configure.args       --mandir=${prefix}/share/man/ \
+                     --sysconfdir=${prefix}/etc/bnetd/ \
+                     --localstatedir=${prefix}/var/bnetd/ \
+                     --with-warn
+
 platform darwin powerpc {
-configure.args-append --build=powerpc-apple-freebsd
+    configure.args-append --build=powerpc-apple-freebsd
 }
 platform darwin i386 {
-configure.args-append --build=i386-apple-darwin${os.version}
+    configure.args-append --build=i386-apple-darwin${os.version}
 }
 
-pre-destroot	{
-	reinplace "s|${prefix}|\${prefix}|g" ${worksrcpath}/Makefile
+pre-destroot    {
+    reinplace "s|${prefix}|\${prefix}|g" ${worksrcpath}/Makefile
 }
-destroot.destdir	prefix=${destroot}${prefix}
-post-destroot	{
-	set vardir ${destroot}${prefix}/var/bnetd
-	foreach file {users reports chanlogs charinfo charsave ladders bak/charsave bak/charinfo} {
-		xinstall -m 755 -d ${vardir}/${file}
-		destroot.keepdirs-append ${vardir}/${file}
-	}
-	reinplace "s|${destroot}${prefix}|${prefix}|g" \
-		${destroot}${prefix}/etc/bnetd/bnetd.conf \
-		${destroot}${prefix}/etc/bnetd/d2cs.conf \
-		${destroot}${prefix}/etc/bnetd/d2dbs.conf
+
+destroot.destdir    prefix=${destroot}${prefix}
+
+post-destroot    {
+    set vardir ${destroot}${prefix}/var/bnetd
+    foreach file {users reports chanlogs charinfo charsave ladders bak/charsave bak/charinfo} {
+        xinstall -m 755 -d ${vardir}/${file}
+        destroot.keepdirs-append ${vardir}/${file}
+    }
+    reinplace "s|${destroot}${prefix}|${prefix}|g" \
+        ${destroot}${prefix}/etc/bnetd/bnetd.conf \
+        ${destroot}${prefix}/etc/bnetd/d2cs.conf \
+        ${destroot}${prefix}/etc/bnetd/d2dbs.conf
+}
+
+variant efence conflicts universal description {Adds support for Electric Fence for finding memory problems} {
+    depends_lib-append port:electric-fence
+    configure.args-append --with-efence
 }
