@@ -1,0 +1,31 @@
+#!/bin/bash
+
+case "$1" in
+    upgrade)
+        a=`echo $2|sed 's/\.[0-9]*\.[0-9]*-[0-9]*$//g'`
+        b=`echo $2|sed -e 's/^[0-9]*\.//g' -e 's/\.[0-9]*-[0-9]*$//g'`
+        c=`echo $2|sed -e 's/^[0-9]*\.[0-9]*\.//g' -e 's/-[0-9]*$//g'`
+        #
+        # Close bug #40461
+        #
+        if [ "$a" = "0" -a "$b" = "4" -a "$c" = "8" ]; then
+            mv -f /etc/bnetd/users/bnetd_default_user /etc/bnetd/.
+            if [ `ls -1 /etc/bnetd/users` ]; then
+                mkdir -p /var/cache/bnetd/player
+                mv -f /etc/bnetd/users/* /var/cache/bnetd/player/.
+            fi
+            if [ -e /etc/bnetd/news ]; then
+                mv -f /etc/bnetd/news /etc/bnetd/news.txt
+            fi
+        fi
+    ;;
+    install|abort-upgrade)
+    ;;
+    *)
+        echo "preinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+exit 0
+

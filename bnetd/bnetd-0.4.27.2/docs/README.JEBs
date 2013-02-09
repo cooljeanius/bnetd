@@ -1,0 +1,110 @@
+
+HISTORY
+=======
+JEBs20030519
+	- Fixed one more bug in context of conn_get_chatcharname
+		which resulted in a SIGSERV because NULL return wasn't
+		handled
+JEBs20030518
+	- Made some d2cs/d2dbs/bnetd valgring checkings
+	- Made some modifications in channel code
+	- Changed clienttage entry "D2DV" in initial "channel.list" file to
+		the more used "D2XP" value
+	- Non-specific country channels shall work now
+	- Added the possibilty to use non-specific realm channels
+JEBs20030516
+	- Fixed the possibility to change the Diablo (Account) "Profile"
+	- Applied Darius Tribandis patch for support of the new D2GS version
+		(D2GS Version 1.9.1.1 build on Apr  8 2002 13:15:03,
+		 D2GSLib 1.9.1.5 Build On Mar  4 2003 21:04:34)
+JEBs20030418
+    - Changed bone headed WHERE clause. Lot thanks again to Typhoon.
+JEBs20030413
+    - Fixed my last fix :/. Lot thanks to Typhoon who opened my eyes ;)
+JEBs20030330
+    - Fixed huge security whole with unescaped wildcard chars ("_" & "%")
+JEBs20030309
+    - Fixed a wrong use of free() in d2char_db_mysql
+    - Made lot debugging of BITS master
+JEBs20030217
+    - Started reactivation of BITS
+    - Compiling without errors
+    - Started to get logon alive
+JEBs20030214
+    - Fixed two memory leaks in DB-MySQL stuff of d2cs.
+JEBs20030209
+    - Fixed some "FIXME" comments. In special, merged the attributes.
+    - Heavily changed channel_reload. I assume it has never worked before
+      without crashes (when changing "channel.list" and reloading it) !
+JEBs20030208
+    - Fixed membug in passworded (/pjoin) channels wich occured
+      when users are in a channel and config is reloaded via HUP signal
+    - Changed/fixed t_channel->maxmembers from uint to int
+    - NULL entry in country column of "channel.list" works now as accepted.
+      In addition it removed the country part from the channel name.
+    - Disabled max users (-1) in "channel.list" works now in permanent system
+      channel too. In addition it removed the trailing channel-number (id).
+JEBs20030103
+    - Fixed passwords in channel-rebuild.
+    - Fixed channel-passwords to be case sensitive.
+    - Checked some code in channel.c and wrote some comments,
+      which must be veryfied by someone else
+    - Made some valgrind tests.
+JEBs20030102
+    - Added private/passworded channels with new /pchannel /pjoin.
+      Because normal channels support channelnames with spaces,
+      and i wasn't interested to create some silly syntax like:
+      "/channel name [pw:<password>]", i solved it via new command names.
+JEBs20030101
+    - Added an welcome-file to get clear behavior of "welcome" and
+      "motd" functionality. For detailed information take a look into
+      the root "CHANGELOG" file.
+    - Checked the root "TODO" file and removed things in which i'm
+      sure that they're done. Made some comments to it, would be
+      good if others take a look too.
+    - Added (important) info to the root "CHANGELOG" related to
+      the "/motd" command.
+JEBs20021130
+    - Bugfixing cause of pointer failure in account caching
+	  (At least when not configured with ...DYN_LOAD)
+    - Some README corrections
+JEBs20021026
+    - MySQL storage implementation of character
+      on top of cvs 20021013T200000
+    - Heavy rewrite of old DB sources
+    - Lot code combined in common sources
+    - Connection code optimization
+    - Lot valgrind debugging
+JEBs20021006
+    - Fixed some log-message mistakes
+      (bnetd/handle_d2cs.c & bnetd/realm.c)
+    - Changed "realmlist find by IP" to "realmlist find by name"
+      when D2CS connects. This give the ability to connect
+      with multiple D2CS from same IP (but different ports)
+JEBs20020922
+    - /kill command changed to use "connlist_find_connection_by_name"
+      to get the ability of kill D2 users via the charname.
+      This means that all /kill calls in a D2 environment (or better
+      where a Realm exists) must use the [charname|*accname] syntax,
+      like the /whisper command. Additional this gives the possibility
+      to do a "/kill charname@realm" from within a chat-/bot client !
+      (bnetd/command.c)
+    - Found comment "/* XXXXXXX FIXME: change to usernick */" and fixed.
+      (bnetd/command.c)
+JEBs20020909
+    - Remove of compiler warnings from cvs 20020909T172000
+      - "FD_SETSIZE" redefined (common/setup_before.h)
+      - pointer from int without cast (bnetd/account_db_mysql.c)
+      - passing arg 1 of `free' discards qualifiers (bnetd/game.c)
+      - Fixed init mistake of MYSQL struct
+          
+JEBs20020902
+    - Build MySQL-patch version 0.2 against Yoss's
+      "bnetd.milc.com.pl" CVS version (20020902T193400)
+      For more details look into README.db_mysql
+    - Included Sherpya's newest ladder.py script which
+      includes some important fixes
+      
+JEBs20020723
+    - Initial version 0.1 finished. Build patch against bnetd-0.4.26CVS
+    

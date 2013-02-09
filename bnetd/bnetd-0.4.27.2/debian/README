@@ -1,0 +1,7 @@
+As of Starcraft version 1.08, and recent versions of Diablo II, the
+mechanism for selecting Battle.Net servers has changed. Read the
+instructions in /usr/share/doc/bnetd/docs/README.diablo108 to find out
+how to modify your registry appropriately.
+
+NOTE: If you have trouble remove the bncache.dat file from your game
+directory.

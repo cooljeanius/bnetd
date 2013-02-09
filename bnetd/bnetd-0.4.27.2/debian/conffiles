@@ -1,0 +1,17 @@
+/etc/bnetd/ad.list
+/etc/bnetd/autoupdate
+/etc/bnetd/bnbitspasswd
+/etc/bnetd/bnban
+/etc/bnetd/bnetd.conf
+/etc/bnetd/d2cs.conf
+/etc/bnetd/d2dbs.conf
+/etc/bnetd/versioncheck
+/etc/bnetd/bnetd_default_user
+/etc/bnetd/bnhelp
+/etc/bnetd/bnissue.txt
+/etc/bnetd/bnmotd.txt
+/etc/bnetd/channel.list
+/etc/bnetd/gametrans
+/etc/bnetd/news.txt
+/etc/bnetd/realm.list
+/etc/init.d/bnetd

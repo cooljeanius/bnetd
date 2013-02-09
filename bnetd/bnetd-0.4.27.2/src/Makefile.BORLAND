@@ -1,0 +1,579 @@
+#
+# Copyright (C) 2002  Erik Latoshek [forester] (laterk@inbox.lv)
+# Copyright (C) 2001  _type_in_
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+
+# Makefile.BORLAND -
+#   Makefile for Borland's/Inprise's free command-line win32 tools
+#   Tested with Version 5.5 & 5.5.1
+
+# attention!
+#  on some win95 systems even if there are valid ilink32.cfg file, 
+#  ilink32 does not find objects in lib dir! notice, that on NT all works fine
+#  so if you get a error that c0x32.obj cannot be found uncomment this macro 
+#LINK_LIBS_PATH = "c:\program files\bcc55\lib"
+#  -> ofcourse set path to your path
+#  -> this was detected in 5.5
+
+srcdir      = .
+
+# prefix is the directory where the bnetd binary
+# distribution will be installed
+prefix      = C:\Bnetd
+exec_prefix = C:\Bnetd
+
+bindir      = ${exec_prefix}\bin
+sbindir     = ${exec_prefix}\sbin
+mandir      = ${prefix}\man
+confdir     = ${prefix}\etc
+sharedir    = ${prefix}\var
+filesdir    = ${sharedir}\files
+usersdir    = ${sharedir}\users
+reportsdir  = ${sharedir}\reports
+chanlogsdir = ${sharedir}\chanlogs
+
+TOPDIR      = ${srcdir}\..
+INSTALLDIR  = ${prefix}
+
+SRC_SRCDIR      = ${srcdir}
+SRC_BINDIR      = ${srcdir}\..\bin
+SRC_SBINDIR     = ${srcdir}\..\sbin
+SRC_MANDIR      = ${srcdir}\..\man
+SRC_CONFDIR     = ${SRCDIR}\..\conf
+SRC_SHAREDIR    = ${SRCDIR}\..\files
+
+SRC_ACDIR       = ${SRC_SRCDIR}\autoconf
+SRC_BNETDDIR    = ${SRC_SRCDIR}\bnetd
+SRC_BNIUTILSDIR = ${SRC_SRCDIR}\bniutils
+SRC_BNPASSDIR   = ${SRC_SRCDIR}\bnpass
+SRC_BNPROXYDIR  = ${SRC_SRCDIR}\bnproxy
+SRC_BNTRACKDDIR = ${SRC_SRCDIR}\bntrackd
+SRC_D2CSDIR	= ${SRC_SRCDIR}\d2cs
+SRC_D2DBSDIR	= ${SRC_SRCDIR}\d2dbs
+SRC_CLIENTDIR   = ${SRC_SRCDIR}\client
+SRC_COMMONDIR   = ${SRC_SRCDIR}\common
+SRC_COMPATDIR   = ${SRC_SRCDIR}\compat
+SRC_DEBUGDIR    = ${SRC_SRCDIR}\debug
+
+CC      = bcc32
+RC      = brc32
+# Grr... warning 8060 complains about if (!(var = create())) and the compiler stops
+# working correctly after 20 or 30 warnings so we have to disable it.
+# Warning 8057 is that a function parameter is unused... this is probably intentional so
+# this only makes the compile noisy.
+CFLAGS      = -v -y -O2 -d -j2 -w-8060 -w-8057
+CPPFLAGS    = -DWIN32 -DHAVE_CONFIG_H -I${SRC_SRCDIR}\
+                -DBNETD_DEFAULT_CONF_FILE=\"${bnetd_DEFCONFFILE:\=\\}\"\
+                -DD2CS_DEFAULT_CONF_FILE=\"${d2cs_DEFCONFFILE:\=\\}\"\
+                -DD2DBS_DEFAULT_CONF_FILE=\"${d2dbs_DEFCONFFILE}:\=\\}\"
+COMPILE     = ${CC} ${CFLAGS} ${CPPFLAGS} -c
+LINK        = ilink32 -v -L${LINK_LIBS_PATH}
+LINK_LIBS   = 
+
+bnetd_DEFCONFFILE   = ${confdir}\bnetd.conf
+bnetd_SBIN          = ${SRC_SBINDIR}\bnetd.exe
+bnetd_OBJECTS       = \
+	${SRC_BNETDDIR}\main.obj \
+	${SRC_BNETDDIR}\server.obj \
+	${SRC_BNETDDIR}\connection.obj \
+	${SRC_BNETDDIR}\message.obj \
+	${SRC_BNETDDIR}\handle_init.obj \
+	${SRC_BNETDDIR}\handle_bnet.obj \
+	${SRC_BNETDDIR}\handle_file.obj \
+	${SRC_BNETDDIR}\handle_bot.obj \
+	${SRC_BNETDDIR}\handle_telnet.obj \
+	${SRC_BNETDDIR}\handle_bits.obj \
+	${SRC_BNETDDIR}\handle_irc.obj \
+	${SRC_BNETDDIR}\handle_udp.obj \
+	${SRC_BNETDDIR}\handle_auth.obj \
+	${SRC_BNETDDIR}\channel.obj \
+	${SRC_BNETDDIR}\channel_conv.obj \
+	${SRC_BNETDDIR}\game.obj \
+	${SRC_BNETDDIR}\command.obj \
+    ${SRC_BNETDDIR}\account_db_mysql.o \
+	${SRC_BNETDDIR}\account.obj \
+	${SRC_BNETDDIR}\account_wrap.obj \
+	${SRC_BNETDDIR}\prefs.obj \
+	${SRC_BNETDDIR}\tick.obj \
+	${SRC_BNETDDIR}\file.obj \
+	${SRC_BNETDDIR}\watch.obj \
+	${SRC_BNETDDIR}\friends.obj \
+	${SRC_BNETDDIR}\ladder.obj \
+	${SRC_BNETDDIR}\ladder_calc.obj \
+	${SRC_BNETDDIR}\adbanner.obj \
+	${SRC_BNETDDIR}\timer.obj \
+	${SRC_BNETDDIR}\tracker.obj \
+	${SRC_BNETDDIR}\ipban.obj \
+	${SRC_BNETDDIR}\game_conv.obj \
+	${SRC_BNETDDIR}\gametrans.obj \
+	${SRC_BNETDDIR}\autoupdate.obj \
+	${SRC_BNETDDIR}\helpfile.obj \
+	${SRC_BNETDDIR}\mail.obj \
+	${SRC_BNETDDIR}\runprog.obj \
+	${SRC_BNETDDIR}\game_rule.obj \
+	${SRC_BNETDDIR}\realm.obj \
+	${SRC_BNETDDIR}\character.obj \
+	${SRC_BNETDDIR}\udptest_send.obj \
+	${SRC_BNETDDIR}\versioncheck.obj \
+	${SRC_BNETDDIR}\handle_d2cs.obj \
+	${SRC_BNETDDIR}\irc.obj \
+	${SRC_BNETDDIR}\query.obj \
+	${SRC_BNETDDIR}\alias_command.obj \
+	${SRC_BNETDDIR}\bits.obj \
+	${SRC_BNETDDIR}\bits_va.obj \
+	${SRC_BNETDDIR}\bits_query.obj \
+	${SRC_BNETDDIR}\bits_packet.obj \
+	${SRC_BNETDDIR}\bits_net.obj \
+	${SRC_BNETDDIR}\bits_ext.obj \
+	${SRC_BNETDDIR}\bits_chat.obj \
+	${SRC_BNETDDIR}\bits_rconn.obj \
+	${SRC_BNETDDIR}\bits_login.obj \
+	${SRC_BNETDDIR}\bits_game.obj \
+	${SRC_BNETDDIR}\bits_motd.obj \
+	${SRC_COMMONDIR}\hexdump.obj \
+	${SRC_COMMONDIR}\bn_type.obj \
+	${SRC_COMMONDIR}\packet.obj \
+	${SRC_COMMONDIR}\queue.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\network.obj \
+	${SRC_COMMONDIR}\list.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\bnettime.obj \
+	${SRC_COMMONDIR}\bnethash.obj \
+	${SRC_COMMONDIR}\bnethashconv.obj \
+	${SRC_COMMONDIR}\addr.obj \
+	${SRC_COMMONDIR}\hashtable.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMMONDIR}\give_up_root_privileges.obj \
+	${SRC_COMMONDIR}\token.obj \
+	${SRC_COMMONDIR}\proginfo.obj \
+	${SRC_COMMONDIR}\conftable.obj \
+    ${SRC_COMMONDIR}\db_mysql.o \
+	${SRC_COMPATDIR}\pdir.obj \
+	${SRC_COMPATDIR}\inet_aton.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strdup.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\strtoul.obj \
+	${SRC_COMPATDIR}\strftime.obj \
+	${SRC_COMPATDIR}\strcasecmp.obj \
+	${SRC_COMPATDIR}\strncasecmp.obj \
+	${SRC_COMPATDIR}\strsep.obj \
+	${SRC_COMPATDIR}\psock.obj \
+	${SRC_COMPATDIR}\uname.obj \
+	${SRC_COMPATDIR}\gettimeofday.obj \
+	${SRC_COMPATDIR}\difftime.obj \
+	${SRC_COMPATDIR}\memset.obj \
+	${SRC_COMPATDIR}\memcpy.obj
+
+bnetg_SBIN          = ${SRC_SBINDIR}\bnetg.exe
+bnetg_OBJECTS       = \
+	${bnetd_OBJECTS:.obj=.bnetg_obj}\
+	${SRC_BNETDDIR}\winmain.bnetg_obj
+bnetg_RESOURCES     = ${SRC_BNETDDIR}\resource.res
+bnetg_CFLAGS        = -DWIN32_GUI -tWM
+
+sbnetd_SBIN	= ${SRC_SBINDIR}\sbnetd.exe
+sbnetd_OBJECTS	= \
+	${SRC_DEBUGDIR}\sbnetd.obj \
+	${SRC_COMPATDIR}\strerror.obj
+
+bnproxy_SBIN    = ${SRC_SBINDIR}\bnproxy.exe
+bnproxy_OBJECTS = \
+	${SRC_BNPROXYDIR}\bnproxy.obj \
+	${SRC_BNPROXYDIR}\virtconn.obj \
+	${SRC_COMMONDIR}\hexdump.obj \
+	${SRC_COMMONDIR}\packet.obj \
+	${SRC_COMMONDIR}\queue.obj \
+	${SRC_COMMONDIR}\list.obj \
+	${SRC_COMMONDIR}\bn_type.obj \
+	${SRC_COMMONDIR}\network.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\psock.obj
+
+bntrackd_SBIN   = ${SRC_SBINDIR}\bntrackd.exe
+bntrackd_OBJECTS= \
+	${SRC_BNTRACKDDIR}\bntrackd.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\list.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\psock.obj
+
+d2cs_DEFCONFFILE = ${confdir}\d2cs.conf
+d2cs_SBIN = ${SRC_SBINDIR}\d2cs.exe
+d2cs_OBJECTS	= \
+	${SRC_D2CSDIR}\main.obj \
+	${SRC_D2CSDIR}\d2gs.obj \
+	${SRC_D2CSDIR}\handle_d2gs.obj \
+	${SRC_D2CSDIR}\serverqueue.obj \
+	${SRC_D2CSDIR}\connection.obj \
+	${SRC_D2CSDIR}\game.obj \
+	${SRC_D2CSDIR}\server.obj \
+    ${SRC_D2CSDIR}\handle_init.obj \
+    ${SRC_D2CSDIR}\handle_d2cs_db_mysql.obj \
+    ${SRC_D2CSDIR}\handle_d2cs.obj \
+    ${SRC_D2CSDIR}\d2char_db_mysql.obj \
+    ${SRC_D2CSDIR}\d2charfile.obj \
+    ${SRC_D2CSDIR}\xstring.obj \
+    ${SRC_D2CSDIR}\gamequeue.obj \
+    ${SRC_D2CSDIR}\conf.obj \
+    ${SRC_D2CSDIR}\prefs.obj \
+    ${SRC_D2CSDIR}\cmdline_parse.obj \
+    ${SRC_D2CSDIR}\bnetd.obj \
+    ${SRC_D2CSDIR}\handle_bnetd.obj \
+    ${SRC_D2CSDIR}\s2s.obj \
+    ${SRC_D2CSDIR}\net.obj \
+    ${SRC_D2CSDIR}\d2ladder.obj \
+    ${SRC_D2CSDIR}\db_table_mysql.obj \
+    ${SRC_COMMONDIR}\db_mysql.obj \
+    ${SRC_COMMONDIR}\check_alloc.obj \
+    ${SRC_COMMONDIR}\hashtable.obj \
+    ${SRC_COMMONDIR}\hexdump.obj \
+    ${SRC_COMMONDIR}\eventlog.obj \
+    ${SRC_COMMONDIR}\list.obj \
+    ${SRC_COMMONDIR}\packet.obj \
+    ${SRC_COMMONDIR}\bn_type.obj \
+    ${SRC_COMMONDIR}\addr.obj \
+    ${SRC_COMMONDIR}\util.obj \
+    ${SRC_COMMONDIR}\queue.obj \
+    ${SRC_COMMONDIR}\network.obj \
+	${SRC_COMPATDIR}\inet_aton.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strdup.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\strtoul.obj \
+	${SRC_COMPATDIR}\strftime.obj \
+	${SRC_COMPATDIR}\strcasecmp.obj \
+	${SRC_COMPATDIR}\strncasecmp.obj \
+    ${SRC_COMPATDIR}\psock.obj \
+    ${SRC_COMPATDIR}\uname.obj \
+    ${SRC_COMPATDIR}\gettimeofday.obj \
+    ${SRC_COMPATDIR}\difftime.obj \
+    ${SRC_COMPATDIR}\pdir.obj \
+	${SRC_COMPATDIR}\strsep.obj
+
+d2dbs_DEFCONFFILE = ${confdir}\d2dbs.conf
+d2dbs_SBIN = ${SRC_SBINDIR}\d2dbs.exe
+d2dbs_OBJECTS = \
+	${SRC_D2DBSDIR}\main.obj \
+	${SRC_D2DBSDIR}\charlock.obj \
+	${SRC_D2DBSDIR}\d2ladder.obj \
+	${SRC_D2DBSDIR}\dbserver.obj \
+	${SRC_D2DBSDIR}\dbspacket.obj \
+	${SRC_D2DBSDIR}\cmdline_parse.obj \
+	${SRC_D2DBSDIR}\prefs.obj \
+	${SRC_D2DBSDIR}\server.obj \
+    ${SRC_D2CSDIR}\conf.obj \
+    ${SRC_D2CSDIR}\xstring.obj \
+    ${SRC_D2CSDIR}\d2char_db_mysql.obj \
+    ${SRC_COMMONDIR}\list.obj \
+    ${SRC_COMMONDIR}\eventlog.obj \
+    ${SRC_COMMONDIR}\bn_type.obj \
+    ${SRC_COMMONDIR}\check_alloc.obj \
+    ${SRC_COMMONDIR}\util.obj \
+    ${SRC_COMPATDIR}\psock.obj \
+    ${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\strsep.obj
+
+bnchat_BIN  = ${SRC_BINDIR}\bnchat.exe
+bnchat_OBJECTS = \
+	${SRC_CLIENTDIR}\bnchat.obj \
+	${SRC_CLIENTDIR}\client.obj \
+	${SRC_CLIENTDIR}\client_connect.obj \
+	${SRC_CLIENTDIR}\udptest.obj \
+	${SRC_COMMONDIR}\packet.obj \
+	${SRC_COMMONDIR}\queue.obj \
+	${SRC_COMMONDIR}\bn_type.obj \
+	${SRC_COMMONDIR}\network.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\bnethash.obj \
+	${SRC_COMMONDIR}\bnethashconv.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\bnettime.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMMONDIR}\proginfo.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\psock.obj \
+	${SRC_COMPATDIR}\gettimeofday.obj
+
+bnpass_BIN  = ${SRC_BINDIR}\bnpass.exe
+bnpass_OBJECTS = \
+	${SRC_BNPASSDIR}\bnpass.obj \
+	${SRC_COMMONDIR}\bnethash.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMPATDIR}\strerror.obj
+
+bnftp_BIN   = ${SRC_BINDIR}\bnftp.exe
+bnftp_OBJECTS = \
+	${SRC_CLIENTDIR}\bnftp.obj \
+	${SRC_CLIENTDIR}\client.obj \
+	${SRC_COMMONDIR}\hexdump.obj \
+	${SRC_COMMONDIR}\packet.obj \
+	${SRC_COMMONDIR}\queue.obj \
+	${SRC_COMMONDIR}\bn_type.obj \
+	${SRC_COMMONDIR}\network.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\bnettime.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\strftime.obj \
+	${SRC_COMPATDIR}\psock.obj \
+	${SRC_COMPATDIR}\gettimeofday.obj
+
+bnbot_BIN   = ${SRC_BINDIR}\bnbot.exe
+bnbot_OBJECTS   = \
+	${SRC_CLIENTDIR}\bnbot.obj \
+	${SRC_CLIENTDIR}\client.obj \
+	${SRC_COMMONDIR}\packet.obj \
+	${SRC_COMMONDIR}\bn_type.obj \
+	${SRC_COMMONDIR}\network.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\psock.obj
+
+bnstat_BIN  = ${SRC_BINDIR}\bnstat.exe
+bnstat_OBJECTS = \
+	${SRC_CLIENTDIR}\bnstat.obj \
+	${SRC_CLIENTDIR}\client.obj \
+	${SRC_CLIENTDIR}\client_connect.obj \
+	${SRC_CLIENTDIR}\udptest.obj \
+	${SRC_COMMONDIR}\packet.obj \
+	${SRC_COMMONDIR}\queue.obj \
+	${SRC_COMMONDIR}\bn_type.obj \
+	${SRC_COMMONDIR}\network.obj \
+	${SRC_COMMONDIR}\eventlog.obj \
+	${SRC_COMMONDIR}\bnethash.obj \
+	${SRC_COMMONDIR}\bnethashconv.obj \
+	${SRC_COMMONDIR}\util.obj \
+	${SRC_COMMONDIR}\bnettime.obj \
+	${SRC_COMMONDIR}\check_alloc.obj \
+	${SRC_COMMONDIR}\proginfo.obj \
+	${SRC_COMPATDIR}\inet_ntoa.obj \
+	${SRC_COMPATDIR}\strerror.obj \
+	${SRC_COMPATDIR}\strftime.obj \
+	${SRC_COMPATDIR}\psock.obj \
+	${SRC_COMPATDIR}\gettimeofday.obj
+
+bnilist_BIN = ${SRC_BINDIR}\bnilist.exe
+bnilist_OBJECTS = \
+	${SRC_BNIUTILSDIR}\bnilist.obj \
+	${SRC_BNIUTILSDIR}\fileio.obj \
+	${SRC_BNIUTILSDIR}\tga.obj \
+	${SRC_COMMONDIR}\check_alloc.obj
+
+bni2tga_BIN = ${SRC_BINDIR}\bni2tga.exe
+bni2tga_OBJECTS = \
+	${SRC_BNIUTILSDIR}\bni2tga.obj \
+	${SRC_BNIUTILSDIR}\fileio.obj \
+	${SRC_COMMONDIR}\check_alloc.obj
+
+bniextract_BIN  = ${SRC_BINDIR}\bniextract.exe
+bniextract_OBJECTS = \
+	${SRC_BNIUTILSDIR}\bniextract.obj \
+	${SRC_BNIUTILSDIR}\fileio.obj \
+	${SRC_BNIUTILSDIR}\tga.obj \
+	${SRC_BNIUTILSDIR}\bni.obj \
+	${SRC_COMMONDIR}\check_alloc.obj
+
+bnibuild_BIN    = ${SRC_BINDIR}\bnibuild.exe
+bnibuild_OBJECTS = \
+	${SRC_BNIUTILSDIR}\bnibuild.obj \
+	${SRC_BNIUTILSDIR}\fileio.obj \
+	${SRC_BNIUTILSDIR}\tga.obj \
+	${SRC_BNIUTILSDIR}\bni.obj \
+	${SRC_COMMONDIR}\check_alloc.obj
+
+tgainfo_BIN = ${SRC_BINDIR}\tgainfo.exe
+tgainfo_OBJECTS = \
+	${SRC_BNIUTILSDIR}\tgainfo.obj \
+	${SRC_BNIUTILSDIR}\fileio.obj \
+	${SRC_BNIUTILSDIR}\tga.obj \
+	${SRC_COMMONDIR}\check_alloc.obj
+
+
+OBJECTS     = ${bnetd_OBJECTS} ${bnetg_OBJECTS} ${d2cs_OBJECTS} ${d2dbs_OBJECTS} ${bnproxy_OBJECTS} ${bntrackd_OBJECTS} ${bnchat_OBJECTS} ${bnpass_OBJECTS} ${bnbot_OBJECTS} ${bnftp_OBJECTS} ${bnstat_OBJECTS} ${bnilist_OBJECTS} ${bni2tga_OBJECTS} ${bniextract_OBJECTS} ${bnibuild_OBJECTS} ${tgainfo_OBJECTS}
+SBINS       = ${bnetd_SBIN} ${bnetg_SBIN} ${d2cs_SBIN} ${d2dbs_SBIN} ${bnproxy_SBIN} ${bntrackd_SBIN}
+BINS        = ${bnchat_BIN} ${bnpass_BIN} ${bnftp_BIN} ${bnbot_BIN} ${bnstat_BIN} ${bnilist_BIN} ${bni2tga_BIN} ${bniextract_BIN} ${bnibuild_BIN} ${tgainfo_BIN}
+CONFS       = ad.list bnetd.conf d2cs.conf d2dbs.conf bnetd_default_user bnmotd.txt channel.list news.txt bnban bnhelp gametrans autoupdate realm.list
+SHARES      = ad000001.pcx icons.bni tos.txt
+OTHERBINS	= ${sbnetd_OBJECTS} ${sbnetd_SBIN}
+DIRS        = ${SRC_BINDIR} ${SRC_SBINDIR}
+
+all: config ${SBINS} ${BINS}
+
+clean:
+# there is a command line limit in borland tools
+	@for %f in (${bnetd_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnetg_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnetg_RESOURCES}) do @if exist %f del %f
+	@for %f in (${d2cs_OBJECTS}) do @if exist %f del %f
+	@for %f in (${d2dbs_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnproxy_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bntrackd_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnchat_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnpass_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnbot_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnftp_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnstat_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnilist_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bni2tga_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bniextract_OBJECTS}) do @if exist %f del %f
+	@for %f in (${bnibuild_OBJECTS}) do @if exist %f del %f
+	@for %f in (${tgainfo_OBJECTS}) do @if exist %f del %f
+	-@echo y|del ${SRC_BINDIR}\*.*
+	-@echo y|del ${SRC_SBINDIR}\*.*
+	@for %d in (${DIRS}) do @if exist %d rmdir %d
+
+distclean: clean
+	-del ${SRC_SRCDIR}\Makefile 
+	-del ${SRC_SRCDIR}\config.h
+
+clean-compile: clean all
+
+config: ${SRC_SRCDIR}\Makefile ${SRC_SRCDIR}\config.h
+
+${SRC_SRCDIR}\config.h: ${SRC_SRCDIR}\config.h.win32borland
+    copy ${SRC_SRCDIR}\config.h.win32borland ${SRC_SRCDIR}\config.h
+
+${SRC_SRCDIR}\Makefile: ${SRC_SRCDIR}\Makefile.BORLAND
+    copy ${SRC_SRCDIR}\Makefile.BORLAND ${SRC_SRCDIR}\Makefile
+
+${SRC_BINDIR}:
+    if not exist $@ mkdir $@
+
+${SRC_SBINDIR}:
+    if not exist $@ mkdir $@
+
+install: config all
+    -mkdir ${INSTALLDIR}
+    -mkdir ${INSTALLDIR}\bin
+    -mkdir ${INSTALLDIR}\sbin
+    -mkdir ${INSTALLDIR}\var
+    -mkdir ${INSTALLDIR}\var\files
+    -mkdir ${INSTALLDIR}\var\users
+    -mkdir ${INSTALLDIR}\var\reports
+    -mkdir ${INSTALLDIR}\var\chanlogs
+    -mkdir ${INSTALLDIR}\var\ladders
+    -mkdir ${INSTALLDIR}\etc
+    copy ${TOPDIR}\files\*.* ${INSTALLDIR}\var\files
+    copy ${TOPDIR}\conf\*.* ${INSTALLDIR}\etc
+    copy ${INSTALLDIR}\etc\bnetd.conf.win32 ${INSTALLDIR}\etc\bnetd.conf
+    copy ${INSTALLDIR}\etc\d2cs.conf.win32 ${INSTALLDIR}\etc\d2cs.conf
+    copy ${INSTALLDIR}\etc\d2dbs.conf.win32 ${INSTALLDIR}\etc\d2dbs.conf
+    copy ${TOPDIR}\sbin\*.exe ${INSTALLDIR}\sbin
+    copy ${TOPDIR}\bin\*.exe ${INSTALLDIR}\bin
+    copy ${TOPDIR}\*.* ${INSTALLDIR}
+    echo @cd ${INSTALLDIR} > ${INSTALLDIR}\bnetd.bat
+    echo @.\sbin\bnetd.exe -c .\etc\bnetd.conf >> ${INSTALLDIR}\bnetd.bat
+
+    echo @start .\sbin\bnetg.exe -c .\etc\bnetd.conf > ${INSTALLDIR}\bnetg.bat
+
+    echo @cd ${INSTALLDIR} > ${INSTALLDIR}\d2cs.bat
+    echo @.\sbin\d2cs.exe -c .\etc\d2cs.conf >> ${INSTALLDIR}\d2cs.bat
+
+    echo @cd ${INSTALLDIR} > ${INSTALLDIR}\d2dbs.bat
+    echo @.\sbin\d2dbs.exe -c .\etc\d2dbs.conf >> ${INSTALLDIR}\d2dbs.bat
+
+# The Borland compiler silently ignores -ofilename if it is after the source file
+# The Borland compiler silently ignores -efilename if it is after the object file
+
+.rc.res:
+    ${RC} -r -fo$@ $<
+
+.c.obj:
+    ${COMPILE} -o$@ $<
+
+.c.bnetg_obj:
+    ${COMPILE} -o$@ ${bnetg_CFLAGS} $<
+
+${bnetd_SBIN}: ${bnetd_OBJECTS}
+    @if not exist ${SRC_SBINDIR} mkdir ${SRC_SBINDIR}
+    ${LINK} /ap c0x32 ${bnetd_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnetg_SBIN}: ${bnetg_OBJECTS} ${bnetg_RESOURCES}
+    @if not exist ${SRC_SBINDIR} mkdir ${SRC_SBINDIR}
+    ${LINK} /aa c0w32 ${bnetg_OBJECTS}, $@, , ${LINK_LIBS} cw32mt import32, , ${bnetg_RESOURCES}
+
+${d2cs_SBIN}: ${d2cs_OBJECTS}
+    @if not exist ${SRC_SBINDIR} mkdir ${SRC_SBINDIR}
+    ${LINK} /ap c0x32 ${d2cs_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${d2dbs_SBIN}: ${d2dbs_OBJECTS}
+    @if not exist ${SRC_SBINDIR} mkdir ${SRC_SBINDIR}
+    ${LINK} /ap c0x32 ${d2dbs_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnproxy_SBIN}: ${bnproxy_OBJECTS}
+    @if not exist ${SRC_SBINDIR} mkdir ${SRC_SBINDIR}
+    ${LINK} /ap c0x32 ${bnproxy_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bntrackd_SBIN}: ${bntrackd_OBJECTS}
+    @if not exist ${SRC_SBINDIR} mkdir ${SRC_SBINDIR}
+    ${LINK} /ap c0x32 ${bntrackd_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnchat_BIN}: ${bnchat_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnchat_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnpass_BIN}: ${bnpass_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnpass_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnftp_BIN}: ${bnftp_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnftp_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnbot_BIN}: ${bnbot_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnbot_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnstat_BIN}: ${bnstat_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnstat_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnilist_BIN}: ${bnilist_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnilist_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bni2tga_BIN}: ${bni2tga_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bni2tga_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bniextract_BIN}: ${bniextract_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bniextract_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${bnibuild_BIN}: ${bnibuild_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${bnibuild_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32
+
+${tgainfo_BIN}: ${tgainfo_OBJECTS}
+    @if not exist ${SRC_BINDIR} mkdir ${SRC_BINDIR}
+    ${LINK} /ap c0x32 ${tgainfo_OBJECTS}, $@, , ${LINK_LIBS} cw32 import32

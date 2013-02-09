@@ -1,0 +1,37 @@
+#!/bin/sh
+
+case "$1" in
+    configure)
+        # continue below
+    ;;
+    abort-upgrade|abort-remove|abort-deconfigure)
+        exit 0
+    ;;
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+if test -d /var/cache/bnetd/player && \
+   find /var/cache/bnetd/player -type f | egrep .; then
+    cat >&2 <<'END'
+/var/cache/bnetd/player contains some files.  These files should be in
+/var/lib/bnetd/player.  You will have to move them by hand or perhaps
+adjust the configuration, as this maintainer script is too stupid
+(sorry).  Moving them may prevent the old software from working.
+
+Also not that /var/log/bnetd/record and /var/log/bnetd/chanlog are the
+new locations of the game records and channel logs.  (They used to be
+in /var/cache too.)  Again, old data has not been (re)moved.
+END
+    exit 1
+fi
+
+if [ -d /usr/doc -a ! -e /usr/doc/bnetd -a -d /usr/share/doc/bnetd ]; then
+	ln -sf ../share/doc/bnetd /usr/doc/bnetd
+fi
+update-rc.d bnetd defaults >/dev/null
+/etc/init.d/bnetd start
+
+exit 0

@@ -1,0 +1,8 @@
+etc/bnetd
+usr/bin
+usr/sbin
+usr/share/bnetd
+var/log
+var/lib/bnetd/player
+var/log/bnetd/reports
+var/log/bnetd/chanlogs

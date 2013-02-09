@@ -1,0 +1,39 @@
+################################################################################
+# channel.list  -  Configuration for permanent channels                        #
+#------------------------------------------------------------------------------#
+#                                                                              #
+# These are the channels to create when the server starts up. This file does   #
+# not change the channel that the client requests when it logs in, but it      #
+# can be used to give that channel a different "official" name.                #
+#                                                                              #
+# Quotes (") are required around the strings, but they are not allowed         #
+# inside them.  An unquoted NULL means there is no entry for that position.    #
+#                                                                              #
+# NONE for special name means to use the format "realm shortname ctry-num",    #
+#  depenedent on if realm, country and/or num are enabled					   #	
+#  e.g. "D2CS Starcraft USA-1"                                                 #
+#                                                                              #
+# Log level:                                                                   #
+#  p  = public messages                                                        #
+#  c  = channel commands                                                       #
+#  pc = both of the above                                                      #
+#  -  = no logging                                                             #
+#                                                                              #
+# NULL for country creates non-country specific channels.                      #
+# NULL for realm creates non-realm specific channels.
+# -1 for max sets no limit to the number of users allowed in the channel       #
+#                                                                              #
+# ---special name--- -----short name------ ctag bots- -ops- log ctry- realm max#
+NONE                 "Starcraft"           STAR true  false  -  "USA" NULL  30
+NONE                 "Brood War"           SEXP true  false  -  "USA" NULL  30
+NONE                 "Starcraft Shareware" SSHR true  false  -  "USA" NULL  30
+NONE                 "Diablo Retail"       DRTL true  false  -  "USA" NULL  30
+NONE                 "War2BNE"             W2BN true  false  -  "USA" NULL  30
+NONE                 "Diablo II"           D2XP true  false  -  "USA" NULL  30
+#                                                                              #
+#"Blizzard Chat"      "Chat"                CHAT true  false  -  NULL  NULL -1
+#"Blizzard Support"   NULL                  NULL false false  -  NULL  NULL -1
+"Bnetd Chat"         "Chat"                CHAT true  false  -  NULL  NULL -1
+"Bnetd Support"      NULL                  NULL false false  -  NULL  NULL -1
+#                                                                              #
+################################################################################

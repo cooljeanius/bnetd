@@ -1,0 +1,5 @@
+%IHello %l !
+%IWelcome to BNETD (Debian GNU/Linux Battle.Net Server).
+%IRunning version %v on %h.
+%IFor more information please visit:
+%I http://www.bnetd.org/

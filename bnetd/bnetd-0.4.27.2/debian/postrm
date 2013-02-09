@@ -1,0 +1,31 @@
+#!/bin/sh
+
+case "$1" in
+    purge)
+	    update-rc.d bnetd remove >/dev/null
+    	rm -f /var/log/bnetd.log /var/run/bnetd.pid
+        rm -fr /var/cache/bnetd
+    ;;
+    upgrade)
+        a=`echo $2|sed 's/\.[0-9]*\.[0-9]*-[0-9]*$//g'`
+        b=`echo $2|sed -e 's/^[0-9]*\.//g' -e 's/\.[0-9]*-[0-9]*$//g'`
+        c=`echo $2|sed -e 's/^[0-9]*\.[0-9]*\.//g' -e 's/-[0-9]*$//g'`
+        #
+        # Workaround for bug #40461
+        #
+        if [ "$a" = "0" -a "$b" = "4" -a "$c" = "8" ]; then
+            mkdir -p /etc/bnetd/users
+            if [ `ls -1 /var/cache/bnetd/player` ]; then
+                mv /var/cache/bnetd/player/* /etc/bnetd/users/.
+            fi
+        fi
+    ;;
+    remove|failed-upgrade|abort-install|abort-upgrade|disapper)
+    ;;
+    *)
+        echo "postrm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+exit 0

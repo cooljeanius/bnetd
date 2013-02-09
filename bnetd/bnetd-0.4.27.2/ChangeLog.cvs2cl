@@ -1,0 +1,4475 @@
+2002-02-20 07:26  rcombs
+
+	* CHANGELOG (1.42), TODO (1.20), docs/README.registry (1.3),
+	src/Makefile.in (1.18), src/bnetd/account.c (1.21),
+	src/bnetd/account.h (1.4), src/bnetd/message.c (1.24),
+	src/bnpass/bnpass.c (1.2), src/common/bnet_protocol.h (1.36),
+	src/common/hashtable.c (1.3), src/common/list.c (1.2),
+	src/common/packet.c (1.20), src/common/packet.h (1.22),
+	src/d2cs/d2charfile.c (1.6), src/d2cs/handle_bnetd.c (1.3),
+	src/d2cs/handle_d2cs.c (1.5), src/d2cs/handle_d2gs.c (1.5),
+	src/d2cs/s2s.c (1.5), src/d2cs/server.c (1.5), src/d2dbs/dbserver.c
+	(1.8), src/d2dbs/dbspacket.c (1.7), src/debug/Makefile (1.2),
+	src/debug/hashtabletest.c (1.2), src/debug/listtest.c (1.2): 
+	Fixed various sign related warnings and a couple of bugs.  Added
+	constants and comments to packet handler tables in d2cs.  Added the
+	debug programs to the Makefile and updated their includes.  Added
+	more War3 packet info in bnet_protocol.h.  Modified hash function
+	to produce slightly more even distribution.. slower but it should
+	keep hash tables more balanced.
+
+2002-02-19 22:42  typhoon
+
+	* src/client/client_connect.c (1.19): Fixed compile problem in
+	client_connect.c.
+
+2002-02-19 19:01  rcombs
+
+	* src/debug/timetest.c (1.2): 
+	Updated header locations.
+
+2002-02-19 01:40  rcombs
+
+	* src/: bnetd/account.c (1.20), bnetd/adbanner.c (1.3),
+	bnetd/command.c (1.23), bnetd/connection.c (1.35),
+	bnetd/connection.h (1.17), bnetd/handle_bnet.c (1.50),
+	bnetd/handle_file.c (1.4), bnetd/handle_init.c (1.3),
+	bnetd/handle_udp.c (1.4), bnetd/ipban.c (1.6), bnetd/ipban.h (1.5),
+	bnetd/mail.c (1.9), bnetd/mail.h (1.8), bnetd/prefs.c (1.22),
+	bnetd/server.c (1.40), bnetd/tracker.c (1.3), bnetd/udptest_send.c
+	(1.3), bnetd/versioncheck.c (1.19), common/check_alloc.h (1.3),
+	compat/char_bit.h (1.3), compat/uint.h (1.3): 
+	Fixed some sign warnings and bugs.  Maybe fixed the watchall crash.
+	 Fixed a memory leak in the ipban code.  Maybe fixed the ipban
+	crash.	A few formatting changes and minor compat improvements.
+
+2002-02-18 07:27  rcombs
+
+	* src/bnetd/: bits.c (1.8), bits_motd.c (1.9): 
+	BITS compile fixes from the warforge patch.
+
+2002-02-17 15:43  typhoon
+
+	* src/bnetd/versioncheck.c (1.18): Fixed a typo in versioncheck. I
+	meant %%s instead of %%%us.
+
+2002-02-16 09:40  rcombs
+
+	* CHANGELOG (1.41), CREDITS (1.22), src/bnetd/channel.c (1.28),
+	src/bnetd/game.c (1.12): 
+	Fixed two of the bugs reported by Blue on the mailing list.
+
+2002-02-16 08:46  rcombs
+
+	* src/bnetd/versioncheck.c (1.17): 
+	Fixed some portability things and a warning.
+
+2002-02-16 08:38  rcombs
+
+	* CHANGELOG (1.40), conf/versioncheck (1.11), src/bnetd/game_conv.c
+	(1.11), src/common/bnet_protocol.h (1.35), src/d2cs/handle_d2gs.h
+	(1.3), src/d2cs/handle_init.h (1.3), src/d2cs/setup.h (1.4): 
+	
+	Added top vs. bottom for Starcraft/Brood War.  Added another
+	example of the new auth packets.  Added some FIXMEs.
+
+2002-02-16 08:23  rcombs
+
+	* src/common/bnet_protocol.h (1.34): 
+	Forgot to check in before; added back original packet examples.
+
+2002-02-16 01:33  typhoon
+
+	* conf/bnetd.conf.in (1.27), conf/bnetd.conf.win32 (1.21),
+	src/bnetd/account.c (1.19), src/bnetd/account.h (1.3),
+	src/bnetd/prefs.c (1.21), src/bnetd/prefs.h (1.16): Added
+	configuration option to set the maximum number of accounts as it
+	was suggested by Phil.
+
+2002-02-14 19:32  rcombs
+
+	* conf/versioncheck (1.10), src/bnetd/handle_bnet.c (1.49),
+	src/bnetd/versioncheck.c (1.16), src/client/bnchat.c (1.21),
+	src/client/bnftp.c (1.10), src/client/bnstat.c (1.8),
+	src/common/bnet_protocol.h (1.33), src/common/packet.h (1.21),
+	src/common/tag.h (1.5): 
+	Added MacOS X arch tag.  More War3 stuff.
+
+2002-02-14 05:34  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.48), common/packet.c (1.19),
+	common/packet.h (1.20): 
+	Added info on new CREATEACCT3 request.
+
+2002-02-14 00:28  typhoon
+
+	* conf/bnetd.conf.in (1.26), conf/bnetd.conf.win32 (1.20),
+	src/bnetd/handle_irc.c (1.8), src/bnetd/irc.c (1.8),
+	src/bnetd/server.c (1.39): Fixed IRC support again. Made the server
+	figure out its own FQDN. Made IRC unrecognized command message more
+	verbose.
+
+2002-02-13 22:39  rcombs
+
+	* conf/bnhelp (1.8): 
+	Added /motd help.
+
+2002-02-13 22:29  rcombs
+
+	* conf/versioncheck (1.9): 
+	Added wildcard WAR3 entry.
+
+2002-02-13 21:17  rcombs
+
+	* src/bnetd/account.c (1.18): 
+	Implemented account optimization idea from Phil (don't mark dirty
+	if new val is equal to old val).
+
+2002-02-13 20:32  rcombs
+
+	* src/client/client_connect.c (1.18): 
+	Used correct WAR3 clientid.
+
+2002-02-12 01:05  rcombs
+
+	* CHANGELOG (1.39), src/bnetd/file.c (1.4), src/bnetd/handle_bnet.c
+	(1.47), src/client/bnchat.c (1.20), src/client/bnftp.c (1.9),
+	src/client/bnstat.c (1.7), src/client/client_connect.c (1.17),
+	src/common/tag.h (1.4): 
+	Added Warcraft III clienttag.
+
+2002-02-11 22:34  rcombs
+
+	* CREDITS (1.21), conf/versioncheck (1.8): 
+	Added some info from Blue about Blizzard's version numbering.
+
+2002-02-11 19:58  typhoon
+
+	* conf/bnetd.conf.in (1.25), conf/bnetd.conf.win32 (1.19),
+	src/bnetd/prefs.c (1.20), src/bnetd/prefs.h (1.15),
+	src/bnetd/versioncheck.c (1.15), src/common/setup_before.h (1.18):
+	Added more lax versioncheck exeinfo checking.
+
+2002-02-11 16:30  typhoon
+
+	* src/bnetd/versioncheck.c (1.14): Made exeinfo field
+	case-insensitive.
+
+2002-02-11 16:29  typhoon
+
+	* src/: bnetd/versioncheck.c (1.13), common/eventlog.c (1.6): Added
+	wildcard support for versioncheck. Use '?' in the exeinfo field to
+	match any character.
+
+2002-02-11 16:04  forester22
+
+	* conf/bnetd.conf.win32 (1.18): directories must be without
+	trailing '\' versioncheckfile = versioncheck_file
+
+2002-02-11 14:34  forester22
+
+	* src/Makefile.BORLAND (1.14): bnetg support
+
+2002-02-11 14:34  forester22
+
+	* src/common/eventlog.c (1.5): WIN32_GUI support
+
+2002-02-11 14:33  forester22
+
+	* src/bnetd/main.c (1.17): removed all exit(), only return
+
+2002-02-11 14:32  forester22
+
+	* src/bnetd/server.c (1.38): added wrapers quit() & restart(),
+	bnetg support
+
+2002-02-11 14:32  forester22
+
+	* src/bnetd/server.h (1.8): added wrapers quit() & restart()
+
+2002-02-11 14:29  forester22
+
+	* src/bnetd/: resource.rc (1.1), resource.h (1.1), bnetg16x16.ico
+	(1.1), bnetg32x32.ico (1.1), winmain.c (1.1), winmain.h (1.1): just
+	added
+
+2002-02-11 12:52  forester22
+
+	* src/Makefile.BORLAND (1.13): new version [ more win9x friendly ]
+
+2002-02-11 12:48  forester22
+
+	* src/config.h.win32borland (1.4): strsep() patched
+
+2002-02-11 07:49  rcombs
+
+	* CHANGELOG (1.38), TODO (1.19), conf/bnetd.conf.in (1.24),
+	conf/bnetd.conf.win32 (1.17), src/bnetd/account.c (1.17),
+	src/bnetd/bits_chat.c (1.5), src/bnetd/bits_ext.c (1.6),
+	src/bnetd/bits_login.c (1.6), src/bnetd/command.c (1.22),
+	src/bnetd/connection.c (1.34), src/bnetd/connection.h (1.16),
+	src/bnetd/game.c (1.11), src/bnetd/handle_auth.c (1.13),
+	src/bnetd/handle_bits.c (1.19), src/bnetd/handle_bnet.c (1.46),
+	src/bnetd/handle_bot.c (1.10), src/bnetd/handle_d2cs.c (1.5),
+	src/bnetd/handle_file.c (1.3), src/bnetd/handle_irc.c (1.7),
+	src/bnetd/handle_telnet.c (1.9), src/bnetd/handle_udp.c (1.3),
+	src/bnetd/irc.c (1.7), src/bnetd/message.c (1.23),
+	src/bnetd/query.h (1.3), src/bnetd/versioncheck.c (1.12),
+	src/client/bnchat.c (1.19), src/client/bnftp.c (1.8),
+	src/client/client_connect.c (1.16), src/common/field_sizes.h (1.4),
+	src/d2dbs/cmdline_parse.c (1.3): 
+	Fixed off-by-one error with long character names.  Created more
+	field size constants and used them in various files.  Changed
+	handling of the dummy versioncheck entry so that it does not pass
+	validation unless allow_unknown_version is enabled.  Fixed some
+	more multi-line string constants.  Added a /motd command.  Changed
+	character name parsing to allow @ signs in the name if a realm is
+	also specified.  Renamed connlist_find_connection to
+	connlist_find_connection_ by_accountname (longest function name
+	ever) so that it is clear it only handles account names.  Added
+	some debugging messages for game deletion.  Reworded the failed
+	versioncheck error messages and created a new state for clients
+	that failed.  Made versioncheck validation routine messages
+	distinguish checksum mismatches from exeinfo mismatches.
+
+2002-02-08 19:12  rcombs
+
+	* conf/: bnetd.conf.in (1.23), bnetd.conf.win32 (1.16): 
+	Clarify when skip_versioncheck works.
+
+2002-02-08 00:54  typhoon
+
+	* src/: bnetd/main.c (1.16), common/eventlog.c (1.4),
+	common/eventlog.h (1.5): Added debug mode because it saves me one
+	terminal per bnetd process during testing :). It generally switches
+	bnetd to foreground mode and additionally logs to stdout. Maybe
+	this should be default for Win32 so the users don't think bnetd
+	doesn't work and the DOS is actually useful.
+
+2002-02-07 20:02  typhoon
+
+	* src/bnetd/message.c (1.22): Made bnetd send NULL messages even
+	before login. This used to be avoided.	However, battle.net
+	obviously sends them.
+
+2002-02-07 19:47  rcombs
+
+	* src/bnetd/ipban.c (1.5): 
+	Fix typo in help message.
+
+2002-02-07 19:22  rcombs
+
+	* src/bnetd/handle_d2cs.c (1.4): 
+	Removed backslashes at the ends of lines.  Used strreverse()
+	instead of abusing the bn_type functions.
+
+2002-02-07 18:49  typhoon
+
+	* src/bnetd/handle_bot.c (1.9): Fixed another bug in the bot
+	protocol. Thanks to Phil for the fix. This is not 100% the same fix
+	but it generally does the same.
+
+2002-02-07 08:42  rcombs
+
+	* CHANGELOG (1.37), CREDITS (1.20), conf/autoupdate (1.11),
+	conf/channel.list (1.6), conf/versioncheck (1.7), src/Makefile.in
+	(1.17), src/MSVC++.mak (1.5), src/Makefile.BORLAND (1.12),
+	src/bnetd/alias_command.c (1.1), src/bnetd/alias_command.h (1.1),
+	src/bnetd/command.c (1.21), src/bnetd/ipban.c (1.4),
+	src/bnetd/ipban.h (1.4), src/bnetd/timer.c (1.2), src/common/util.c
+	(1.6): 
+	New config file update from Blue to identify 109 clients.  Initial
+	check-in of alias code but it is far from being complete.
+
+2002-02-04 06:33  rcombs
+
+	* conf/bnalias.list (1.1): 
+	Configuration file for alias system.  The alias code is not
+	complete and has not been checked in yet.
+
+2002-02-04 05:20  rcombs
+
+	* CREDITS (1.19), conf/autoupdate (1.10), conf/versioncheck (1.6): 
+	Added Blue's new versioncheck and autoupdate entries which support
+	all known PC versions of StarCraft and Brood War.
+
+2002-02-04 02:11  typhoon
+
+	* src/bnetd/server.c (1.37): Added possible workaround for the
+	UltimateBot problem.
+
+2002-02-01 21:41  rcombs
+
+	* src/bnetd/irc.c (1.6): 
+	Fixed missing free in irc.c.
+
+2002-02-01 19:43  rcombs
+
+	* src/bnetd/server.h (1.7): [no log message]
+
+2002-02-01 19:39  rcombs
+
+	* CHANGELOG (1.36), src/bnetd/channel.c (1.27), src/bnetd/channel.h
+	(1.8), src/bnetd/main.c (1.15), src/bnetd/message.c (1.21),
+	src/bnetd/server.c (1.36): [no log message]
+
+2002-02-01 07:26  rcombs
+
+	* CHANGELOG (1.35), TODO (1.18), src/bnetd/bits_motd.c (1.8),
+	src/bnetd/message.c (1.20), src/bnetd/message.h (1.5): 
+	Externalized the motd line formatting code so that it can be used
+	by other parts of the server.  The command format will now handle
+	non- slash prefixed text as if the user typed it in.
+
+2002-02-01 01:22  rcombs
+
+	* CHANGELOG (1.34), src/bnetd/bits.c (1.7), src/bnetd/bits_chat.c
+	(1.4), src/bnetd/bits_ext.c (1.5), src/bnetd/bits_game.c (1.8),
+	src/bnetd/bits_login.c (1.5), src/bnetd/bits_motd.c (1.7),
+	src/bnetd/bits_net.c (1.3), src/bnetd/bits_packet.c (1.3),
+	src/bnetd/bits_query.c (1.12), src/bnetd/bits_rconn.c (1.3),
+	src/bnetd/bits_va.c (1.5), src/bnetd/channel.c (1.26),
+	src/bnetd/handle_d2cs.c (1.3), src/bnetd/prefs.h (1.14),
+	src/bnetd/query.c (1.4), src/bnetd/server.c (1.35),
+	src/bnproxy/bnproxy.c (1.4), src/bntrackd/bntrackd.c (1.4),
+	src/client/bnbot.c (1.4), src/client/bnchat.c (1.18),
+	src/client/bnftp.c (1.7), src/client/client_connect.c (1.15),
+	src/client/udptest.c (1.2), src/common/check_alloc.c (1.7),
+	src/compat/difftime.c (1.2), src/compat/gettimeofday.c (1.3),
+	src/compat/inet_aton.c (1.2), src/compat/inet_ntoa.c (1.2),
+	src/compat/memcpy.c (1.2), src/compat/memmove.c (1.2),
+	src/compat/memset.c (1.2), src/compat/psock.h (1.4),
+	src/compat/strcasecmp.c (1.2), src/compat/strdup.c (1.2),
+	src/compat/strerror.c (1.2), src/compat/strftime.c (1.2),
+	src/compat/strncasecmp.c (1.2), src/compat/strsep.c (1.3),
+	src/compat/strtoul.c (1.2), src/compat/uname.c (1.2),
+	src/d2cs/net.c (1.5), src/d2dbs/dbserver.c (1.7): 
+	Fixed some missing parenthesis in psock.h.  Added defines for TCP
+	and UDP protocols even though they are zero on all known systems. 
+	Fixed some delayed errno reading.  Fixed signed/unsigned warning in
+	d2cs and d2dbs by using psock_t_socklen.  Fixed "empty source file"
+	warnings.  Added some missing prefs prototypes.
+
+2002-01-31 23:07  sherpya
+
+	* src/bnetd/command.c (1.20): 
+	Fixed handling of squelch/unsquelch for d2 clients, (d2 client
+	prefix * before username). The change is not seen by the client
+	until the player rejoins the channel, this also apply on the
+	flag/tag command, maybe the server need to send an update flags to
+	the clients or similar
+
+2002-01-31 20:45  typhoon
+
+	* src/d2cs/d2charfile.c (1.5): Fixed crash bug in D2CS. At least it
+	crashed my D2CS here when I tried to create an character. fclose()
+	was called with a NULL file handle. I don't know why this wasn't
+	noticed earlier. So the QOTD is: Why did that only happen to me? Or
+	was this an intended feature?
+
+2002-01-31 19:28  rcombs
+
+	* src/bnetd/connection.h (1.15): 
+	Fixed comma at end of enumerator list warning.	Not an error but it
+	was a little annoying because it was in a commonly used header.
+
+2002-01-31 15:29  typhoon
+
+	* src/bnetd/: handle_irc.c (1.6), irc.c (1.5), main.c (1.14),
+	server.c (1.34), server.h (1.6): Fixed IRC support for standalone
+	servers. Added auto-configuration for servername used in IRC. Added
+	IRC BNET command to pass /-commands to handle_command(). Just type
+	/quote BNET :(text) to use bnetd commands (or add this
+	permanently).
+
+2002-01-31 04:20  sherpya
+
+	* conf/bnhelp (1.7), src/bnetd/command.c (1.19): 
+	added support for /set command to change/add account's attr at
+	runtime note key must be in the format BNET\acct\ with one slash
+
+2002-01-30 23:40  typhoon
+
+	* src/: bnetd/account.c (1.16), bnetd/bits.c (1.6), bnetd/bits.h
+	(1.5), bnetd/bits_ext.c (1.4), bnetd/bits_ext.h (1.3),
+	bnetd/bits_net.c (1.2), bnetd/bits_net.h (1.2), bnetd/bits_query.c
+	(1.11), bnetd/bits_query.h (1.8), bnetd/connection.c (1.33),
+	bnetd/connection.h (1.14), bnetd/handle_bits.c (1.18), bnetd/main.c
+	(1.13), bnetd/prefs.c (1.19), bnetd/prefs.h (1.13), bnetd/query.c
+	(1.3), bnetd/query.h (1.2), common/bits_protocol.h (1.8),
+	common/packet.c (1.18), common/packet.h (1.19),
+	common/setup_before.h (1.17): Finally some BITS changes: Fixed bug
+	which rendered the whole authentication system useless. Added
+	support for latency measurement with pings. Probably fixed some
+	other bugs. However, there still seems to be a bug in the channel
+	code ...
+
+2002-01-30 21:36  sherpya
+
+	* src/bnetd/handle_bnet.c (1.45): 
+	d2 recycles PROGIDENT2 packet requesting channel list, clienttag is
+	set to 0 so we can send the channel list without log an error
+
+2002-01-30 19:49  rcombs
+
+	* CHANGELOG (1.33), src/bnetd/handle_bnet.c (1.44),
+	src/client/bnchat.c (1.17), src/client/bnstat.c (1.6),
+	src/common/bnet_protocol.h (1.32), src/common/packet.c (1.17),
+	src/common/packet.h (1.18), src/d2cs/prefs.c (1.3),
+	src/d2cs/setup.h (1.3), src/d2dbs/prefs.c (1.4), src/d2dbs/setup.h
+	(1.6): 
+	Renamed the TOS packet to FILEINFO.  Added defaults for all d2cs
+	and d2dbs configuration settings.
+
+2002-01-30 19:13  sherpya
+
+	* src/bnetd/channel.c (1.25): 
+	Cleaned up channellist_reload, I've fixed all memory leaks,
+	channellist reload is a little bit heavy for the server, since all
+	users in channels must me replicated, we can maybe add a pref to
+	disable channellist reload, when the server do a restart P.S. Ross
+	don't blame me for the goto :P
+
+2002-01-30 18:41  rcombs
+
+	* src/common/hashtable.c (1.2): 
+	Fixed memory over-allocation for hashtable entries found by
+	superppy3@yahoo.co.kr.
+
+2002-01-30 00:03  sherpya
+
+	* src/bnetd/channel.c (1.24): 
+	Fixed channellist_reload, moderator flags is deleted, is not much,
+	but is better than preserving moderator.  A memory leak still
+	remain: Missing free for 0x80d2ce0 = malloc(8) in
+	bnetd/channel.c{list_prepend_data}:1674 Missing free for 0x80effa8
+	= malloc(8) in bnetd/channel.c{list_prepend_data}:1674 Total
+	unfreed memory is 16 bytes in 2 objects.
+
+2002-01-29 21:49  rcombs
+
+	* src/d2dbs/: dbserver.c (1.6), setup.h (1.5): 
+	
+	Fixed memory leak on exit.  Fixed listen socket initialization. 
+	Removed macros for sockets with value -1.
+
+2002-01-29 14:20  sherpya
+
+	* src/bnetd/game_conv.c (1.10): gameinfo for d2closed was set to
+	NULL
+
+2002-01-29 06:57  rcombs
+
+	* src/bnetd/command.c (1.18): 
+	Nothing really worth mentioning... added some spaces and added
+	empty /friends stanza.
+
+2002-01-28 22:23  rcombs
+
+	* src/bnetd/main.c (1.12): 
+	We also need to include query.h :)
+
+2002-01-28 21:11  sherpya
+
+	* src/bnetd/main.c (1.11): main.c must call versioncheck_unload on
+	server shutdown :P
+
+2002-01-28 20:03  rcombs
+
+	* src/bnetd/: command.c (1.17), ipban.c (1.3), ipban.h (1.3),
+	prefs.h (1.12): 
+	Made extern/static prototypes explicit in ipban code.  Moved static
+	prototypes into the .c.  Added ipban include to command.c.  Added
+	proto to prefs.h.  Called stracasecmp.h compat include.
+
+2002-01-28 19:37  rcombs
+
+	* CHANGELOG (1.32), CREDITS (1.18), src/bnetd/command.c (1.16),
+	src/bnetd/ipban.c (1.2), src/bnetd/ipban.h (1.2),
+	src/bnetd/message.c (1.19), src/bnetd/message.h (1.4),
+	src/bnetd/prefs.c (1.18), conf/bnetd.conf.in (1.22),
+	conf/bnetd.conf.win32 (1.15), conf/bnhelp (1.6): 
+	Added Yoss' new improved ipban code and administration command
+	improvements.
+
+2002-01-28 19:18  rcombs
+
+	* scripts/: login_testusers.sh (1.2), make_testusers.sh (1.2): 
+	Fixed bugs in scripts found by JEBs.
+
+2002-01-28 17:06  sherpya
+
+	* src/bnetd/connection.c (1.32): fixed
+	connlist_find_connection_by_name conforming to real battle.net
+	servers, possible formats are: charname or username (if the client
+	supports realm or not, charname refers the same realm of the
+	sender), *username, charname@other_realm, charname*username
+
+2002-01-27 20:04  rcombs
+
+	* CHANGELOG (1.31), src/compat/strsep.c (1.2), src/d2cs/d2gs.c
+	(1.6): 
+	Solaris compile fixes.
+
+2002-01-27 18:08  rcombs
+
+	* TODO (1.17): 
+	Added /friends entry.
+
+2002-01-27 09:02  rcombs
+
+	* CHANGELOG (1.30), src/Makefile.BORLAND (1.11), src/Makefile.in
+	(1.16), src/bnetd/game_conv.c (1.9), src/bnetd/watch.c (1.4),
+	src/compat/strsep.c (1.1), src/compat/strsep.h (1.1),
+	src/d2cs/d2gs.c (1.5), src/d2dbs/dbspacket.c (1.6), src/config.h.in
+	(1.13), src/config.h.win32 (1.4), src/config.h.win32borland (1.3),
+	src/config.h.win32msvc++ (1.3), src/configure (1.11),
+	src/configure.in (1.8): 
+	Added strsep compat function and removed blank_strtok from
+	game_conv.c.  Made watchlist destruction look like other list
+	destruction code.
+
+2002-01-27 08:33  rcombs
+
+	* docs/FAQ.html (1.17): 
+	A couple of new questions.  Pointed people to the bnetd.org mailing
+	lists.	Updated the domain of Mike's computer.
+
+2002-01-25 19:17  rcombs
+
+	* CHANGELOG (1.29), src/bnetd/handle_bnet.c (1.43): 
+	Fixed timezone for 109 clients.
+
+2002-01-25 07:01  rcombs
+
+	* CHANGELOG (1.28), TODO (1.16), src/bnetd/prefs.c (1.17),
+	src/bnetd/server.c (1.33), src/bnetd/versioncheck.c (1.11),
+	src/d2cs/cmdline_parse.c (1.4), src/d2cs/conf.c (1.6),
+	src/d2cs/connection.c (1.5), src/d2cs/d2charfile.c (1.4),
+	src/d2cs/d2gs.c (1.4), src/d2cs/d2ladder.c (1.5), src/d2cs/game.c
+	(1.5), src/d2cs/handle_d2cs.c (1.4), src/d2cs/handle_d2gs.c (1.4),
+	src/d2cs/handle_init.c (1.3), src/d2cs/server.c (1.4): 
+	Added system errors to d2cs error messages.  Small formatting
+	cleanups.
+
+2002-01-24 22:19  rcombs
+
+	* TODO (1.15): 
+	Removed a few completed items.
+
+2002-01-24 00:27  sherpya
+
+	* conf/autoupdate (1.9), conf/versioncheck (1.5),
+	src/bnetd/versioncheck.c (1.10): fixed versioncheck: made exeinfo
+	case insensitive, other fixes, cleanup, updated
+	autoupdate/versioncheck file with all d2/lod/d1 versions
+
+2002-01-23 17:46  rcombs
+
+	* CHANGELOG (1.27), INSTALL (1.2), README (1.3),
+	src/Makefile.BORLAND (1.10), src/bnetd/handle_irc.c (1.5),
+	src/d2cs/conf.c (1.5), src/d2cs/d2ladder.c (1.4), src/d2cs/game.c
+	(1.4), src/d2cs/gamequeue.c (1.3), src/d2dbs/charlock.c (1.4): 
+	Some strcasecmp portability fixes.
+
+2002-01-23 17:03  rcombs
+
+	* src/bnetd/autoupdate.c (1.10): 
+	Added some missing free()s.  Added some FIXMEs.  Made some of the
+	two- space formatting be four-space.
+
+2002-01-23 07:28  sherpya
+
+	* conf/autoupdate (1.8), conf/versioncheck (1.4),
+	src/bnetd/versioncheck.c (1.9): made versionid optional, updated
+	versioncheck/autoupdate file with some entries, later I will add
+	the rest of d2exp entries and some of other clients
+
+2002-01-23 07:15  rcombs
+
+	* src/: bnetd/bits.c (1.5), bnetd/bits_login.c (1.4),
+	bnetd/bits_motd.c (1.6), bnetd/character.c (1.9),
+	bnetd/handle_bits.c (1.17), bnetd/handle_bot.c (1.8),
+	bnetd/handle_irc.c (1.4), bnetd/handle_telnet.c (1.8), bnetd/irc.c
+	(1.4), bnetd/message.c (1.18), common/setup_before.h (1.16),
+	d2cs/conf.c (1.4), d2cs/connection.c (1.4), d2cs/game.c (1.3),
+	d2cs/handle_signal.c (1.3), d2cs/main.c (1.4), d2cs/s2s.c (1.4),
+	d2cs/xstring.c (1.4), d2dbs/dbserver.c (1.5), d2dbs/dbspacket.c
+	(1.5), d2dbs/handle_signal.c (1.3), d2dbs/main.c (1.3),
+	d2dbs/server.c (1.3), d2dbs/setup.h (1.4): 
+	Fixed missing compat/strdup.h headers.	Converted d2dbs to psock.h
+	socket functions and also got rid of WSAWOULDBLOCK and changed the
+	SOCKET define to not be unsigned.  The conversion is not 100%
+	complete because the select types need to be fixed and it needs to
+	not treat readiness in the exception set as an error.
+
+2002-01-23 06:27  rcombs
+
+	* src/Makefile.BORLAND (1.9): 
+	Fixed bad entry of token.o instead of token.obj.
+
+2002-01-23 04:43  rcombs
+
+	* conf/autoupdate (1.7): 
+	Updated some of the comments and reformatted the columns.
+
+2002-01-23 04:17  rcombs
+
+	* conf/versioncheck (1.3): 
+	Changed format to match other files.  Added another example.  Used
+	the line continuation characters to make it more readable. 
+	Expanded and clarified the description.  Need to check for
+	accuracy.
+
+2002-01-23 04:02  rcombs
+
+	* conf/: bnetd.conf.in (1.21), bnetd.conf.win32 (1.14): 
+	Fixed a typo.  Made bnetd.conf.* match more closely.
+
+2002-01-23 01:28  rcombs
+
+	* src/common/version.h (1.5): 
+	Increment version.
+
+2002-01-22 18:13  rcombs
+
+	* src/: Makefile.BORLAND (1.8), bnetd/connection.c (1.31): 
+	Fixed missing includes in connection.c and missing objects in
+	Makefile.BORLAND which caused compile failure on Borland/Win32.
+
+2002-01-22 16:15  sherpya
+
+	* conf/bnetd.conf.in (1.20), conf/bnetd.conf.win32 (1.13),
+	src/bnetd/prefs.c (1.16): make savebyname opt true by default
+
+2002-01-22 16:12  sherpya
+
+	* src/bnetd/: autoupdate.c (1.9), autoupdate.h (1.5),
+	versioncheck.c (1.8), versioncheck.h (1.3): Added copyright notices
+	:P
+
+2002-01-22 06:52  rcombs
+
+	* src/: bniutils/bniextract.c (1.2), d2dbs/dbserver.c (1.4),
+	d2dbs/dbspacket.c (1.4): 
+	More include fixes.
+
+2002-01-22 06:35  rcombs
+
+	* src/common/eventlog.h (1.4): 
+	Removed unused define.
+
+2002-01-21 18:51  rcombs
+
+	* CHANGELOG (1.26), src/bnetd/command.c (1.15),
+	src/bnetd/connection.c (1.30), src/bnetd/game.c (1.10),
+	src/bnetd/main.c (1.10), src/bnetd/server.c (1.32),
+	src/client/bnchat.c (1.16), src/client/client_connect.c (1.14),
+	src/compat/memmove.c (1.1), src/compat/memmove.h (1.1),
+	src/d2cs/cmdline_parse.c (1.3), src/d2cs/conf.c (1.3),
+	src/d2cs/connection.c (1.3), src/d2cs/d2charfile.c (1.3),
+	src/d2cs/d2ladder.c (1.3), src/d2cs/handle_d2cs.c (1.3),
+	src/d2cs/handle_d2gs.c (1.3), src/d2cs/main.c (1.3), src/d2cs/net.c
+	(1.4), src/d2cs/net.h (1.3), src/d2cs/s2s.c (1.3),
+	src/d2cs/server.c (1.3), src/d2cs/xstring.c (1.3), src/Makefile.in
+	(1.15), src/config.h.in (1.12), src/config.h.win32borland (1.2),
+	src/config.h.win32msvc++ (1.2), src/configure (1.10),
+	src/configure.in (1.7): 
+	Portability and header cleanups.  Added compat/memmove.[ch].  Fixed
+	missing/misordered/unneeded includes in d2cs/*.c, bnetd/server.c,
+	and bnetd/main.c.
+
+2002-01-21 07:22  rcombs
+
+	* src/common/setup_before.h (1.15): 
+	Accidently committed a version with many DEBUG options turned on. 
+	Turned those off since they can really slow things down.
+
+2002-01-21 07:14  rcombs
+
+	* CHANGELOG (1.25), conf/bnetd.conf.in (1.19),
+	conf/bnetd.conf.win32 (1.12), src/bnetd/account.c (1.15),
+	src/bnetd/channel.c (1.23), src/bnetd/character.c (1.8),
+	src/bnetd/command.c (1.14), src/bnetd/connection.c (1.29),
+	src/bnetd/handle_bnet.c (1.42), src/bnetd/prefs.c (1.15),
+	src/bnetd/prefs.h (1.11), src/bnetd/server.c (1.31),
+	src/common/setup_before.h (1.14): 
+	Added telnet server address list support.  Added more information
+	to some error messages in server.c.
+
+2002-01-21 04:56  rcombs
+
+	* src/bnetd/tracker.c (1.2): 
+	Only report bnet listen addresses (ignore IRC and telnet).
+
+2002-01-21 04:52  rcombs
+
+	* src/compat/socket.h (1.2): 
+	Clarified comment and fixed a verb tense mismatch.
+
+2002-01-20 23:43  rcombs
+
+	* CHANGELOG (1.24), src/bnetd/server.c (1.30), src/bnetd/server.h
+	(1.5), src/common/setup_before.h (1.13), src/compat/char_bit.h
+	(1.2), src/d2cs/d2gs.c (1.3), src/d2cs/net.c (1.3): 
+	Fixed startup crash when port in use and IRC enabled.  Made IRC
+	code not create a UDP socket.  Fixed include problems in d2cs.
+
+2002-01-20 03:05  sherpya
+
+	* src/bnetd/: game_conv.c (1.8), versioncheck.c (1.7): fixed a
+	weird memory leak into game_gonv, and small fixes into versioncheck
+
+2002-01-20 00:18  rcombs
+
+	* src/bnetd/server.h (1.4): 
+	Tiny formatting and comment changes.
+
+2002-01-19 17:57  sherpya
+
+	* src/bnetd/server.c (1.29): fixed a bug that cause segfault if
+	bnetd port bind fails
+
+2002-01-19 17:31  sherpya
+
+	* src/bnetd/: server.c (1.28), channel.c (1.22): disable
+	channellist_reaload with bits since works in different way
+
+2002-01-19 16:00  sherpya
+
+	* src/bnetd/versioncheck.c (1.6): make exeinfo optional, I've
+	missed "NULL" value check
+
+2002-01-18 21:58  sherpya
+
+	* src/bnetd/handle_bnet.c (1.41): miss CLIENTTAG_DIABLOSHR in
+	progident
+
+2002-01-18 20:40  sherpya
+
+	* conf/bnetd.conf.in (1.18), src/bnetd/game.c (1.9),
+	src/bnetd/prefs.c (1.14), src/bnetd/prefs.h (1.10): added an option
+	to disable diablo game report
+
+2002-01-18 19:47  sherpya
+
+	* conf/autoupdate (1.6), conf/bnetd.conf.in (1.17),
+	conf/versioncheck (1.2), docs/TODO.Sherpya (1.5), src/Makefile.in
+	(1.14), src/bnetd/autoupdate.c (1.8), src/bnetd/autoupdate.h (1.4),
+	src/bnetd/handle_bnet.c (1.40), src/bnetd/main.c (1.9),
+	src/bnetd/server.c (1.27), src/bnetd/versioncheck.c (1.5),
+	src/bnetd/versioncheck.h (1.2): Completed autoupdate/versioncheck,
+	see etc/autoupdate etc/versioncheck for more infos, peraps this
+	need more test, since the code is a little bit complex
+
+2002-01-17 19:39  rcombs
+
+	* docs/README.registry (1.2): 
+	Clarified version number differences.
+
+2002-01-17 17:52  rcombs
+
+	* TODO (1.14): 
+	Added restricted channel item.
+
+2002-01-17 14:39  sherpya
+
+	* src/bnetd/autoupdate.c (1.7): forgot to free entry->archtag
+
+2002-01-17 05:14  sherpya
+
+	* src/bnetd/handle_bnet.c (1.39): miss to modifybad version message
+	for auth_req109
+
+2002-01-17 04:58  sherpya
+
+	* conf/autoupdate (1.5): fix old autoupdate examples
+
+2002-01-17 04:55  sherpya
+
+	* conf/autoupdate (1.4), docs/TODO.Sherpya (1.4),
+	src/bnetd/autoupdate.c (1.6), src/bnetd/autoupdate.h (1.3),
+	src/bnetd/handle_bnet.c (1.38), src/bnetd/server.c (1.26),
+	src/client/client_connect.c (1.13), src/common/bnet_protocol.h
+	(1.31): make autoupdate work with checksum, cleanup of auth_req109
+	and make it do versioncheck, now we can upgrade selectively a
+	client depending on checksum, check autoupdate file for more infos
+
+2002-01-16 22:57  sherpya
+
+	* src/: bnetd/handle_bnet.c (1.37), client/client_connect.c (1.12),
+	common/bnet_protocol.h (1.30): Converted 4 byte to int into
+	authreq1 packet uniforming to authreq109, later I will make
+	checksum working
+
+2002-01-16 18:25  rcombs
+
+	* src/common/eventlog.c (1.3): 
+	Copied body out of eventlog into eventlog_step to make the latter
+	portable.
+
+2002-01-16 04:09  sherpya
+
+	* docs/TODO.Sherpya (1.3): update my todo list
+
+2002-01-16 03:46  sherpya
+
+	* src/common/eventlog.c (1.2), src/common/eventlog.h (1.3),
+	conf/d2dbs.conf.in (1.3), src/d2dbs/charlock.c (1.3),
+	src/d2dbs/charlock.h (1.3), src/d2dbs/d2ladder.c (1.3),
+	src/d2dbs/dbserver.c (1.3), src/d2dbs/dbserver.h (1.3),
+	src/d2dbs/dbspacket.c (1.3), src/d2dbs/prefs.c (1.3),
+	src/d2dbs/prefs.h (1.3), src/d2dbs/setup.h (1.3): merged changes
+	from d2close-109beta4, small fixes on d2dbs server, new option for
+	logging specific d2gs-gs events
+
+2002-01-16 02:31  sherpya
+
+	* src/: bnetd/handle_bnet.c (1.36), client/client_connect.c (1.11),
+	common/bnet_protocol.h (1.29): renamed answer in checksum into
+	CLIENT_AUTH1 packet, this will be checked in
+	versioncheck/autoupdate
+
+2002-01-16 02:23  sherpya
+
+	* src/bnetd/server.c (1.25): enabled channellist_reload
+
+2002-01-15 21:42  rcombs
+
+	* TODO (1.13): 
+	Lots of items removed.	A few additions and clarifications.
+
+2002-01-15 19:32  rcombs
+
+	* conf/bnetd.conf.in (1.16), conf/bnetd.conf.win32 (1.11),
+	conf/realm.list (1.3), src/bnetd/realm.c (1.5), src/bnetd/realm.h
+	(1.4), src/common/setup_before.h (1.12): 
+	Removed the unused allow_new_char setting in the realm.list parser.
+	 Moved the default realm port to setup_before.h.  Fixed the
+	comments in the realm.list configuration file.	Slight
+	clarifications to the D2CS part of the bnetd.conf.
+
+2002-01-15 17:57  sherpya
+
+	* src/bnetd/channel.c (1.21): Implemented channellist_reload, now
+	is not active, to make active decomment channellist_reload() into
+	server.c
+
+2002-01-15 17:53  sherpya
+
+	* src/bnetd/handle_bnet.c (1.35): Update my comment about TOSFILE
+	packet
+
+2002-01-15 17:53  sherpya
+
+	* src/bnetd/server.c (1.24): Implemented channellist_reload, now is
+	not active, to make active decomment channellist_reload() into
+	server.c
+
+2002-01-15 17:01  sherpya
+
+	* docs/TODO.Sherpya (1.2): updated my todo
+
+2002-01-15 06:19  rcombs
+
+	* src/common/bnet_protocol.h (1.28): 
+	Added info on the ping (null) packet from the Prolix project.
+
+2002-01-15 00:33  rcombs
+
+	* CHANGELOG (1.23), CREDITS (1.17), src/bnetd/command.c (1.13): 
+	Added a modifed patch from Yoss to make banning and kicking of
+	administrators impossible.
+
+2002-01-14 07:44  rcombs
+
+	* src/bnetd/message.c (1.17): 
+	Work-around for message formatting problem.  Caching system needs
+	to be made more intelligent.
+
+2002-01-13 15:50  typhoon
+
+	* files/newbie.save (1.2): Added newbie.save. What is this file
+	actually good for? D2 realm doesn't seem to work without it.
+
+2002-01-13 01:44  rcombs
+
+	* TODO (1.12): 
+	Added /teams todo item.
+
+2002-01-13 01:38  rcombs
+
+	* CHANGELOG (1.22): 
+	Clarify reason for missing 0.4.23 entry.
+
+2002-01-10 19:44  rcombs
+
+	* CHANGELOG (1.21), CREDITS (1.16), conf/bnhelp (1.5),
+	src/bnetd/command.c (1.12): 
+	Added the new /admin command.
+
+2002-01-06 20:12  rcombs
+
+	* src/bnetd/: mail.c (1.8), mail.h (1.7): 
+	Implemented mail command abbreviations as suggested by Yoss.
+
+2002-01-06 09:13  rcombs
+
+	* conf/: bnetd.conf.in (1.15), bnetd.conf.win32 (1.10): 
+	Hopefully clarified the savebyname option description.
+
+2002-01-06 08:55  rcombs
+
+	* CREDITS (1.15), src/bnetd/command.c (1.11): 
+	Fixed emote flooding hole thanks to Yoss.
+
+2002-01-04 06:50  rcombs
+
+	* src/bnetd/connection.c (1.28): 
+	Fixed a memory leak when using D2 or D2 LoD and also a compile
+	error with TEST_UNGET in the chatname formatting code.	Also
+	refomatted some of the code to put two blank lines between each
+	function.
+
+2002-01-04 06:25  rcombs
+
+	* conf/bnetd.conf.in (1.14), conf/bnetd.conf.win32 (1.9),
+	src/bnetd/prefs.c (1.13): 
+	Made bnetd.conf more consistant.  Removed the allow_adbanner since
+	it is equivalent to commenting out all the adbanners in the
+	ad.list.
+
+2002-01-03 19:32  rcombs
+
+	* src/: bnetd/connection.c (1.27), bnetd/connection.h (1.13),
+	bnetd/handle_bnet.c (1.34), bnetd/handle_udp.c (1.2),
+	common/bnet_protocol.h (1.27), common/packet.c (1.16),
+	common/packet.h (1.17), common/udp_protocol.h (1.2): 
+	Converted info about CLIENT_UNKNOWN_14 to CLIENT_UDPOK. 
+	Implemented the MF_PLUG icon for clients which can not receive UDP
+	packets from the server.  Untested.
+
+2002-01-03 18:36  rcombs
+
+	* CHANGELOG (1.20), conf/bnetd.conf.in (1.13), conf/channel.list
+	(1.5), conf/d2cs.conf.in (1.2), conf/d2dbs.conf.in (1.2),
+	conf/realm.list (1.2), docs/TODO.Sherpya (1.1), files/bnserver.ini
+	(1.1), files/icons_STAR.bni (1.1), scripts/ladder.py (1.1),
+	scripts/tos.sh (1.1), src/Makefile.BORLAND (1.7), src/Makefile.in
+	(1.13), src/bnetd/account.c (1.14), src/bnetd/channel.c (1.20),
+	src/bnetd/channel.h (1.7), src/bnetd/command.c (1.10),
+	src/bnetd/connection.c (1.26), src/bnetd/connection.h (1.12),
+	src/bnetd/game.c (1.8), src/bnetd/game.h (1.5),
+	src/bnetd/game_conv.c (1.7), src/bnetd/game_rule.c (1.4),
+	src/bnetd/handle_bits.c (1.16), src/bnetd/handle_bnet.c (1.33),
+	src/bnetd/handle_d2cs.c (1.2), src/bnetd/handle_d2cs.h (1.2),
+	src/bnetd/handle_init.c (1.2), src/bnetd/handle_irc.c (1.3),
+	src/bnetd/irc.c (1.3), src/bnetd/irc.h (1.2), src/bnetd/message.c
+	(1.16), src/bnetd/message.h (1.3), src/bnetd/prefs.c (1.12),
+	src/bnetd/realm.c (1.4), src/bnetd/realm.h (1.3),
+	src/bnetd/server.c (1.23), src/client/bnchat.c (1.15),
+	src/client/bnstat.c (1.5), src/client/client_connect.c (1.10),
+	src/common/bnet_protocol.h (1.26), src/common/init_protocol.h
+	(1.2), src/common/packet.c (1.15), src/common/packet.h (1.16),
+	src/common/proginfo.c (1.2), src/common/proginfo.h (1.2),
+	src/common/version.h (1.4), src/d2cs/Makefile (1.2), src/d2cs/bit.h
+	(1.2), src/d2cs/bnetd.c (1.2), src/d2cs/bnetd.h (1.2),
+	src/d2cs/cmdline_parse.c (1.2), src/d2cs/cmdline_parse.h (1.2),
+	src/d2cs/conf.c (1.2), src/d2cs/conf.h (1.2), src/d2cs/connection.c
+	(1.2), src/d2cs/connection.h (1.2), src/d2cs/d2charfile.c (1.2),
+	src/d2cs/d2charfile.h (1.2), src/d2cs/d2cs_bnetd_protocol.h (1.2),
+	src/d2cs/d2cs_d2dbs_ladder.h (1.2), src/d2cs/d2cs_d2gs_character.h
+	(1.2), src/d2cs/d2cs_d2gs_protocol.h (1.2),
+	src/d2cs/d2cs_protocol.h (1.2), src/d2cs/d2gs.c (1.2),
+	src/d2cs/d2gs.h (1.2), src/d2cs/d2ladder.c (1.2),
+	src/d2cs/d2ladder.h (1.2), src/d2cs/game.c (1.2), src/d2cs/game.h
+	(1.2), src/d2cs/gamequeue.c (1.2), src/d2cs/gamequeue.h (1.2),
+	src/d2cs/handle_bnetd.c (1.2), src/d2cs/handle_bnetd.h (1.2),
+	src/d2cs/handle_d2cs.c (1.2), src/d2cs/handle_d2cs.h (1.2),
+	src/d2cs/handle_d2gs.c (1.2), src/d2cs/handle_d2gs.h (1.2),
+	src/d2cs/handle_init.c (1.2), src/d2cs/handle_init.h (1.2),
+	src/d2cs/handle_signal.c (1.2), src/d2cs/handle_signal.h (1.2),
+	src/d2cs/main.c (1.2), src/d2cs/net.c (1.2), src/d2cs/net.h (1.2),
+	src/d2cs/prefs.c (1.2), src/d2cs/prefs.h (1.2), src/d2cs/s2s.c
+	(1.2), src/d2cs/s2s.h (1.2), src/d2cs/server.c (1.2),
+	src/d2cs/server.h (1.2), src/d2cs/serverqueue.c (1.2),
+	src/d2cs/serverqueue.h (1.2), src/d2cs/setup.h (1.2),
+	src/d2cs/version.h (1.2), src/d2cs/xstring.c (1.2),
+	src/d2cs/xstring.h (1.2), src/d2dbs/Makefile (1.2),
+	src/d2dbs/charlock.c (1.2), src/d2dbs/charlock.h (1.2),
+	src/d2dbs/cmdline_parse.c (1.2), src/d2dbs/cmdline_parse.h (1.2),
+	src/d2dbs/d2ladder.c (1.2), src/d2dbs/d2ladder.h (1.2),
+	src/d2dbs/dbserver.c (1.2), src/d2dbs/dbserver.h (1.2),
+	src/d2dbs/dbspacket.c (1.2), src/d2dbs/dbspacket.h (1.2),
+	src/d2dbs/handle_signal.c (1.2), src/d2dbs/handle_signal.h (1.2),
+	src/d2dbs/main.c (1.2), src/d2dbs/prefs.c (1.2), src/d2dbs/prefs.h
+	(1.2), src/d2dbs/server.c (1.2), src/d2dbs/server.h (1.2),
+	src/d2dbs/setup.h (1.2), src/d2dbs/version.h (1.2): 
+	Big huge merge of the d2close branch to MAIN.  Thanks to Sherpya
+	for most of the hard work and also to Typhoon for some cleanups. 
+	There is still a little more to do and some recent fixes may have
+	been reverted (though I tried to filter those out).  This is
+	completely untested so don't be too surprised if it has a few bugs.
+
+2001-12-21 22:21  rcombs
+
+	* src/bnetd/server.c (1.22): 
+	Fix stupid bug which caused sockets to never be received when using
+	select().  Pointed out by Blue in the forums.
+
+2001-12-17 00:09  rcombs
+
+	* scripts/reform.awk (1.3): 
+	Fixed a typo in the comments.
+
+2001-12-17 00:08  rcombs
+
+	* TODO (1.11), scripts/reform.awk (1.2): 
+	Added account purging to TODO and improved comments in the
+	reform.awk script.
+
+2001-12-13 18:33  rcombs
+
+	* src/common/bnet_protocol.h (1.25): 
+	Fixed missing */.
+
+2001-12-12 23:40  rcombs
+
+	* CREDITS (1.14): 
+	Fixed Sherpya's name.
+
+2001-12-12 23:10  rcombs
+
+	* src/common/bnet_protocol.h (1.24): 
+	Changed two comments 0x14ff is the speedtest ping reply.
+
+2001-12-07 07:21  rcombs
+
+	* CREDITS (1.13): 
+	Added sherpya.
+
+2001-12-07 06:59  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.32), common/bnet_protocol.h (1.23),
+	common/packet.h (1.15): 
+	Put in correct packet definitions for the new ADCLICK stuff. 
+	Thanks to sherpya for the patch.
+
+2001-12-06 08:47  rcombs
+
+	* src/: bnetd/handle_bot.c (1.7), bnetd/handle_telnet.c (1.7),
+	client/bnchat.c (1.14): 
+	Fix bot/telnet password case sensitivity bug.
+
+2001-12-06 08:22  rcombs
+
+	* src/common/introtate.h (1.3): 
+	Urg... use the third macro because the fourth doesn't work on PPC. 
+	I thought I had already done this but obviously not...
+
+2001-12-06 03:57  rcombs
+
+	* src/bnetd/: channel_conv.c (1.1), channel_conv.h (1.1): 
+	Oops, forgot to commit these earlier as part of the channel flag
+	update.
+
+2001-12-05 21:48  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.31), common/packet.c (1.14),
+	common/packet.h (1.14): 
+	Added reply for new adclick2 packet.  The packet contents are
+	probably wrong but we can fix that later.
+
+2001-12-05 09:45  rcombs
+
+	* src/common/: bnet_protocol.h (1.22), packet.h (1.13): 
+	Commented new adclick packet.
+
+2001-12-05 00:18  rcombs
+
+	* src/: bnetd/handle_bot.c (1.6), bnetd/handle_telnet.c (1.6),
+	common/bnet_protocol.h (1.21): 
+	Add reminders of items to fix.
+
+2001-12-04 09:02  rcombs
+
+	* src/bnetd/server.c (1.21): 
+	Split the main loop into different routines to handle each case. 
+	Made the TCP output handler try to send multiple packets at a time.
+
+2001-12-03 10:00  rcombs
+
+	* src/bnetd/handle_bnet.c (1.30): 
+	Added a FIXME.
+
+2001-12-03 09:57  rcombs
+
+	* src/bnetd/: channel.c (1.19), connection.c (1.25): 
+	Moved channel list purging into the channel code.  Added some
+	temporary heuristics for channel flags until they are
+	user-configurable.
+
+2001-12-03 09:56  rcombs
+
+	* src/client/bnchat.c (1.13): 
+	Now prints channels flags when joining a channel.
+
+2001-12-03 09:19  rcombs
+
+	* TODO (1.10), src/MSVC++.mak (1.4), src/Makefile.BORLAND (1.6),
+	src/Makefile.in (1.12), src/config.h.in (1.11), src/configure
+	(1.9), src/bnetd/channel.c (1.18), src/bnetd/channel.h (1.6),
+	src/bnetd/game_conv.c (1.6), src/bnetd/handle_bnet.c (1.29),
+	src/bnetd/message.c (1.15), src/common/bn_type.c (1.3),
+	src/common/bn_type.h (1.3), src/common/bnet_protocol.h (1.20),
+	src/common/util.h (1.7): 
+	Added storage of tzbias.  Added initial portion of channel flag
+	support.  Updated TODO list.
+
+2001-11-29 03:50  rcombs
+
+	* TODO (1.9): 
+	Added watchlist stuff.
+
+2001-11-29 03:38  rcombs
+
+	* src/common/bn_type.c (1.2): 
+	Made functions to convert bn_types to strings.
+
+2001-11-29 03:36  rcombs
+
+	* CREDITS (1.12), src/bnetd/connection.c (1.24),
+	src/bnetd/connection.h (1.11), src/bnetd/handle_bnet.c (1.28),
+	src/bnetd/message.c (1.14), src/common/bn_type.h (1.2): 
+	Fixed the fake clienttag stuff as directed by Eurijk!  Removed the
+	clientag argument to the get_playerinfo function.
+
+2001-11-22 03:48  onlyer
+
+	* src/bnetd/: command.c, handle_bnet.c (d2close_bnetd_b1.[5,7]):
+	[no log message]
+
+2001-11-19 11:43  rcombs
+
+	* scripts/: login_testusers.sh (1.1), make_testusers.sh (1.1): 
+	Two testing scripts to investigate memory usage problems with many
+	simultaneous logins.
+
+2001-11-19 11:21  rcombs
+
+	* src/bnetd/query.c (1.2): 
+	Use %p for printing the callback function pointers.
+
+2001-11-19 11:12  rcombs
+
+	* src/common/queue.c (1.2): 
+	Check both malloc()s in packet pushing code.
+
+2001-11-19 11:00  rcombs
+
+	* src/bnetd/account.c (1.13): 
+	Check for short lines in account files.
+
+2001-11-19 09:29  rcombs
+
+	* src/bniutils/bni2tga.c (1.2): 
+	Fixed return value check on call to fwrite().
+
+2001-11-19 02:17  rcombs
+
+	* src/bnetd/server.c (1.20): 
+	Slight speed improvement for poll().
+
+2001-11-18 14:14  rcombs
+
+	* src/bnetd/message.c (1.13): 
+	Fixed a bug in the telnet formatting where the wrong variable was
+	used.
+
+2001-11-18 10:04  rcombs
+
+	* TODO (1.8), src/bnetd/server.c (1.19): 
+	Fixed poll() 100% CPU usage bug by checking for POLLHUP when
+	attempting to read and POLLERR for both reading and writing.  Added
+	another check for POLLNVAL before everything else which just tries
+	to close the fd again (that should never happen).
+
+2001-11-18 04:48  typhoon
+
+	* src/bnetd/: query.c (1.1), query.h (1.1): Oops. Forgot to add
+	query.[ch].
+
+2001-11-17 23:06  rcombs
+
+	* src/autoconf/ansi2knr.c (1.2): 
+	Removed broken and usused function getline().
+
+2001-11-17 16:56  typhoon
+
+	* src/: Makefile.in (1.11), bnetd/bits_query.c (1.10),
+	bnetd/bits_query.h (1.7), bnetd/bits_va.c (1.4), bnetd/channel.c
+	(1.17), bnetd/connection.c (1.23), bnetd/handle_bits.c (1.15),
+	bnetd/handle_bnet.c (1.27), bnetd/handle_bot.c (1.5),
+	bnetd/handle_telnet.c (1.5), bnetd/main.c (1.8), bnetd/server.c
+	(1.18): Applied bits_patch-0.4.25pre4-1:  - transition from
+	bits_query to query
+
+2001-11-17 09:24  rcombs
+
+	* README (1.2): 
+	Updated URLs and email addresses.
+
+2001-11-17 01:44  rcombs
+
+	* TODO (1.7): 
+	Added some more items to the list.
+
+2001-11-15 11:20  rcombs
+
+	* src/: config.h.in (1.10), configure (1.8), bnetd/channel.c
+	(1.16), bnetd/mail.c (1.7), bnetd/server.c (1.17),
+	common/check_alloc.c (1.6), common/check_alloc.h (1.2),
+	common/token.c (1.4): 
+	Fixed a couple of minor memory leaks and cleaned up the token
+	handling in channel.c so that strdup() didn't need to be called all
+	the time.  Added a USR2 signal handler which ties in with
+	USE_CHECK_ALLOC to print out the current list of allocated objects.
+
+2001-11-15 09:10  rcombs
+
+	* src/common/check_alloc.c (1.5): 
+	Might as well log the size too.
+
+2001-11-15 09:07  rcombs
+
+	* src/common/check_alloc.c (1.4): 
+	Fixed silly mistake in logging free()s without malloc()s.
+
+2001-11-13 19:09  rcombs
+
+	* src/configure.in (1.6): 
+	Added some new warnings from newer gcc's for --with-warn.
+
+2001-11-13 07:18  rcombs
+
+	* TODO (1.6), src/bnetd/account.c (1.12), src/bnetd/prefs.c (1.11),
+	src/bnetd/prefs.h (1.9), conf/bnetd.conf.in (1.12),
+	conf/bnetd.conf.win32 (1.8), src/bnetd/server.c (1.16),
+	src/common/setup_before.h (1.11): 
+	Make account list hashtable size a configuration option.  Updated
+	the TODO file a little bit.
+
+2001-11-13 06:08  rcombs
+
+	* files/icons.bni (1.2): 
+	Added D2XP icon to the archive.
+
+2001-11-11 18:14  typhoon
+
+	* conf/bnetd.conf.in (1.11), conf/bnetd.conf.win32 (1.7),
+	src/bnetd/connection.c (1.22), src/bnetd/handle_irc.c (1.2),
+	src/bnetd/irc.c (1.2): More IRC stuff: Users can finally talk.
+	Fixed some more bugs. Added configuration variables in bnetd.conf.
+
+2001-11-10 09:40  rcombs
+
+	* docs/FAQ.html (1.16): 
+	Added a <br> where one was missing.
+
+2001-11-09 16:51  typhoon
+
+	* src/bnetd/: handle_irc.h (1.1), irc.h (1.1): Forgot to add some
+	files ... again. See previous commits for more information.
+
+2001-11-09 16:49  typhoon
+
+	* src/: bnetd/handle_irc.c (1.1), bnetd/irc.c (1.1),
+	common/irc_protocol.h (1.1): Awww ... forgot to add files. All
+	previously posted warnings apply.
+
+2001-11-09 16:47  typhoon
+
+	* src/: Makefile.in (1.10), bnetd/connection.c (1.21),
+	bnetd/connection.h (1.10), bnetd/message.c (1.12), bnetd/prefs.c
+	(1.10), bnetd/prefs.h (1.8), bnetd/server.c (1.15), bnetd/server.h
+	(1.3), common/addr.c (1.3), common/addr.h (1.3),
+	common/field_sizes.h (1.3), common/setup_before.h (1.10): Added IRC
+	support. Please note that this stuff is EXPERIMENTAL. There is not
+	much stuff implemented as of yet. A "grep FIXME:" on irc.c and
+	handle_irc.c should speak for itself.
+
+2001-11-09 07:47  rcombs
+
+	* src/bnetd/game.c (1.7): 
+	Fixed a bug that could crash the server if a game report was
+	written for a game with an unknown map name.  Thanks to rambooger
+	for reporting the problem and providing a patch to fix it.
+
+2001-11-08 07:12  rcombs
+
+	* src/common/util.c (1.5): 
+	file_get_line() now supports line continuation (\) characters at
+	the end of the line and also handles dos-style line endings.
+
+2001-11-08 06:42  rcombs
+
+	* src/compat/pdir.c (1.3): 
+	Hmm... must have missed some &dir->fileinfo => &pdir->fileinfo
+	changes last time around.  Should be fixed for real now.
+
+2001-11-07 08:18  rcombs
+
+	* src/common/util.h (1.6): 
+	Fixed idiotic^Woverzealous use of PURE_ATTR().	Thanks for pointing
+	that out Doug.
+
+2001-11-07 08:11  rcombs
+
+	* scripts/process.pl (1.2): 
+	Incorporated configurability improvements from Roland.
+
+2001-10-27 07:51  onlyer
+
+	* conf/d2cs.conf.in, src/d2cs/Makefile, src/d2cs/game.c,
+	src/d2cs/prefs.c, src/d2cs/prefs.h, src/d2cs/setup.h,
+	src/d2dbs/Makefile (d2close_bnetd_b1.[9,6,6,7,6,5,5]): added option
+	to set if automatially destroy game
+
+2001-10-23 16:29  onlyer
+
+	* src/: bnetd/connection.c, common/check_alloc.c, common/version.h
+	(d2close_bnetd_b1.[6,2,3]): fixed dnd bug check alloc some
+	improvements
+
+2001-10-23 07:22  onlyer
+
+	* conf/bnetd.conf.in, conf/d2cs.conf.in, conf/d2dbs.conf.in,
+	src/bnetd/channel.c, src/bnetd/handle_bnet.c, src/bnetd/prefs.c,
+	src/bnetd/prefs.h, src/bnetd/server.c, src/common/packet.h,
+	src/d2cs/Makefile, src/d2cs/bnetd.h, src/d2cs/connection.c,
+	src/d2cs/connection.h, src/d2cs/d2cs_d2gs_protocol.h,
+	src/d2cs/d2gs.c, src/d2cs/d2gs.h, src/d2cs/game.c,
+	src/d2cs/handle_d2cs.c, src/d2cs/handle_d2gs.c,
+	src/d2cs/handle_init.c, src/d2cs/prefs.c, src/d2cs/prefs.h,
+	src/d2cs/server.c, src/d2cs/setup.h, src/d2dbs/Makefile,
+	src/d2dbs/d2ladder.c, src/d2dbs/dbserver.c, src/d2dbs/dbserver.h,
+	src/d2dbs/dbspacket.c, src/d2dbs/dbspacket.h, src/d2dbs/prefs.c,
+	src/d2dbs/prefs.h, src/d2dbs/setup.h
+	(d2close_bnetd_b1.[4,8,7,3,6,4,3,2,3,5,3,5,3,4,5,4,5,7,4,5,6,5,5,4,
+	4,5,5,5,7,4,4,3,4]): bnetd		     Fixed Channel log bug 
+			       Fixed 1024 Limit bug when using poll	   
+			Added option to support disabling of banner	   
+			Added support to computer each realm player and    
+			    game nmber (Still Need Fix) 		   
+	    Added announce command for realm (/realmann)		   
+	     Different open games and closed games in gamelist.
+	
+	d2cs			Ported to Sun and BSD(not fully tested)    
+			    Added quota support for config file 	   
+		    Added option to set whether check multi login	   
+		      Added option to check s2s timeout 		   
+	    Make Ladder file format more portable.			   
+	Added game server password for security reasons.		   
+	      Added keep alive for d2gs 			 Added
+	option to support game limit			      Optimizd
+	timed event handle
+	
+	d2dbs			Ported to Sun and BSD(not fully tested)    
+			    Make Ladder fle format more portable.	   
+		       Added timeout check for d2gs (for lock exception)   
+			      Added keep alive for d2gs
+
+2001-10-19 06:15  rcombs
+
+	* src/bnetd/autoupdate.c (1.5): 
+	Enabled debugging messages so that users can use it to figure out
+	what is happening when things don't work.
+
+2001-10-19 06:01  rcombs
+
+	* src/: bnetd/account.c (1.11), bnetd/bits_ext.c (1.3),
+	bnetd/bits_ext.h (1.2), bnetd/bits_login.c (1.3),
+	bnetd/bits_login.h (1.2), bnetd/command.c (1.9),
+	bnetd/handle_auth.c (1.12), bnetd/handle_bits.c (1.14),
+	bnetd/handle_bnet.c (1.26), bnetd/message.c (1.11), client/bnchat.c
+	(1.12), common/field_sizes.h (1.2): 
+	New min and max user name macros.
+
+2001-10-17 08:30  rcombs
+
+	* src/bnetd/: account.c (1.10), command.c (1.8): 
+	Half-merged some d2_closed changes.  The account naming rules
+	should be made configurable.  The alias code has not been completed
+	yet.
+
+2001-10-16 23:39  rcombs
+
+	* CREDITS (1.11): 
+	Updated Phil's address.
+
+2001-10-13 00:05  onlyer
+
+	* conf/d2cs.conf.in, conf/d2dbs.conf.in, src/bnetd/handle_bnet.c,
+	src/common/version.h, src/d2cs/d2cs_d2dbs_ladder.h,
+	src/d2cs/d2ladder.c, src/d2cs/handle_d2cs.c, src/d2dbs/d2ladder.c,
+	src/d2dbs/d2ladder.h, src/d2dbs/dbspacket.c, src/d2dbs/server.c
+	(d2close_bnetd_b1.[7,6,5,2,3,3,6,4,4,6,3]): make ladder file format
+	portable
+
+2001-10-11 17:01  onlyer
+
+	* conf/d2cs.conf.in, conf/d2dbs.conf.in, conf/realm.list,
+	src/Makefile.in, src/bnetd/connection.c, src/common/version.h,
+	src/d2cs/Makefile, src/d2cs/bnetd.c, src/d2cs/cmdline_parse.c,
+	src/d2cs/conf.c, src/d2cs/connection.c, src/d2cs/d2charfile.c,
+	src/d2cs/d2cs_d2dbs_ladder.h, src/d2cs/d2gs.c, src/d2cs/d2ladder.c,
+	src/d2cs/game.c, src/d2cs/gamequeue.c, src/d2cs/handle_bnetd.c,
+	src/d2cs/handle_d2cs.c, src/d2cs/handle_d2gs.c,
+	src/d2cs/handle_init.c, src/d2cs/handle_signal.c, src/d2cs/main.c,
+	src/d2cs/net.c, src/d2cs/prefs.c, src/d2cs/s2s.c,
+	src/d2cs/server.c, src/d2cs/serverqueue.c, src/d2cs/xstring.c,
+	src/d2dbs/Makefile, src/d2dbs/charlock.c, src/d2dbs/charlock.h,
+	src/d2dbs/cmdline_parse.c, src/d2dbs/d2ladder.c,
+	src/d2dbs/d2ladder.h, src/d2dbs/dbserver.c, src/d2dbs/dbserver.h,
+	src/d2dbs/dbspacket.c, src/d2dbs/dbspacket.h,
+	src/d2dbs/handle_signal.c, src/d2dbs/main.c, src/d2dbs/prefs.c,
+	src/d2dbs/server.c, src/d2dbs/setup.h
+	(d2close_bnetd_b1.[6,5,3,3,5,1,4,3,4,4,4,4,2,4,2,4,3,4,5,3,4,2,5,3,
+	5,3,4,3,4,3,3,2,4,3,3,4,4,5,3,2,4,3,2,3]): ported d2cs and d2dbs to
+	freebsd and sun
+
+2001-10-09 23:46  onlyer
+
+	* INSTALL, conf/d2cs.conf.in, conf/d2dbs.conf.in, conf/realm.list,
+	src/bnproxy/bnproxy.c (d2close_bnetd_b1.[1,5,4,2,1]): fixed bnproxy
+	bug, changed some configuration entry
+
+2001-10-08 21:23  onlyer
+
+	* conf/bnetd.conf.in, conf/d2cs.conf.in, conf/d2dbs.conf.in,
+	src/bnetd/command.c, src/bnetd/connection.c, src/bnetd/game.c,
+	src/bnetd/game.h, src/bnetd/game_conv.c, src/bnetd/handle_bnet.c,
+	src/bnetd/realm.c, src/bnetd/realm.h, src/bnetd/versioncheck.c,
+	src/common/bnet_protocol.h, src/d2cs/conf.c, src/d2cs/connection.c,
+	src/d2cs/d2gs.c, src/d2cs/d2gs.h, src/d2cs/game.c,
+	src/d2cs/handle_d2cs.c, src/d2cs/prefs.c, src/d2cs/prefs.h,
+	src/d2cs/xstring.c, src/d2dbs/dbserver.c, src/d2dbs/dbserver.h,
+	src/d2dbs/dbspacket.c
+	(d2close_bnetd_b1.[3,4,3,4,4,5,2,2,4,4,4,3,2,3,3,3,3,3,4,4,4,3,3,3,
+	4]): fixed some command for realm support added support for quota
+	in config file fixed open game and close game option added config
+	entry for game server password, game limitation d2dbs,d2gs allow
+	d2gs to kick old logins
+
+2001-10-07 09:09  rcombs
+
+	* src/bnetd/: bits_motd.c (1.5), message.c (1.10), server.c (1.14),
+	watch.c (1.3): 
+	Removed fixed limits on message sizes.	Added truncation as the
+	last step for bot connections.	The telnet connections get
+	arbitrary long strings.  Need to figure out what the maximum length
+	that clients can handle with bnet connections.
+
+2001-10-05 10:44  onlyer
+
+	* src/: autoconf/ansi2knr.c, compat/inet_aton.c
+	(d2close_bnetd_b1.[1,1]): [no log message]
+
+2001-10-05 09:58  onlyer
+
+	* src/bnetd/: game.c, handle_bnet.c (d2close_bnetd_b1.[4,3]): fixed
+	open games creation problem
+
+2001-10-05 08:31  onlyer
+
+	* src/d2dbs/setup.h (d2close_bnetd_b1.2): [no log message]
+
+2001-10-05 08:29  onlyer
+
+	* src/: d2cs/handle_signal.c (1.1), d2dbs/handle_signal.c (1.1):
+	file handle_signal.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-10-05 08:29  onlyer
+
+	* src/d2dbs/server.c (1.1): file server.c was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-05 08:29  onlyer
+
+	* src/: d2cs/handle_signal.c, d2cs/handle_signal.h,
+	d2dbs/handle_signal.c, d2dbs/handle_signal.h, d2dbs/server.c,
+	d2dbs/server.h (d2close_bnetd_b1.[1,1,1,1,1,1]): moved signals
+	handler into handle_signal.c
+
+2001-10-05 08:29  onlyer
+
+	* src/: d2cs/handle_signal.h (1.1), d2dbs/handle_signal.h (1.1):
+	file handle_signal.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-10-05 08:29  onlyer
+
+	* src/d2dbs/server.h (1.1): file server.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-05 08:16  onlyer
+
+	* src/bnetd/: handle_d2cs.c, prefs.c (d2close_bnetd_b1.[4,3]):
+	changed bnetd prefs to allow hex int settings
+
+2001-10-05 08:04  rcombs
+
+	* src/bnetd/file.c (1.3): 
+	Set the packet size before writing to it in case we ever do
+	dynamically sized packets.
+
+2001-10-05 07:03  onlyer
+
+	* conf/bnetd.conf.in, conf/channel.list, conf/d2cs.conf.in,
+	conf/d2dbs.conf.in, src/bnetd/channel.c, src/bnetd/channel.h,
+	src/bnetd/command.c, src/bnetd/connection.c,
+	src/bnetd/handle_bits.c, src/bnetd/handle_bnet.c,
+	src/bnetd/handle_d2cs.c, src/bnetd/handle_d2cs.h,
+	src/bnetd/handle_init.c, src/bnetd/prefs.c, src/bnetd/prefs.h,
+	src/bnetd/realm.c, src/bnetd/realm.h, src/common/eventlog.c,
+	src/common/eventlog.h, src/common/packet.h, src/d2cs/Makefile,
+	src/d2cs/d2charfile.c, src/d2cs/d2cs_bnetd_protocol.h,
+	src/d2cs/d2cs_d2gs_character.h, src/d2cs/d2cs_d2gs_protocol.h,
+	src/d2cs/handle_bnetd.c, src/d2cs/handle_d2cs.c,
+	src/d2cs/handle_init.c, src/d2cs/main.c, src/d2cs/prefs.c,
+	src/d2cs/prefs.h, src/d2cs/server.c, src/d2cs/server.h,
+	src/d2cs/version.h, src/d2dbs/Makefile, src/d2dbs/charlock.c,
+	src/d2dbs/cmdline_parse.c, src/d2dbs/d2ladder.c,
+	src/d2dbs/d2ladder.h, src/d2dbs/data.h, src/d2dbs/dbserver.c,
+	src/d2dbs/dbserver.h, src/d2dbs/dbspacket.c, src/d2dbs/dbspacket.h,
+	src/d2dbs/main.c, src/d2dbs/prefs.c, src/d2dbs/prefs.h,
+	src/d2dbs/setup.h
+	(d2close_bnetd_b1.[2,1,3,2,2,1,3,3,1,2,3,3,4,2,2,3,3,1,1,2,3,3,3,3,
+	3,3,3,3,4,3,3,3,3,3,2,2,3,2,2,5,2,2,3,2,3,2,2,1]): changed bnetd
+	channel name format and character searching to support multiple
+	realms added some d2cs - bnetd protocol added support for d2dbs to
+	dynamically reload configuration file fixed some minor bugs and
+	compiler warnings
+
+2001-10-05 07:03  onlyer
+
+	* src/d2dbs/setup.h (1.1): file setup.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-05 00:32  rcombs
+
+	* src/bnetd/: connection.c (1.20), connection.h (1.9),
+	handle_bnet.c (1.25), realm.c (1.3), realm.h (1.2): 
+	A few more parts ported over from the d2closed branch.
+
+2001-10-04 17:59  onlyer
+
+	* src/d2cs/setup.h (d2close_bnetd_b1.3): changed some default
+	settings
+
+2001-10-04 17:57  onlyer
+
+	* src/d2dbs/: data.h, dbspacket.c (d2close_bnetd_b1.[4,2]): fixed
+	some compiler warnings
+
+2001-10-04 01:44  onlyer
+
+	* src/d2dbs/: cmdline_parse.c, cmdline_parse.h, main.c
+	(d2close_bnetd_b1.[2,2,2]): changed stderr member of t_param to
+	logstderr to avoid some compiler warning
+
+2001-10-04 01:24  onlyer
+
+	* src/d2cs/: cmdline_parse.c, cmdline_parse.h, main.c
+	(d2close_bnetd_b1.[3,3,3]): changed stderr member of t_param to
+	logstderr to avoid some compiler warning
+
+2001-10-04 01:04  onlyer
+
+	* src/bnetd/handle_init.c (d2close_bnetd_b1.3): allow d2cs_bnetd
+	connection to kick old logins
+
+2001-10-03 23:42  rcombs
+
+	* src/bnetd/handle_bnet.c (1.24): 
+	Added support for new realm join packet to handle_bnet.c.  The
+	handle_auth.c stuff probably needs to be updated too.
+
+2001-10-03 19:10  rcombs
+
+	* src/bnetd/account.c (1.9): 
+	Bumpped up the hashtable size which was inspired by the d2closed
+	branch but not quite as big as they made it.
+
+2001-10-03 19:07  rcombs
+
+	* CHANGELOG (1.19), CREDITS (1.10), TODO (1.5), src/bnetd/game.c
+	(1.6), src/bnetd/game.h (1.4), src/bnetd/game_conv.c (1.5),
+	src/common/bnet_protocol.h (1.19): 
+	Updated credits to add in the rest of Onlyer's crew.  Fixed the
+	gameresult 5 problem thanks for forester's post in the forums.
+
+2001-10-03 13:57  onlyer
+
+	* src/d2dbs/data.h (d2close_bnetd_b1.3): [no log message]
+
+2001-10-03 01:00  rcombs
+
+	* src/: bnetd/prefs.c (1.9), bnetd/prefs.h (1.7),
+	common/bnet_protocol.h (1.18), common/packet.c (1.13),
+	common/packet.h (1.12), common/setup_before.h (1.9): 
+	Incorporated some changes from the d2close_bnetd_b1 tree to make
+	later merging a little easier.	We also need do some merging the
+	other direction.
+
+2001-10-02 23:12  rcombs
+
+	* src/common/check_alloc.c (1.3): 
+	Fixed bug in realloc found by faster.
+
+2001-10-02 21:30  onlyer
+
+	* src/d2dbs/data.h (d2close_bnetd_b1.2): changed include
+	<sys/time.h> to <time.h>
+
+2001-10-02 15:12  onlyer
+
+	* src/d2cs/d2cs_d2dbs_ladder.h (d2close_bnetd_b1.1): shared ladder
+	file format headers for d2cs and d2dbs
+
+2001-10-02 15:12  onlyer
+
+	* src/d2cs/d2cs_d2dbs_ladder.h (1.1): file d2cs_d2dbs_ladder.h was
+	initially added on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/: d2cs/d2ladder.h (1.1), d2dbs/d2ladder.h (1.1): file
+	d2ladder.h was initially added on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/dbserver.h (1.1): file dbserver.h was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/Makefile (1.1): file Makefile was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2cs/bit.h (1.1): file bit.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/charlock.c (1.1): file charlock.c was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/: d2cs/d2ladder.c (1.1), d2dbs/d2ladder.c (1.1): file
+	d2ladder.c was initially added on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/cmdline_parse.h (1.1): file cmdline_parse.h was
+	initially added on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/data.h (1.1): file data.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/dbserver.c (1.1): file dbserver.c was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/prefs.h (1.1): file prefs.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/main.c (1.1): file main.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/dbspacket.h (1.1): file dbspacket.h was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* conf/d2cs.conf.in, conf/d2dbs.conf.in, src/Makefile.in,
+	src/bnetd/account.c, src/bnetd/command.c, src/bnetd/connection.c,
+	src/bnetd/connection.h, src/bnetd/game.c, src/bnetd/handle_d2cs.c,
+	src/bnetd/handle_d2cs.h, src/bnetd/handle_init.c,
+	src/bnetd/realm.c, src/bnetd/realm.h, src/bnetd/versioncheck.c,
+	src/bnetd/versioncheck.h, src/d2cs/Makefile, src/d2cs/bit.h,
+	src/d2cs/bnetd.c, src/d2cs/bnetd.h, src/d2cs/cmdline_parse.c,
+	src/d2cs/cmdline_parse.h, src/d2cs/conf.c, src/d2cs/conf.h,
+	src/d2cs/connection.c, src/d2cs/connection.h,
+	src/d2cs/d2charfile.c, src/d2cs/d2charfile.h,
+	src/d2cs/d2cs_bnetd_protocol.h, src/d2cs/d2cs_d2gs_character.h,
+	src/d2cs/d2cs_d2gs_protocol.h, src/d2cs/d2cs_protocol.h,
+	src/d2cs/d2gs.c, src/d2cs/d2gs.h, src/d2cs/d2ladder.c,
+	src/d2cs/d2ladder.h, src/d2cs/game.c, src/d2cs/game.h,
+	src/d2cs/gamequeue.c, src/d2cs/gamequeue.h,
+	src/d2cs/handle_bnetd.c, src/d2cs/handle_bnetd.h,
+	src/d2cs/handle_d2cs.c, src/d2cs/handle_d2cs.h,
+	src/d2cs/handle_d2gs.c, src/d2cs/handle_d2gs.h,
+	src/d2cs/handle_init.c, src/d2cs/handle_init.h, src/d2cs/main.c,
+	src/d2cs/net.c, src/d2cs/net.h, src/d2cs/prefs.c, src/d2cs/prefs.h,
+	src/d2cs/s2s.c, src/d2cs/s2s.h, src/d2cs/server.c,
+	src/d2cs/server.h, src/d2cs/serverqueue.c, src/d2cs/serverqueue.h,
+	src/d2cs/setup.h, src/d2cs/version.h, src/d2cs/xstring.c,
+	src/d2cs/xstring.h, src/d2dbs/Makefile, src/d2dbs/charlock.c,
+	src/d2dbs/charlock.h, src/d2dbs/cmdline_parse.c,
+	src/d2dbs/cmdline_parse.h, src/d2dbs/d2ladder.c,
+	src/d2dbs/d2ladder.h, src/d2dbs/data.h, src/d2dbs/dbserver.c,
+	src/d2dbs/dbserver.h, src/d2dbs/dbspacket.c, src/d2dbs/dbspacket.h,
+	src/d2dbs/main.c, src/d2dbs/prefs.c, src/d2dbs/prefs.h,
+	src/d2dbs/version.h
+	(d2close_bnetd_b1.[2,1,2,2,2,2,2,3,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,
+	2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+	,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]): added sousou's d2dbs
+	code added ladder support for d2cs some fix and improvements
+
+2001-10-02 15:02  onlyer
+
+	* conf/d2dbs.conf.in (1.1): file d2dbs.conf.in was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/charlock.h (1.1): file charlock.h was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/cmdline_parse.c (1.1): file cmdline_parse.c was
+	initially added on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/prefs.c (1.1): file prefs.c was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/dbspacket.c (1.1): file dbspacket.c was initially added
+	on branch d2close_bnetd_b1.
+
+2001-10-02 15:02  onlyer
+
+	* src/d2dbs/version.h (1.1): file version.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-10-01 19:16  rcombs
+
+	* src/compat/pdir.c (1.2): 
+	Fixed a couple of typos that caused pdir to not compile on Windows.
+
+2001-10-01 09:03  rcombs
+
+	* src/client/: bnbot.c (1.3), bnchat.c (1.11), bnftp.c (1.6): 
+	Added options into the usage message, fixed the bnftp prompt, small
+	changes to the resume support in bnftp (use malloc, etc.) and fix
+	bnftp so that it uses the locally requested filename instead of the
+	remotely reported one to write out.
+
+2001-09-30 17:37  typhoon
+
+	* src/: bnetd/file.c (1.2), bnetd/file.h (1.2), bnetd/handle_file.c
+	(1.2), client/bnchat.c (1.10), client/bnftp.c (1.5),
+	common/file_protocol.h (1.2): Added file download resuming support
+	to bnetd and bnftp. bnftp now asks what to do if the file already
+	exists. Also added some options to bnftp, so it can be better used
+	in automated scripts.
+
+2001-09-24 12:31  rcombs
+
+	* CHANGELOG (1.18), TODO (1.4): 
+	Added recent changes to CHANGELOG and removed completed work from
+	TODO.
+
+2001-09-24 12:24  rcombs
+
+	* src/bnproxy/bnproxy.c (1.3): 
+	Moved the hexstrm definition from hexdump.c to this file.
+
+2001-09-24 12:20  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.23), bnetd/main.c (1.7),
+	bnetd/server.c (1.13), bnetd/udptest_send.c (1.2),
+	bnetd/versioncheck.c (1.4), common/bnet_protocol.h (1.17),
+	common/hexdump.c (1.2), common/hexdump.h (1.2): 
+	Changed default versioncheck to something that the client accepts. 
+	Fixed the hexstrm global so that each application declares it
+	instead of hexdump.c.  Added changes for D2 LoD 1.0.8 version
+	authentication (the return values are reversed).
+
+2001-09-24 12:16  rcombs
+
+	* src/: Makefile.BORLAND (1.5), Makefile.in (1.9): 
+	Include hexdump object in bnftp link line.
+
+2001-09-24 12:15  rcombs
+
+	* src/client/: bnbot.c (1.2), bnftp.c (1.4): 
+	Fixed bad error message.  Added packet dump capability to bnftp.
+
+2001-09-20 12:14  onlyer
+
+	* src/bnetd/game.c (d2close_bnetd_b1.2): fix a bug to destroy timed
+	out game without checking current players in game
+
+2001-09-20 11:47  onlyer
+
+	* files/newbie.save (1.1): file newbie.save was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:47  onlyer
+
+	* files/newbie.save (d2close_bnetd_b1.1): diablo2 close character
+	initial save file
+
+2001-09-20 11:32  onlyer
+
+	* src/bnetd/handle_d2cs.c (1.1): file handle_d2cs.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:32  onlyer
+
+	* src/bnetd/handle_d2cs.h (1.1): file handle_d2cs.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:32  onlyer
+
+	* src/bnetd/: handle_d2cs.c, handle_d2cs.h
+	(d2close_bnetd_b1.[1,1]): bnetd <-> d2cs s2s communication code
+
+2001-09-20 11:23  onlyer
+
+	* src/d2cs/out (d2close_bnetd_b1.2): a tempory build
+	file,useless,removed
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/gamequeue.h (1.1): file gamequeue.h was initially added
+	on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_init.h (1.1): file handle_init.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2cs_d2gs_character.h (1.1): file d2cs_d2gs_character.h
+	was initially added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_d2gs.h (1.1): file handle_d2gs.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/net.h (1.1): file net.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/prefs.h (1.1): file prefs.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/xstring.h (1.1): file xstring.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/game.h (1.1): file game.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/conf.h (1.1): file conf.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/server.h (1.1): file server.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/setup.h (1.1): file setup.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2gs.h (1.1): file d2gs.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2charfile.h (1.1): file d2charfile.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/s2s.c (1.1): file s2s.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/cmdline_parse.h (1.1): file cmdline_parse.h was
+	initially added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_d2cs.c (1.1): file handle_d2cs.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* files/IX86ver1.mpq (1.1): file IX86ver1.mpq was initially added
+	on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_bnetd.c (1.1): file handle_bnetd.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/bnetd.c (1.1): file bnetd.c was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* files/tos.sh (1.1): file tos.sh was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/serverqueue.c (1.1): file serverqueue.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* conf/bnetd.conf.in, conf/d2cs.conf.in, conf/realm.list,
+	conf/versioncheck, files/IX86ver1.mpq, files/tos.sh,
+	files/tos_DEU.txt, files/tos_USA.txt, src/Makefile.in,
+	src/bnetd/account.c, src/bnetd/channel.c, src/bnetd/command.c,
+	src/bnetd/connection.c, src/bnetd/connection.h, src/bnetd/game.c,
+	src/bnetd/game.h, src/bnetd/game_conv.c, src/bnetd/game_rule.c,
+	src/bnetd/handle_bnet.c, src/bnetd/handle_init.c, src/bnetd/main.c,
+	src/bnetd/message.c, src/bnetd/prefs.c, src/bnetd/prefs.h,
+	src/bnetd/realm.c, src/bnetd/realm.h, src/bnetd/server.c,
+	src/bnetd/server.h, src/bnetd/versioncheck.c,
+	src/bnetd/versioncheck.h, src/client/client_connect.c,
+	src/common/bnet_protocol.h, src/common/check_alloc.c,
+	src/common/field_sizes.h, src/common/init_protocol.h,
+	src/common/packet.c, src/common/packet.h,
+	src/common/setup_before.h, src/d2cs/Makefile, src/d2cs/bnetd.c,
+	src/d2cs/bnetd.h, src/d2cs/cmdline_parse.c,
+	src/d2cs/cmdline_parse.h, src/d2cs/conf.c, src/d2cs/conf.h,
+	src/d2cs/connection.c, src/d2cs/connection.h,
+	src/d2cs/d2charfile.c, src/d2cs/d2charfile.h,
+	src/d2cs/d2cs_bnetd_protocol.h, src/d2cs/d2cs_d2gs_character.h,
+	src/d2cs/d2cs_d2gs_protocol.h, src/d2cs/d2cs_protocol.h,
+	src/d2cs/d2gs.c, src/d2cs/d2gs.h, src/d2cs/game.c, src/d2cs/game.h,
+	src/d2cs/gamequeue.c, src/d2cs/gamequeue.h,
+	src/d2cs/handle_bnetd.c, src/d2cs/handle_bnetd.h,
+	src/d2cs/handle_d2cs.c, src/d2cs/handle_d2cs.h,
+	src/d2cs/handle_d2gs.c, src/d2cs/handle_d2gs.h,
+	src/d2cs/handle_init.c, src/d2cs/handle_init.h, src/d2cs/main.c,
+	src/d2cs/net.c, src/d2cs/net.h, src/d2cs/out, src/d2cs/prefs.c,
+	src/d2cs/prefs.h, src/d2cs/s2s.c, src/d2cs/s2s.h,
+	src/d2cs/server.c, src/d2cs/server.h, src/d2cs/serverqueue.c,
+	src/d2cs/serverqueue.h, src/d2cs/setup.h, src/d2cs/version.h,
+	src/d2cs/xstring.c, src/d2cs/xstring.h
+	(d2close_bnetd_b1.[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+	,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]): Added D2CS
+	part for diablo2 close beta support
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2cs_d2gs_protocol.h (1.1): file d2cs_d2gs_protocol.h
+	was initially added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/Makefile (1.1): file Makefile was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/connection.c (1.1): file connection.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/gamequeue.c (1.1): file gamequeue.c was initially added
+	on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_init.c (1.1): file handle_init.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/prefs.c (1.1): file prefs.c was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_d2gs.c (1.1): file handle_d2gs.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/net.c (1.1): file net.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* conf/d2cs.conf.in (1.1): file d2cs.conf.in was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2cs_protocol.h (1.1): file d2cs_protocol.h was
+	initially added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/game.c (1.1): file game.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* conf/versioncheck (1.1): file versioncheck was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/xstring.c (1.1): file xstring.c was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2cs_bnetd_protocol.h (1.1): file d2cs_bnetd_protocol.h
+	was initially added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/conf.c (1.1): file conf.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/s2s.h (1.1): file s2s.h was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/server.c (1.1): file server.c was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_d2cs.h (1.1): file handle_d2cs.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/handle_bnetd.h (1.1): file handle_bnetd.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/bnetd.h (1.1): file bnetd.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/serverqueue.h (1.1): file serverqueue.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2gs.c (1.1): file d2gs.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/main.c (1.1): file main.c was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/d2charfile.c (1.1): file d2charfile.c was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/connection.h (1.1): file connection.h was initially
+	added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/cmdline_parse.c (1.1): file cmdline_parse.c was
+	initially added on branch d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/out (1.1): file out was initially added on branch
+	d2close_bnetd_b1.
+
+2001-09-20 11:20  onlyer
+
+	* src/d2cs/version.h (1.1): file version.h was initially added on
+	branch d2close_bnetd_b1.
+
+2001-09-19 23:28  rcombs
+
+	* src/bnetd/server.c (1.12): 
+	Also fix the units used in the timer calculations.
+
+2001-09-19 23:06  rcombs
+
+	* scripts/announce.sh (1.1): 
+	Nice script by Onlyer which can be used as an announcement bot.
+
+2001-09-19 21:44  rcombs
+
+	* src/: bnetd/server.c (1.11), common/setup_before.h (1.8): 
+	Fixed the "poll() causes laggy signals" but which was probably due
+	to a misunderstanding over a typo in a comment in setup_before.h.
+
+2001-09-19 21:03  typhoon
+
+	* src/: bnetd/account.c (1.8), bnetd/account_wrap.c (1.7),
+	bnetd/bits_chat.c (1.3), bnetd/bits_chat.h (1.2),
+	bnetd/bits_query.c (1.9), bnetd/bits_query.h (1.6), bnetd/channel.c
+	(1.15), bnetd/connection.c (1.19), bnetd/connection.h (1.8),
+	bnetd/handle_bits.c (1.13), bnetd/handle_bnet.c (1.22),
+	common/bits_protocol.h (1.7), common/packet.c (1.12),
+	common/packet.h (1.11): Applied bits_patch-0.4.25pre3-3:  - fixed
+	issues with the new channel, rollover code and BITS  - fixed bug in
+	master server gamelist code  - fixed obsolete traffic in
+	account_set_strattr when the value hasn't    changed  - maybe some
+	other fixes?
+
+2001-09-19 08:05  rcombs
+
+	* src/bnetd/versioncheck.c (1.3): 
+	Oops, fixed swapped initializers.
+
+2001-09-17 19:35  typhoon
+
+	* src/Makefile.in (1.8): Added BITS configuration files to install
+	list.
+
+2001-09-17 19:33  typhoon
+
+	* conf/bits_motd (1.2), conf/bits_passwd (1.2), conf/bnbitsmotd.txt
+	(1.1), conf/bnbitspasswd (1.1), conf/bnetd.conf.in (1.10),
+	conf/bnetd.conf.win32 (1.6), src/bnetd/channel.c (1.14),
+	src/bnetd/connection.c (1.18): Renamed bits_passwd to bnbitspasswd
+	and bits_motd to bnbitsmotd.txt. This should resolve the issue with
+	the "very generic config file names" from the TODO list.
+
+2001-09-17 02:20  rcombs
+
+	* src/bnetd/game.c (1.5): 
+	Added D2 and LoD tags to list of game which skip gamereports.
+
+2001-09-17 00:56  rcombs
+
+	* src/bnetd/versioncheck.c (1.2): 
+	Nicer parsing of game version.	Still need to fix handling of
+	quoted strings.
+
+2001-09-16 11:54  rcombs
+
+	* CHANGELOG (1.17), conf/autoupdate (1.3), conf/bnetd.conf.in
+	(1.9), conf/bnetd.conf.win32 (1.5), conf/bnhelp (1.4),
+	src/MSVC++.mak (1.3), src/Makefile.BORLAND (1.4), src/Makefile.in
+	(1.7), src/config.h.in (1.9), src/configure (1.7),
+	src/bnetd/account.c (1.7), src/bnetd/adbanner.c (1.2),
+	src/bnetd/autoupdate.c (1.4), src/bnetd/bits_game.c (1.7),
+	src/bnetd/channel.c (1.13), src/bnetd/command.c (1.7),
+	src/bnetd/connection.c (1.17), src/bnetd/connection.h (1.7),
+	src/bnetd/game.c (1.4), src/bnetd/game.h (1.3),
+	src/bnetd/game_conv.c (1.4), src/bnetd/game_rule.c (1.3),
+	src/bnetd/gametrans.c (1.2), src/bnetd/handle_auth.c (1.11),
+	src/bnetd/handle_bits.c (1.12), src/bnetd/handle_bnet.c (1.21),
+	src/bnetd/ladder.c (1.2), src/bnetd/mail.c (1.6), src/bnetd/mail.h
+	(1.6), src/bnetd/prefs.c (1.8), src/bnetd/prefs.h (1.6),
+	src/bnetd/realm.c (1.2), src/bnetd/server.c (1.10),
+	src/bnetd/server.h (1.2), src/client/bnchat.c (1.9),
+	src/client/bnftp.c (1.3), src/client/bnstat.c (1.4),
+	src/client/client_connect.c (1.9), src/common/list.h (1.2),
+	src/common/setup_before.h (1.7), src/common/tag.h (1.3),
+	src/common/util.c (1.4), src/common/util.h (1.5): 
+	I'm not typing that over again.  Sorry but CVS sucks because it
+	aborts the commit if something isn't up to date after you have
+	typed this description.
+
+2001-09-16 11:46  rcombs
+
+	* src/common/: proginfo.c (1.1), proginfo.h (1.1): 
+	These files will contain utility routines for dealing with client
+	information such as default channel, program id, etc.  Right now
+	they only contain some version conversion routines.
+
+2001-09-16 11:43  rcombs
+
+	* src/bnetd/: versioncheck.c (1.1), versioncheck.h (1.1): 
+	Ported from Onlyer's work.  These files will provide a table which
+	will let the server compare the client's checksum with known-good
+	values.
+
+2001-09-09 19:55  typhoon
+
+	* src/bnetd/handle_bits.c (1.11): BITS should at least compile ...
+
+2001-09-08 09:05  rcombs
+
+	* src/: bnetd/main.c (1.6), bnproxy/bnproxy.c (1.2),
+	bntrackd/bntrackd.c (1.3), common/eventlog.h (1.2),
+	common/setup_after.h (1.2), common/setup_before.h (1.6),
+	compat/gethostname.h (1.2), compat/gettimeofday.c (1.2),
+	compat/recv.h (1.2), compat/send.h (1.2), compat/strchr.h (1.2),
+	compat/strrchr.h (1.2), compat/uint.h (1.2), debug/sbnetd.c (1.2): 
+	Removed comments around #error directives... will change ansi2knr
+	instead.  Initialized miliseconds field for ftime() because it
+	isn't always set on Win32 (according to Onlyer)..
+
+2001-09-08 01:41  rcombs
+
+	* CHANGELOG (1.16), CREDITS (1.9), src/bnetd/connection.c (1.16): 
+	Fixed the gameinfo bug reported by AsmodeusB.
+
+2001-08-31 09:58  rcombs
+
+	* CHANGELOG (1.15), conf/bnetd.conf.in (1.8), conf/bnetd.conf.win32
+	(1.4), src/bnetd/channel.c (1.12), src/bnetd/channel.h (1.5),
+	src/bnetd/command.c (1.6), src/bnetd/connection.c (1.15),
+	src/bnetd/handle_bits.c (1.10), src/bnetd/handle_bnet.c (1.20),
+	src/bnetd/prefs.c (1.7), src/bnetd/prefs.h (1.5),
+	src/client/client_connect.c (1.8), src/common/setup_before.h (1.5):
+	
+	Made the channel log message configurable.  Fixed some memory bugs
+	in channel.c.  Fixed a duplicate channel creation bug in channel.c.
+	 Fixed some cut and paste errors in client_connect.c.  Added
+	clienttag handling to the COUNTRYINFO109 packet.
+
+2001-08-27 18:57  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.19), client/client_connect.c (1.7),
+	common/bnet_protocol.h (1.16): 
+	Onlyer's fixes for the 109 stuff.
+
+2001-08-27 06:29  rcombs
+
+	* CHANGELOG (1.14), src/bnetd/character.c (1.7),
+	src/bnetd/handle_bnet.c (1.18), src/client/client_connect.c (1.6),
+	src/common/bnet_protocol.h (1.15), src/common/packet.c (1.11),
+	src/common/packet.h (1.10), src/common/util.c (1.3),
+	src/common/util.h (1.4): 
+	Added a missing const in util.[ch].  Updated the client code to
+	send 109 style packets.  Fixes to 109 packet types and renaming of
+	replaced packets.
+
+2001-08-27 00:09  hakan
+
+	* src/bnetd/handle_bnet.c (1.17): Work in Progress for COUNTRYINFO,
+	AUTHREQ and AUTHREPLY packets for Diablo II 1.09
+
+2001-08-27 00:08  hakan
+
+	* src/common/: bnet_protocol.h (1.14), packet.c (1.10), packet.h
+	(1.9): COUNTRYINFO, AUTHREQ and AUTHREPLY packets for Diablo II
+	1.09
+
+2001-08-26 21:02  hakan
+
+	* src/bnetd/connection.c (1.14): Write the connection class in
+	cleartext
+
+2001-08-23 07:31  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.16), common/bnet_protocol.h (1.13): 
+	Fixed order of octets in version string and noted that the
+	versionid for Brood War was already correct.
+
+2001-08-21 09:01  rcombs
+
+	* CREDITS (1.8): 
+	Updated Dizzy's entry and added Onlyer.
+
+2001-08-21 07:23  rcombs
+
+	* scripts/fsgs2bnetd.pl (1.1): 
+	Onlyer's script to convert FSGS accounts to BNETD accounts.
+
+2001-08-20 12:45  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.25): Build bnpcap in its own
+	package
+
+2001-08-20 12:16  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.24): The Summary reflects
+	that we support more than StarCraft
+
+2001-08-15 13:22  hakan
+
+	* src/: bnetd/handle_auth.c (1.10), common/auth_protocol.h (1.9),
+	common/packet.c (1.9), common/packet.h (1.8): Determined packet for
+	converting characters, add *real* conversion later.
+
+2001-08-15 08:36  rcombs
+
+	* CHANGELOG (1.13), src/MSVC++.mak (1.2), src/Makefile.BORLAND
+	(1.3), src/Makefile.in (1.6), src/bnetd/account.c (1.6),
+	src/bnetd/mail.c (1.5), src/bnetd/mail.h (1.5), src/bnetd/server.c
+	(1.9), src/compat/pdir.c (1.1), src/compat/pdir.h (1.1): 
+	Added Dizzy's portable directory reading code and changed account.c
+	to use it.  Fixed some mail error handling.  Need to test new code
+	on win32.
+
+2001-08-14 08:25  rcombs
+
+	* src/: bnetd/account.c (1.5), bnetd/account_wrap.c (1.6),
+	bnetd/autoupdate.c (1.3), bnetd/channel.c (1.11), bnetd/character.c
+	(1.6), bnetd/handle_auth.c (1.9), bnetd/helpfile.c (1.4),
+	bnetd/mail.c (1.4), bnetd/main.c (1.5), bnetd/message.c (1.9),
+	bnetd/server.c (1.8), client/bnchat.c (1.8), client/bnstat.c (1.3),
+	common/give_up_root_privileges.c (1.6), common/token.c (1.3),
+	common/token.h (1.3), common/util.h (1.3): 
+	Fixed various compiler warning, missing includes, typos, memory
+	leaks, etc.
+
+2001-08-14 08:18  rcombs
+
+	* src/common/: d2game_protocol.h (1.3), packet.c (1.8), packet.h
+	(1.7): 
+	Added a few things from the d2 closed server project and fixed the
+	old d2game header.
+
+2001-08-13 08:29  rcombs
+
+	* src/bnetd/handle_auth.c (1.8): 
+	Comment a couple of issues in the code and use packet_append_string
+	where possible.
+
+2001-08-13 08:19  rcombs
+
+	* src/bnetd/: helpfile.c (1.3), prefs.c (1.6): 
+	Added missing fclose in prefs.c.  Fixed wrong function name in a
+	couple of eventlog()s.	Fixed a typo in a comment.
+
+2001-08-06 00:08  hakan
+
+	* src/bnetd/account_wrap.c (1.5): Storage of Diablo II Realm
+	Characters added
+
+2001-08-06 00:02  hakan
+
+	* src/bnetd/handle_auth.c (1.7): Correct answer packet for
+	CHARLIST_REQ
+
+2001-08-05 23:59  hakan
+
+	* src/bnetd/: character.c (1.5), character.h (1.4): New templates
+	for Diablo II characters; decode_character_data() needs to be
+	fleshed out
+
+2001-08-05 23:51  hakan
+
+	* src/bnetd/: account_wrap.c (1.4), account_wrap.h (1.4): A
+	function to check for the existence of a certain character in a
+	realm
+
+2001-08-05 23:45  hakan
+
+	* src/common/: util.c (1.2), util.h (1.2): Two functions to encode
+	data to / from Hexadecimal
+
+2001-08-05 21:54  hakan
+
+	* conf/bnserver-D2DV.ini (1.2), files/bnserver-D2DV.ini (1.1): The
+	bnserver file lives in .../files/
+
+2001-08-05 20:21  rcombs
+
+	* docs/FAQ.html (1.15): 
+	Doh!  Fixed a couple of typos in the HTML.
+
+2001-08-05 06:16  rcombs
+
+	* docs/FAQ.html (1.14): 
+	Grr... forgot to update the version and modification date.
+
+2001-08-05 06:15  rcombs
+
+	* docs/FAQ.html (1.13): 
+	Clarified the autoupdate section (and fixed some grammar
+	problems... oops).  Updated the 1.08 server selection answer with a
+	link to the BnetGCfg tool.  Pointed the BNS link to bnetd.myip.org
+	until we get write access to the files directory on www.bnetd.org
+	:)
+
+2001-08-03 09:30  rcombs
+
+	* CHANGELOG (1.12): [no log message]
+
+2001-08-03 09:29  rcombs
+
+	* src/: bnetd/handle_auth.c (1.6), common/auth_protocol.h (1.8),
+	common/d2game_protocol.h (1.2), common/packet.c (1.7),
+	common/packet.h (1.6): 
+	Merged in closed server changes to protocol headers (well, most of
+	them).	The Diablo II game header needs some work.  What is there
+	now doesn't match what was there.
+
+2001-08-03 07:25  rcombs
+
+	* CHANGELOG (1.11), CREDITS (1.7): 
+	Added info about Fred's message patch.
+
+2001-08-03 07:24  rcombs
+
+	* conf/bnissue.txt (1.2), man/bntext.5 (1.2), src/config.h.in
+	(1.8), src/configure (1.6), src/bnetd/bits_motd.c (1.4),
+	src/bnetd/message.c (1.8), src/common/addr.c (1.2),
+	src/common/addr.h (1.2): 
+	Added Fred's message patch which allows the issue and motd to
+	simulate the user executing commands.  Added man page info for
+	these.	Updated the bnissue to include the connecting IP like on
+	the real Battle.net.
+
+2001-08-02 08:55  rcombs
+
+	* conf/bnhelp (1.3): 
+	Added descriptions of the new /reply command and /r and /exit
+	aliases.
+
+2001-08-02 08:53  rcombs
+
+	* CHANGELOG (1.10), src/bnetd/account.c (1.4), src/bnetd/command.c
+	(1.5), src/bnetd/connection.c (1.13), src/bnetd/connection.h (1.6),
+	src/common/check_alloc.c (1.2): 
+	A few changes from Onlyer working on his Diablo2 Realm Emulator.
+
+2001-08-02 08:45  rcombs
+
+	* src/bnetd/mail.h (1.4): 
+	Mail delete command number was the same as unknown which caused
+	confusing error messages when incorrect commands were entered.
+
+2001-07-31 00:31  typhoon
+
+	* src/bnetd/: bits.c (1.4), bits.h (1.4), bits_packet.c (1.2),
+	bits_packet.h (1.2), bits_query.c (1.8), bits_va.c (1.3), channel.c
+	(1.10), command.c (1.4), connection.c (1.12), handle_bits.c (1.9),
+	handle_bnet.c (1.15), server.c (1.7): Applied
+	bits_patch-0.4.25pre3-2:  - Further fixes relating the new channel
+	stuff  - Fixed nasty login bug which blocked an account after a
+	wrong password	- Usual fixes ...
+
+2001-07-30 17:40  rcombs
+
+	* src/compat/mkdir.h (1.3): 
+	Added missing #else's.
+
+2001-07-30 17:36  rcombs
+
+	* src/compat/psock.h (1.3): 
+	Only include Winsock2.h on Windows :)
+
+2001-07-30 17:34  rcombs
+
+	* src/: configure (1.5), configure.in (1.5): 
+	Oops.  Cut and paste error in configure.in.
+
+2001-07-30 08:05  rcombs
+
+	* CHANGELOG (1.9), src/bnetd/channel.c (1.9), src/bnetd/character.c
+	(1.4), src/bnetd/connection.c (1.11), src/bnetd/mail.c (1.3),
+	src/bnetd/mail.h (1.3), src/bnetd/message.c (1.7),
+	src/common/packet.c (1.6), src/compat/mkdir.h (1.2),
+	src/compat/psock.h (1.2): 
+	Updates to compile with MSVC++.  Fixed stuff in channel.c parsing.
+
+2001-07-30 08:00  rcombs
+
+	* src/: MSVC++.mak (1.1), config.h.in (1.7), config.h.win32borland
+	(1.1), config.h.win32msvc++ (1.1), configure (1.4), configure.in
+	(1.4), autoconf/mkdir.m4 (1.1): 
+	Work on Win32 compatibility.  Separated Borland and Microsoft
+	defines since they differ in several areas.  Added an autoconf
+	check for mkdir() taking one argument, for _mkdir(), and for the
+	dir.h and direct.h header files.  Added a Makefile for MSVC++.
+
+2001-07-28 12:57  hakan
+
+	* src/: bnetd/character.h (1.3), common/auth_protocol.h (1.7):
+	Discovered byte for Diablo II Expansion Characters in
+	create_character request
+
+2001-07-26 21:39  hakan
+
+	* conf/bnserver-D2DV.ini (1.1), packaging/Mandrake/8.0/bnetd.spec
+	(1.23), src/Makefile.in (1.5): Added a copy of bnserver-D2DV.ini
+	from europe.battle.net; this file should possibly be customized for
+	local bnetd servers.
+
+2001-07-23 22:31  hakan
+
+	* CREDITS (1.6): Added Diablo II work to my own credits ;-)
+
+2001-07-23 22:30  hakan
+
+	* src/bnetd/: account_wrap.c (1.3), account_wrap.h (1.3),
+	character.c (1.3): New function add_closed_character that stores a
+	(newly created) D2 character
+
+2001-07-23 22:26  hakan
+
+	* src/bnetd/: account_wrap.c (1.2), account_wrap.h (1.2),
+	handle_auth.c (1.5), handle_bnet.c (1.14):
+	get_closed_character_list takes an additonal argument for the realm
+	asked for
+
+2001-07-22 23:44  hakan
+
+	* src/bnetd/: account.c (1.3), account.h (1.2): get_first/next_key
+	are useful for more than bits ;-)
+
+2001-07-18 14:37  rcrit
+
+	* src/bnetd/server.c (1.6): For some reason I had hardcoded the
+	first two file descriptors in a poll which broke support for
+	listening on multiple interfaces.
+
+2001-07-18 12:28  typhoon
+
+	* src/bnetd/handle_bits.c (1.8): Updated BITS code regarding the
+	changes in channel.[ch].
+
+2001-07-17 23:01  rcrit
+
+	* src/: configure (1.3), configure.in (1.3), bnetd/channel.c (1.8),
+	bnetd/handle_bnet.c (1.13), bnetd/server.c (1.5),
+	common/setup_before.h (1.4): Adding support for poll(). Hardcoding
+	poll timeout to 5 seconds for now since poll() doesn't seem to be
+	affected by interrupts so otherwise it can be a while for the
+	server to shutdown when a signal is received.
+	
+	This patch also fixes a few minor compilation warnings, unused
+	variables, etc.
+
+2001-07-17 00:44  typhoon
+
+	* src/bnetd/channel.c (1.7): Fixed crash bug in channel.c if count
+	was NULL.
+
+2001-07-15 22:30  hakan
+
+	* src/: bnetd/handle_auth.c (1.4), common/auth_protocol.h (1.6),
+	common/packet.c (1.5), common/packet.h (1.5): Identified Packet
+	0x17 as character list request/reply, real implementation
+	forthcoming...
+
+2001-07-14 17:56  typhoon
+
+	* src/bnetd/message.c (1.6): Fixed bot null message bug.
+
+2001-07-12 23:45  hakan
+
+	* src/bnpcap/.cvsignore (1.1): Ignore my data directory
+
+2001-07-12 23:43  hakan
+
+	* .cvsignore (1.2): Ignore the output directories for binaries
+
+2001-07-10 10:05  hakan
+
+	* packaging/Mandrake/8.0/bnetd-snapshot-diffs (1.5): Use group
+	names, the resolving works now (Thanks Ross ;-) )
+
+2001-07-10 06:02  rcombs
+
+	* src/client/client_connect.c (1.5): 
+	Removed use of hardcoded answer value from header and made it a
+	numerical constant :)  Not an improvement for now but it will be
+	fixed eventually.
+
+2001-07-10 06:00  rcombs
+
+	* src/common/bnet_protocol.h (1.12): 
+	Removed hardcoded answer value and updated some comments.
+
+2001-07-10 03:25  rcombs
+
+	* src/bnetd/: mail.c (1.2), mail.h (1.2): 
+	Added new includes and ifdefs for others.
+
+2001-07-09 23:57  rcombs
+
+	* src/common/: token.c (1.2), token.h (1.2): 
+	Fixed const violation and removed unneeded pointer dereferences.
+
+2001-07-09 23:56  rcombs
+
+	* src/bnetd/: connection.c (1.10), connection.h (1.5): 
+	Fixed countryinfo initialization and freeing.  Added const on the
+	return value.
+
+2001-07-09 18:49  typhoon
+
+	* src/: bnetd/bits.c (1.3), bnetd/bits.h (1.3), bnetd/bits_query.c
+	(1.7), bnetd/bits_query.h (1.5), bnetd/handle_bits.c (1.7),
+	common/bits_protocol.h (1.6): Applied bits_patch-0.4.25pre3:
+	Prepared for "more than one host in a row" support. However it is
+	far away from being complete and is not tested very well. It should
+	not break anything (at least I hope so :) ).
+
+2001-07-09 16:44  rcrit
+
+	* conf/channel.list (1.4), src/Makefile.in (1.4),
+	src/bnetd/channel.c (1.6), src/bnetd/channel.h (1.4),
+	src/bnetd/connection.c (1.9), src/bnetd/connection.h (1.4),
+	src/bnetd/handle_bnet.c (1.12), src/common/token.c (1.1),
+	src/common/token.h (1.1): Added support for rollover permanent
+	channels. When the number of users in a permement channel passes
+	some threshold (as specified in channels.conf) a new channel in the
+	same country is created.
+	
+	Users in new country locations are automatically added to a channel
+	that matches their country code.
+	
+	Added common/token.c which provides a generic interface for getting
+	a white-space deliminated token out of a string.
+
+2001-07-09 16:30  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-snapshot-diffs (1.4), bnetd.spec
+	(1.22): Support for bnmail
+
+2001-07-09 16:19  hakan
+
+	* src/bnetd/: mail.c (1.1), mail.h (1.1): Committed Mail
+	implementation from Dizzy
+
+2001-07-09 07:05  rcombs
+
+	* CHANGELOG (1.8): [no log message]
+
+2001-07-09 05:22  rcombs
+
+	* CREDITS (1.5), TODO (1.3), conf/bnetd.conf.in (1.7), conf/bnhelp
+	(1.2), src/Makefile.BORLAND (1.2), src/Makefile.in (1.3),
+	src/config.h.in (1.6), src/config.h.win32 (1.3),
+	src/bnetd/command.c (1.3), src/bnetd/handle_bnet.c (1.11),
+	src/bnetd/prefs.c (1.5), src/bnetd/prefs.h (1.4),
+	src/client/bnchat.c (1.7), src/client/client_connect.c (1.4),
+	src/common/bnet_protocol.h (1.11), src/common/setup_before.h (1.3):
+	
+	Small updates to protocol headers.  Applied mail patch from Dizzy. 
+	Fixed Denis' name in the CREDITS file.
+
+2001-07-08 14:08  hakan
+
+	* src/common/bnet_protocol.h (1.10): Correct CLIENT_AUTHREQ_EXEINFO
+	for Diablo II LOD
+
+2001-07-08 12:47  hakan
+
+	* src/: bnetd/handle_bnet.c (1.10), common/auth_protocol.h (1.5),
+	common/bnet_protocol.h (1.9), common/packet.c (1.4),
+	common/packet.h (1.4): identified UNKNOWN_35 as REALMJOIN REQ/REPLY
+
+2001-07-08 12:45  hakan
+
+	* src/bnetd/game_conv.c (1.3): For now, handle Diablo II LOD the
+	same as Diablo II
+
+2001-07-07 22:33  hakan
+
+	* man/bnpcap.1 (1.3): Added required parameters for tcpdump(1)
+
+2001-07-07 22:24  hakan
+
+	* man/bnpcap.1 (1.2): First cut at a manpage
+
+2001-07-07 21:55  hakan
+
+	* man/bnpcap.1 (1.1): Empty shell for now
+
+2001-07-07 21:23  hakan
+
+	* src/config.h.in (1.5): For some reason, the check for SYS_TIME_H
+	moved after SYS_TIMEB_H
+
+2001-07-07 11:13  rcombs
+
+	* src/: bnetd/connection.c (1.8), bnetd/connection.h (1.3),
+	bnetd/handle_bot.c (1.4), bnetd/handle_telnet.c (1.4),
+	bnetd/message.c (1.5), common/bnet_protocol.h (1.8),
+	common/bot_protocol.h (1.3): 
+	Added more protocol info.  Fixed the issue handling in message.c. 
+	Now a setting of zero seconds for nullmsgs means to disable them.
+
+2001-07-07 09:47  rcombs
+
+	* CHANGELOG (1.7), conf/bnetd.conf.in (1.6), conf/bnetd.conf.win32
+	(1.3), src/bnetd/bits_chat.c (1.2), src/bnetd/bits_motd.c (1.3),
+	src/bnetd/bits_query.c (1.6), src/bnetd/channel.c (1.5),
+	src/bnetd/channel.h (1.3), src/bnetd/command.c (1.2),
+	src/bnetd/connection.c (1.7), src/bnetd/handle_bits.c (1.6),
+	src/bnetd/handle_bnet.c (1.9), src/bnetd/handle_bot.c (1.3),
+	src/bnetd/handle_telnet.c (1.3), src/bnetd/helpfile.c (1.2),
+	src/bnetd/message.c (1.4), src/bnetd/message.h (1.2),
+	src/bnetd/prefs.c (1.4), src/bnetd/prefs.h (1.3),
+	src/bnetd/server.c (1.4), src/bnetd/watch.c (1.2),
+	src/client/bnchat.c (1.6), src/common/bnet_protocol.h (1.7),
+	src/common/bot_protocol.h (1.2), src/common/setup_before.h (1.2),
+	src/common/version.h (1.3): 
+	Updated CHANGELOG.  Lots of message changes..  mostly mindless
+	search and replace stuff.  Bots now get those NULL messages every 2
+	minutes like on Battle.net.
+
+2001-07-05 00:19  uid28408
+
+	* docs/FAQ.html (1.12): 
+	Added admin privilege question and updated some of the URLs at
+	bnetd.org.
+
+2001-07-04 22:56  uid28408
+
+	* TODO (1.2): 
+	Removed completed items and clarified some others.
+
+2001-07-04 20:48  uid49757
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.21): rpmlint sez that
+	'Copyright' is superseded by 'License'
+
+2001-07-04 20:11  uid49757
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.20): Use Mandrake's
+	post/preun and %serverbuild macros
+
+2001-07-04 19:44  uid49757
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.19): Use Mandrake's
+	post/preun macros
+
+2001-07-04 19:34  uid49757
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.18): More Mandrake-rpmlint
+	work
+
+2001-07-04 19:05  uid49757
+
+	* scripts/bnetd.init (1.3): rpmlint demands 'reload' in the init
+	script
+
+2001-07-04 18:35  uid49757
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.17): Mandrake-rpmlint
+	acceptable 'Group'
+
+2001-07-04 11:03  uid28408
+
+	* src/bnetd/prefs.c (1.3): 
+	Bumped the upper limits up a little on the quota options.
+
+2001-07-04 11:02  uid28408
+
+	* src/: configure (1.2), configure.in (1.2): 
+	Checking in the autoconf portion of the changes to
+	src/common/give_up_root_privileges.c.
+
+2001-07-04 10:34  uid28408
+
+	* CREDITS (1.4), conf/autoupdate (1.2), src/bnetd/autoupdate.c
+	(1.2), src/bnetd/autoupdate.h (1.2), src/bnetd/handle_bnet.c (1.8):
+	
+	Added patch from Fred Wittekind for autoupdate version ranges. 
+	Adds new optional min and max fields to the autoupdate file. 
+	Modifed the patch a little to avoid floats and also changed version
+	parsing.  Dotted version numbers can be used in addition to the
+	abbreviated style (1.0.7.0 vs 107).
+
+2001-07-04 07:22  rcombs
+
+	* conf/: bnetd.conf.in (1.5), bnetd.conf.win32 (1.2): 
+	Increased default channel quotas and updated the BITS section of
+	the Win32 config file.
+
+2001-07-04 05:56  rcombs
+
+	* src/client/bnstat.c (1.2): 
+	Added Diablo II and Diablo II : LoD tags to command line options.
+
+2001-07-04 05:41  rcombs
+
+	* src/client/bnftp.c (1.2): 
+	Added Diablo II and Diablo II : LoD tags to command line options.
+
+2001-07-03 00:19  hakan
+
+	* conf/channel.list (1.3), src/client/bnchat.c (1.5): Oops, the
+	Diablo II Expansion Pack demands only the original Diablo II
+	channel
+
+2001-07-03 00:15  hakan
+
+	* src/: bnetd/character.c (1.2), bnetd/character.h (1.2),
+	bnetd/connection.c (1.6), bnetd/handle_auth.c (1.3),
+	common/auth_protocol.h (1.4), common/bnet_protocol.h (1.6): Add the
+	D2XP characters Druid and Assassin
+
+2001-07-03 00:09  hakan
+
+	* src/.cvsignore (1.2): Ignore object files
+
+2001-07-02 19:13  hakan
+
+	* src/bnetd/handle_bnet.c (1.7): Handle the new Diablo II Extension
+	Pack tag in CLIENT_PROGIDENT2 too
+
+2001-07-02 15:18  hakan
+
+	* src/: client/bnchat.c (1.4), common/bnet_protocol.h (1.5): Diablo
+	II requests 'unicode' files, simulate that in bnchat too.
+
+2001-07-02 15:16  hakan
+
+	* conf/channel.list (1.2), src/client/bnchat.c (1.3): Shorter Name
+	and new Channel for Diablo II Expansion Pack
+
+2001-07-02 14:56  hakan
+
+	* src/bnetd/handle_bnet.c (1.6): Added Client Tag for Diablo II
+	Expansion Pack
+
+2001-07-02 13:43  hakan
+
+	* CHANGELOG (1.6), src/client/bnchat.c (1.2),
+	src/client/client_connect.c (1.3), src/common/bnet_protocol.h
+	(1.4), src/common/tag.h (1.2): Added Client Tag for Diablo II
+	Expansion Pack
+
+2001-07-02 10:22  rcombs
+
+	* docs/FAQ.html (1.11): 
+	Err.. I don't feel like typing the changelog again.  CVS race
+	conditions suck :)
+
+2001-07-02 02:24  rcombs
+
+	* src/: bnetd/handle_bnet.c (1.5), common/bnet_protocol.h (1.3),
+	common/packet.c (1.3), common/packet.h (1.3): 
+	Added CDKEY3 support for newer versions of Diablo II.
+
+2001-07-01 23:38  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.16): Explicitly set version
+	in the packaged binary
+
+2001-07-01 16:02  hakan
+
+	* docs/FAQ.html (1.10): Added Question & Answer about Diablo II
+	1.08
+
+2001-07-01 15:54  hakan
+
+	* docs/FAQ.html (1.9): Small typo
+
+2001-07-01 09:32  rcombs
+
+	* src/bnpcap/: Makefile (1.2), bnpcap.c (1.2): 
+	Added define in Makefile to fix autoconf usage.  Added -I option to
+	compile on Red Hat systems where pcap.h is in a subdirectory.
+
+2001-07-01 08:57  rcombs
+
+	* src/common/give_up_root_privileges.c (1.5): 
+	Oops, accidently added compat/exitstatus.h after removing exit
+	calls.
+
+2001-07-01 08:53  rcombs
+
+	* src/: config.h.in (1.4), config.h.win32 (1.2), bnetd/main.c
+	(1.4), common/give_up_root_privileges.c (1.4),
+	common/give_up_root_privileges.h (1.2): 
+	Added autoconf checks for headers and functions used in
+	give_up_root_privileges.  Fixed header includes. Fixed reversed
+	error checks in gurp_[ug]name2id.  Removed exits in preference to
+	adding return values.  Removed use of prefs.h so the function can
+	be used in other programs (bntrackd is a candidate).
+
+2001-07-01 04:25  rcombs
+
+	* docs/FAQ.html (1.8): 
+	Updated information about mailiing lists.  Increased table spacing.
+
+2001-06-30 14:29  typhoon
+
+	* src/bnpcap/: Makefile (1.1), bnpcap.c (1.1): Added bnpcap to the
+	bnetd tree: hack alert :)
+
+2001-06-30 08:06  rcombs
+
+	* src/bntrackd/bntrackd.c (1.2): 
+	Fixed debug message logic now that eventlog defaults to including
+	debug.
+
+2001-06-30 03:29  rcombs
+
+	* docs/FAQ.html (1.7): 
+	Added autoupdate question; reworded Diablo answer.
+
+2001-06-29 21:05  hakan
+
+	* docs/README.storage (1.3): Keep nice idea of Mihai in safe
+	storage
+
+2001-06-29 21:04  hakan
+
+	* docs/README.storage (1.2): First ideas on the back of a napkin
+
+2001-06-29 21:02  rcombs
+
+	* scripts/reform.awk (1.1): 
+	Simple tcpdump to hexdump conversion program.  Decided to include
+	in the distribution so it gets change control.
+
+2001-06-29 20:51  hakan
+
+	* docs/README.storage (1.1): Start some documentation for the
+	proposed storage API
+
+2001-06-29 17:12  hakan
+
+	* src/bnetd/server.c (1.3): Memento: we should be able to reload
+	the realm list, too
+
+2001-06-29 16:59  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.15): Only remove
+	RPM_BUILD_ROOT if it was not /
+
+2001-06-29 15:41  hakan
+
+	* packaging/Mandrake/8.0/bnetd-snapshot-diffs (1.3): In the
+	"neutral" distribution, user & group will not be changed, but for
+	the Mandrake distribution, the daemon will change privileges to
+	games.games
+
+2001-06-29 08:53  rcombs
+
+	* src/bnetd/game_conv.c (1.2): 
+	Added support for Starcraft/Brood War Top vs. Bottom games in
+	conversion routines.
+
+2001-06-29 08:52  rcombs
+
+	* src/common/give_up_root_privileges.c (1.3): 
+	No C++ comments in .c files :)
+
+2001-06-29 08:51  rcombs
+
+	* conf/bnetd.conf.in (1.4): 
+	UID/GID changed commented out by default (broke on systems where
+	bnetd was started by non-root users or on systems without games
+	user and games group).
+
+2001-06-29 08:17  rcombs
+
+	* CREDITS (1.3): 
+	Added Eurijk! credits.
+
+2001-06-29 08:17  rcombs
+
+	* CHANGELOG (1.5): [no log message]
+
+2001-06-29 08:13  rcombs
+
+	* src/common/bnet_protocol.h (1.2): 
+	Added new info on CLIENT_CDKEY2.
+
+2001-06-29 08:13  rcombs
+
+	* src/client/client_connect.c (1.2): 
+	Added partial support for encrypted cdkeys.
+
+2001-06-28 23:17  hakan
+
+	* packaging/Mandrake/8.0/bnetd-snapshot-diffs (1.2): New options in
+	bnetd.conf.in change the diff file
+
+2001-06-28 22:50  hakan
+
+	* conf/bnetd.conf.in (1.3): Typo in bnetd.conf: you need blanks
+	around the '=' sign
+
+2001-06-28 22:31  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.14): For now, distibute
+	without BITS
+
+2001-06-28 22:25  hakan
+
+	* src/common/give_up_root_privileges.h (1.1): Oops, forgot to check
+	in the header file
+
+2001-06-28 22:18  hakan
+
+	* src/common/give_up_root_privileges.c (1.2): split out the
+	functions for turning group/user names to ids.
+
+2001-06-28 22:07  hakan
+
+	* CHANGELOG (1.4), conf/bnetd.conf.in (1.2), src/Makefile.in (1.2),
+	src/bnetd/main.c (1.3), src/bnetd/prefs.c (1.2), src/bnetd/prefs.h
+	(1.2), src/common/give_up_root_privileges.c (1.1): Added options to
+	automatically change user/group of the server; that way we don't
+	need to su(1) in the startup script anymore.
+
+2001-06-28 20:27  hakan
+
+	* packaging/Mandrake/8.0/bnetd-snapshot-diffs (1.1): The snapshots
+	should really have their own set of patches. Copy this file to the
+	"real" filename (bnetd-<release>-patches) on release.
+
+2001-06-26 21:06  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.13): Various specfile
+	hackery
+
+2001-06-26 20:37  hakan
+
+	* packaging/Mandrake/8.0/bnetd-0.4.25pre3-diffs (1.2): FHS 2.2
+	wants games data in /var/games
+
+2001-06-26 19:17  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.12): FHS 2.2 wants games
+	data in /var/games
+
+2001-06-26 18:58  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.11): TOS for Diablo II, have
+	to fix that in source tree for the next release
+
+2001-06-26 18:46  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.10): I just forgot the
+	manpages ;-)
+
+2001-06-25 22:47  rcombs
+
+	* docs/FAQ.html (1.6): 
+	Oops... the answer for the Diablo question was missing.  Filled in.
+	 Removed confusing use of the term netfilter and instead used the
+	term iptables.
+
+2001-06-25 21:57  hakan
+
+	* packaging/Mandrake/8.0/: bnetd.spec (1.9), bnetd-0.4.25pre3-diffs
+	(1.1): Compiling & installing 0.4.25pre3 works
+
+2001-06-25 21:46  hakan
+
+	* packaging/: README (1.2), README.packaging (1.1): Adapted the
+	packaging blurb from Samba 2.2.1
+
+2001-06-25 21:36  hakan
+
+	* src/common/version.h (1.2): Ross released a new Prerelease,
+	25pre3
+
+2001-06-25 13:54  hakan
+
+	* docs/FAQ.html (1.5): Added link to the snapshot directory on the
+	SF FTP Server
+
+2001-06-25 11:29  hakan
+
+	* docs/FAQ.html (1.4): Put direct links into the CVS tree
+
+2001-06-25 09:44  rcombs
+
+	* scripts/S98bnetd (1.1): 
+	This is the startup script I use which is nice because it drops
+	root privileges, uses signals instead of killing the server, and
+	avoids killing other programs named bnetd.
+
+2001-06-25 09:38  rcombs
+
+	* CHANGELOG (1.3): [no log message]
+
+2001-06-25 00:54  rcombs
+
+	* src/bnetd/connection.c (1.5): 
+	Update conn_set_game() to set game to NULL after leaving.
+
+2001-06-25 00:50  rcombs
+
+	* docs/FAQ.html (1.3): 
+	Fixed table problem, added BNS vs 1.08 patches question.
+
+2001-06-25 00:45  rcombs
+
+	* docs/README.diablo108 (1.2): 
+	Updated with Win2K information.
+
+2001-06-25 00:32  rcombs
+
+	* docs/FAQ.html (1.2): 
+	Added mailing list and project death questions.  Major updates to
+	the firewall question.
+
+2001-06-24 23:22  typhoon
+
+	* src/bnetd/bits_game.c (1.6): Just a quick fix for
+	bits_patch-0.4.25pre2-4
+
+2001-06-24 21:25  typhoon
+
+	* src/: bnetd/bits_game.c (1.5), bnetd/bits_game.h (1.4),
+	bnetd/bits_query.c (1.5), bnetd/channel.c (1.4), bnetd/connection.c
+	(1.4), bnetd/game.c (1.3), bnetd/handle_bits.c (1.5),
+	bnetd/handle_bnet.c (1.4), common/bits_protocol.h (1.5): Applied
+	bits_patch-0.4.25pre2-4:  - added support for the (historic?)
+	STARTGAME1 and STARTGAME3 requests  - fixed many bugs concerning
+	bits gameplay (some are still left ...)
+
+2001-06-24 02:29  typhoon
+
+	* docs/README.bits (1.3), src/bnetd/bits_game.c (1.4),
+	src/bnetd/bits_game.h (1.3), src/bnetd/bits_query.c (1.4),
+	src/bnetd/bits_query.h (1.4), src/bnetd/connection.c (1.3),
+	src/bnetd/connection.h (1.2), src/bnetd/handle_bits.c (1.4),
+	src/common/bits_protocol.h (1.4): Applied bits_patch-0.4.25pre2-3: 
+	- cleaned up conn_set_game() function, put BITS part into
+	conn_set_game_bits()  - obsoleted game option changes of last patch
+	(some reverted)
+
+2001-06-23 20:59  rcombs
+
+	* src/: bnetd/bits_game.c (1.3), bnetd/bits_game.h (1.2),
+	bnetd/bits_query.c (1.3), bnetd/bits_query.h (1.3), bnetd/channel.h
+	(1.2), bnetd/game.h (1.2), bnetd/game_rule.c (1.2),
+	bnetd/game_rule.h (1.2), bnetd/handle_bits.c (1.3),
+	bnetd/handle_bnet.c (1.3), common/auth_protocol.h (1.3),
+	common/bits_protocol.h (1.3): 
+	Latest BITS update from Typhoon.  It implements game options and
+	adds lots of comments.
+
+2001-06-22 15:10  hakan
+
+	* .cvsignore (1.1): Auto-generated ChangeLog (from CVS history)
+
+2001-06-21 23:01  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-0.4.25pre2-diffs (1.1), bnetd.spec
+	(1.8): Compiling & installing 0.4.25pre2 works
+
+2001-06-21 22:14  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-0.4.25pre1-diffs (1.1), bnetd.spec
+	(1.7): Compiling & installing 0.4.25pre1 works
+
+2001-06-21 21:48  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.6): Add the logrotater and
+	the init script, too
+
+2001-06-21 21:33  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-0.4.24-diffs (1.1), bnetd.spec
+	(1.5): Compiling & installing 0.4.24 works
+
+2001-06-21 21:02  hakan
+
+	* files/tos_DEU.txt (1.1): For now, just a copy of the USA Terms of
+	Service ;-)
+
+2001-06-21 20:25  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-0.4-diffs (1.3), bnetd.spec (1.4):
+	0.4 working; 0.4.24 comes next...
+
+2001-06-21 19:45  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-0.4-diffs (1.2), bnetd.spec (1.3):
+	Installing works, lets see if we've got a running daemon
+
+2001-06-21 19:09  hakan
+
+	* scripts/bnetd.init (1.2): Fixed Email address
+
+2001-06-21 19:07  hakan
+
+	* packaging/Mandrake/8.0/: bnetd-0.4-diffs (1.1), bnetd.spec (1.2):
+	Compiling 0.4 works, now lets install it
+
+2001-06-21 18:25  hakan
+
+	* packaging/Mandrake/8.0/bnetd.spec (1.1): Bare-Bones entry from
+	Mandrake Spec-Helper
+
+2001-06-21 08:06  rcombs
+
+	* CHANGELOG (1.2): [no log message]
+
+2001-06-21 08:00  rcombs
+
+	* src/bnetd/: channel.c (1.3), message.c (1.3): 
+	Fixed malloc(0) and missing message_destroy().
+
+2001-06-21 07:52  rcombs
+
+	* src/bnetd/handle_auth.c (1.2): 
+	Added support for unknown auth packet 17.
+
+2001-06-21 07:51  rcombs
+
+	* src/common/: auth_protocol.h (1.2), packet.c (1.2), packet.h
+	(1.2): 
+	Added unknown auth packet 17.
+
+2001-06-18 21:55  hakan
+
+	* packaging/README (1.1): Adapted the packaging blurb from Samba
+	2.2.1
+
+2001-06-09 00:44  typhoon
+
+	* docs/README.bits (1.2), src/bnetd/account.c (1.2),
+	src/bnetd/bits.c (1.2), src/bnetd/bits.h (1.2),
+	src/bnetd/bits_ext.c (1.2), src/bnetd/bits_game.c (1.2),
+	src/bnetd/bits_login.c (1.2), src/bnetd/bits_motd.c (1.2),
+	src/bnetd/bits_query.c (1.2), src/bnetd/bits_query.h (1.2),
+	src/bnetd/bits_rconn.c (1.2), src/bnetd/bits_va.c (1.2),
+	src/bnetd/bits_va.h (1.2), src/bnetd/channel.c (1.2),
+	src/bnetd/connection.c (1.2), src/bnetd/game.c (1.2),
+	src/bnetd/handle_bits.c (1.2), src/bnetd/handle_bnet.c (1.2),
+	src/bnetd/handle_bot.c (1.2), src/bnetd/handle_telnet.c (1.2),
+	src/bnetd/main.c (1.2), src/bnetd/message.c (1.2),
+	src/bnetd/server.c (1.2), src/common/bits_protocol.h (1.2): Applied
+	bits_patch-0.4.25pre2-1:  - Rewrote the query system  - fixed some
+	minor bugs (eg. crash if bits_init() fails)  - introduced
+	bits_master
+
+2001-05-20 01:33  rcombs
+
+	* src/common/introtate.h (1.2): 
+	Fixed fourth (default) variant to use modulo so that shifts by
+	greater than variable width with are portable.	This was a
+	regression since this bug had previously been fixed in bnethash.c
+	before the rotate macro was moved to introtate.h.
+
+2001-04-30 17:55  hakan
+
+	* CREDITS (1.2): updated current email adress
+
+2001-04-26 18:17  hakan
+
+	* src/config.h.in (1.3): Re-Appeared sometime...
+
+2001-04-26 18:13  hakan
+
+	* src/.cvsignore (1.1): Ignore the results of configure
+
+2001-04-26 17:54  hakan
+
+	* CHANGELOG (1.1.1.26), CREDITS (1.1.1.15), conf/bnetd.conf.in
+	(1.1.1.5), conf/bnetd.conf.win32 (1.1.1.4), conf/bnetd_default_user
+	(1.1.1.10), src/autoconf/ansi2knr.c (1.1.1.2), src/autoconf/mkdir-p
+	(1.1.1.2), src/bnetd/account.c (1.1.1.2), src/bnetd/account_wrap.h
+	(1.1.1.2), src/bnetd/command.c (1.1.1.3), src/bnetd/connection.c
+	(1.1.1.3), src/bnetd/connection.h (1.1.1.2), src/bnetd/file.c
+	(1.1.1.2), src/bnetd/game.c (1.1.1.2), src/bnetd/game_conv.c
+	(1.1.1.2), src/bnetd/game_rule.c (1.1.1.2), src/bnetd/helpfile.c
+	(1.1.1.3), src/bnetd/main.c (1.1.1.2), src/bnetd/message.c
+	(1.1.1.3), src/bnetd/runprog.c (1.1.1.2), src/bniutils/tga.h
+	(1.1.1.2), src/bnproxy/bnproxy.c (1.1.1.2), src/bntrackd/bntrackd.c
+	(1.1.1.3), src/common/auth_protocol.h (1.1.1.2),
+	src/common/bits_protocol.h (1.1.1.3), src/common/bnet_protocol.h
+	(1.1.1.3), src/common/eventlog.c (1.1.1.2), src/common/eventlog.h
+	(1.1.1.2), src/common/setup_after.h (1.1.1.2),
+	src/common/setup_before.h (1.1.1.3), src/common/version.h
+	(1.1.1.3), src/compat/exitstatus.h (1.1.1.2),
+	src/compat/gethostname.h (1.1.1.3), src/compat/gettimeofday.c
+	(1.1.1.3), src/compat/psock.h (1.1.1.5), src/compat/recv.h
+	(1.1.1.4), src/compat/send.h (1.1.1.4), src/compat/signal.h
+	(1.1.1.2), src/compat/socket.h (1.1.1.3), src/compat/strchr.h
+	(1.1.1.3), src/compat/strerror.c (1.1.1.5), src/compat/strrchr.h
+	(1.1.1.3), src/compat/uint.h (1.1.1.2), src/debug/sbnetd.c
+	(1.1.1.2): Importing historical release 0.4.25pre2
+
+2001-04-26 17:53  hakan
+
+	* conf/bits_motd (1.1), src/bnetd/bits_motd.c (1.1),
+	src/bnetd/bits_motd.h (1.1): Initial revision
+
+2001-04-26 17:53  hakan
+
+	* CHANGELOG (1.1.1.25), INSTALL (1.1.1.25), README (1.1.1.26), TODO
+	(1.1.1.21), conf/bits_motd (1.1.1.1), conf/bits_passwd (1.1.1.3),
+	conf/bnetd.conf.in (1.1.1.4), conf/bnetd.conf.win32 (1.1.1.3),
+	docs/README.BORLAND (1.1.1.2), docs/README.bits (1.1.1.2),
+	src/Makefile.BORLAND (1.1.1.3), src/Makefile.in (1.1.1.12),
+	src/config.h.win32 (1.1.1.2), src/bnetd/bits.c (1.1.1.2),
+	src/bnetd/bits.h (1.1.1.2), src/bnetd/bits_chat.c (1.1.1.2),
+	src/bnetd/bits_ext.c (1.1.1.2), src/bnetd/bits_game.c (1.1.1.2),
+	src/bnetd/bits_login.c (1.1.1.2), src/bnetd/bits_login.h (1.1.1.2),
+	src/bnetd/bits_motd.c (1.1.1.1), src/bnetd/bits_motd.h (1.1.1.1),
+	src/bnetd/bits_query.c (1.1.1.2), src/bnetd/bits_rconn.c (1.1.1.2),
+	src/bnetd/bits_rconn.h (1.1.1.2), src/bnetd/channel.c (1.1.1.2),
+	src/bnetd/command.c (1.1.1.2), src/bnetd/connection.c (1.1.1.2),
+	src/bnetd/handle_bits.c (1.1.1.2), src/bnetd/handle_bnet.c
+	(1.1.1.2), src/bnetd/handle_bot.c (1.1.1.2),
+	src/bnetd/handle_telnet.c (1.1.1.2), src/bnetd/helpfile.c
+	(1.1.1.2), src/bnetd/message.c (1.1.1.2), src/bnetd/message.h
+	(1.1.1.2), src/bnetd/prefs.c (1.1.1.2), src/bnetd/prefs.h
+	(1.1.1.2), src/bnetd/server.c (1.1.1.2), src/bnetd/watch.c
+	(1.1.1.2), src/bniutils/bniextract.c (1.1.1.2),
+	src/bntrackd/bntrackd.c (1.1.1.2), src/client/bnchat.c (1.1.1.2),
+	src/common/bits_protocol.h (1.1.1.2), src/common/bnet_protocol.h
+	(1.1.1.2), src/common/hashtable.c (1.1.1.2), src/common/packet.c
+	(1.1.1.2), src/common/packet.h (1.1.1.2), src/common/setup_before.h
+	(1.1.1.2), src/common/version.h (1.1.1.2), src/compat/mkdir.h
+	(1.1.1.2): Importing historical release 0.4.25pre1
+
+2001-04-26 17:46  hakan
+
+	* CHANGE_BUCKY (1.2), CHANGE_VAP (1.2), README.BORLAND (1.2),
+	README.adbanner (1.2), README.bits (1.2), README.debugging (1.2),
+	README.ladder (1.2), TODO_BUCKY (1.2), TODO_VAP (1.2),
+	include/account.h (1.2), include/account_wrap.h (1.2),
+	include/adbanner.h (1.2), include/addr.h (1.2), include/ansi_term.h
+	(1.2), include/auth_protocol.h (1.2), include/autoupdate.h (1.2),
+	include/bits.h (1.2), include/bits_chat.h (1.2), include/bits_ext.h
+	(1.2), include/bits_net.h (1.2), include/bits_packet.h (1.2),
+	include/bits_protocol.h (1.2), include/bits_query.h (1.2),
+	include/bits_rconn.h (1.2), include/bits_va.h (1.2),
+	include/bn_type.h (1.2), include/bnet_protocol.h (1.2),
+	include/bnethash.h (1.2), include/bnethashconv.h (1.2),
+	include/bnettime.h (1.2), include/bot_protocol.h (1.2),
+	include/channel.h (1.2), include/client.h (1.2),
+	include/client_connect.h (1.2), include/command.h (1.2),
+	include/config.h.in (1.2), include/config.h.win32 (1.2),
+	include/connection.h (1.2), include/d2char_file.h (1.2),
+	include/eventlog.h (1.2), include/field_sizes.h (1.2),
+	include/file.h (1.2), include/file_protocol.h (1.2), include/game.h
+	(1.2), include/game_conv.h (1.2), include/gametrans.h (1.2),
+	include/handle_auth.h (1.2), include/handle_bits.h (1.2),
+	include/handle_bot.h (1.2), include/handle_file.h (1.2),
+	include/handle_init.h (1.2), include/handle_normal.h (1.2),
+	include/handle_udp.h (1.2), include/helpfile.h (1.2),
+	include/hexdump.h (1.2), include/init_protocol.h (1.2),
+	include/ipban.h (1.2), include/ladder.h (1.2), include/list.h
+	(1.2), include/message.h (1.2), include/network.h (1.2),
+	include/packet.h (1.2), include/prefs.h (1.2), include/queue.h
+	(1.2), include/runprog.h (1.2), include/server.h (1.2),
+	include/setup.h (1.2), include/tag.h (1.2), include/tick.h (1.2),
+	include/timer.h (1.2), include/tracker.h (1.2),
+	include/udp_protocol.h (1.2), include/udptest.h (1.2),
+	include/util.h (1.2), include/version.h (1.2), include/virtconn.h
+	(1.2), include/watch.h (1.2), src/account.c (1.2),
+	src/account_wrap.c (1.2), src/adbanner.c (1.2), src/addr.c (1.2),
+	src/autoupdate.c (1.2), src/bits.c (1.2), src/bits_chat.c (1.2),
+	src/bits_ext.c (1.2), src/bits_net.c (1.2), src/bits_packet.c
+	(1.2), src/bits_query.c (1.2), src/bits_rconn.c (1.2),
+	src/bits_va.c (1.2), src/bn_type.c (1.2), src/bnbot.c (1.2),
+	src/bnchat.c (1.2), src/bnethash.c (1.2), src/bnethashconv.c (1.2),
+	src/bnettime.c (1.2), src/bnftp.c (1.2), src/bnpass.c (1.2),
+	src/bnproxy.c (1.2), src/bnstat.c (1.2), src/channel.c (1.2),
+	src/client.c (1.2), src/client_connect.c (1.2), src/command.c
+	(1.2), src/connection.c (1.2), src/d2char_file.c (1.2),
+	src/eventlog.c (1.2), src/file.c (1.2), src/game.c (1.2),
+	src/game_conv.c (1.2), src/gametrans.c (1.2), src/handle_auth.c
+	(1.2), src/handle_bits.c (1.2), src/handle_bot.c (1.2),
+	src/handle_file.c (1.2), src/handle_init.c (1.2),
+	src/handle_normal.c (1.2), src/handle_udp.c (1.2), src/helpfile.c
+	(1.2), src/hexdump.c (1.2), src/ipban.c (1.2), src/ladder.c (1.2),
+	src/list.c (1.2), src/main.c (1.2), src/message.c (1.2),
+	src/network.c (1.2), src/packet.c (1.2), src/prefs.c (1.2),
+	src/queue.c (1.2), src/runprog.c (1.2), src/server.c (1.2),
+	src/tick.c (1.2), src/timer.c (1.2), src/tracker.c (1.2),
+	src/udptest.c (1.2), src/util.c (1.2), src/virtconn.c (1.2),
+	src/watch.c (1.2): No more present in 0.4.24
+
+2001-04-26 17:43  hakan
+
+	* conf/bnissue.txt (1.1), conf/realm.list (1.1), files/tos_USA.txt
+	(1.1), man/bni2tga.1 (1.1), man/bnibuild.1 (1.1), man/bniextract.1
+	(1.1), man/bnilist.1 (1.1), man/bntrackd.1 (1.1), man/tgainfo.1
+	(1.1), scripts/process.pl (1.1), src/config.h.win32 (1.1),
+	src/bnproxy/Makefile (1.1), src/bnproxy/bnproxy.c (1.1),
+	src/bnproxy/virtconn.c (1.1), src/bnproxy/virtconn.h (1.1),
+	src/bntrackd/Makefile (1.1), src/bntrackd/bntrackd.c (1.1),
+	src/compat/char_bit.h (1.1), src/compat/exitstatus.h (1.1),
+	src/compat/mkdir.h (1.1), src/compat/nls.h (1.1), src/compat/read.h
+	(1.1), src/compat/seek.h (1.1), src/compat/statmacros.h (1.1),
+	src/compat/stdfileno.h (1.1), src/compat/termios.h (1.1),
+	src/compat/uint.h (1.1), docs/CHANGES_BNIUTILS (1.1),
+	docs/CHANGE_BUCKY (1.1), docs/CHANGE_VAP (1.1), docs/FAQ.html
+	(1.1), docs/README.BORLAND (1.1), docs/README.adbanner (1.1),
+	docs/README.bits (1.1), docs/README.bni (1.1),
+	docs/README.debugging (1.1), docs/README.diablo108 (1.1),
+	docs/README.ladder (1.1), docs/README.registry (1.1),
+	docs/TODO_BUCKY (1.1), docs/TODO_VAP (1.1), docs/bniheader.txt
+	(1.1), src/autoconf/ansi2knr.c (1.1), src/autoconf/ccstdc.m4 (1.1),
+	src/autoconf/termios.m4 (1.1), src/autoconf/winsz.m4 (1.1),
+	src/bnetd/Makefile (1.1), src/bnetd/account.c (1.1),
+	src/bnetd/account.h (1.1), src/bnetd/account_wrap.c (1.1),
+	src/bnetd/account_wrap.h (1.1), src/bnetd/adbanner.c (1.1),
+	src/bnetd/adbanner.h (1.1), src/bnetd/autoupdate.c (1.1),
+	src/bnetd/autoupdate.h (1.1), src/bnetd/bits.c (1.1),
+	src/bnetd/bits.h (1.1), src/bnetd/bits_chat.c (1.1),
+	src/bnetd/bits_chat.h (1.1), src/bnetd/bits_ext.c (1.1),
+	src/bnetd/bits_ext.h (1.1), src/bnetd/bits_game.c (1.1),
+	src/bnetd/bits_game.h (1.1), src/bnetd/bits_login.c (1.1),
+	src/bnetd/bits_login.h (1.1), src/bnetd/bits_net.c (1.1),
+	src/bnetd/bits_net.h (1.1), src/bnetd/bits_packet.c (1.1),
+	src/bnetd/bits_packet.h (1.1), src/bnetd/bits_query.c (1.1),
+	src/bnetd/bits_query.h (1.1), src/bnetd/bits_rconn.c (1.1),
+	src/bnetd/bits_rconn.h (1.1), src/bnetd/bits_va.c (1.1),
+	src/bnetd/bits_va.h (1.1), src/bnetd/channel.c (1.1),
+	src/bnetd/channel.h (1.1), src/bnetd/character.c (1.1),
+	src/bnetd/character.h (1.1), src/bnetd/command.c (1.1),
+	src/bnetd/command.h (1.1), src/bnetd/connection.c (1.1),
+	src/bnetd/connection.h (1.1), src/bnetd/file.c (1.1),
+	src/bnetd/file.h (1.1), src/bnetd/game.c (1.1), src/bnetd/game.h
+	(1.1), src/bnetd/game_conv.c (1.1), src/bnetd/game_conv.h (1.1),
+	src/bnetd/game_rule.c (1.1), src/bnetd/game_rule.h (1.1),
+	src/bnetd/gametrans.c (1.1), src/bnetd/gametrans.h (1.1),
+	src/bnetd/handle_auth.c (1.1), src/bnetd/handle_auth.h (1.1),
+	src/bnetd/handle_bits.c (1.1), src/bnetd/handle_bits.h (1.1),
+	src/bnetd/handle_bnet.c (1.1), src/bnetd/handle_bnet.h (1.1),
+	src/bnetd/handle_bot.c (1.1), src/bnetd/handle_bot.h (1.1),
+	src/bnetd/handle_file.c (1.1), src/bnetd/handle_file.h (1.1),
+	src/bnetd/handle_init.c (1.1), src/bnetd/handle_init.h (1.1),
+	src/bnetd/handle_telnet.c (1.1), src/bnetd/handle_telnet.h (1.1),
+	src/bnetd/handle_udp.c (1.1), src/bnetd/handle_udp.h (1.1),
+	src/bnetd/helpfile.c (1.1), src/bnetd/helpfile.h (1.1),
+	src/bnetd/ipban.c (1.1), src/bnetd/ipban.h (1.1),
+	src/bnetd/ladder.c (1.1), src/bnetd/ladder.h (1.1),
+	src/bnetd/ladder_calc.c (1.1), src/bnetd/ladder_calc.h (1.1),
+	src/bnetd/main.c (1.1), src/bnetd/message.c (1.1),
+	src/bnetd/message.h (1.1), src/bnetd/prefs.c (1.1),
+	src/bnetd/prefs.h (1.1), src/bnetd/quota.h (1.1), src/bnetd/realm.c
+	(1.1), src/bnetd/realm.h (1.1), src/bnetd/runprog.c (1.1),
+	src/bnetd/runprog.h (1.1), src/bnetd/server.c (1.1),
+	src/bnetd/server.h (1.1), src/bnetd/tick.c (1.1), src/bnetd/tick.h
+	(1.1), src/bnetd/timer.c (1.1), src/bnetd/timer.h (1.1),
+	src/bnetd/tracker.c (1.1), src/bnetd/udptest_send.c (1.1),
+	src/bnetd/udptest_send.h (1.1), src/bnetd/watch.c (1.1),
+	src/bnetd/watch.h (1.1), src/bniutils/Makefile (1.1),
+	src/bniutils/bni.c (1.1), src/bniutils/bni.h (1.1),
+	src/bniutils/bni2tga.c (1.1), src/bniutils/bnibuild.c (1.1),
+	src/bniutils/bniextract.c (1.1), src/bniutils/bnilist.c (1.1),
+	src/bniutils/fileio.c (1.1), src/bniutils/fileio.h (1.1),
+	src/bniutils/tga.c (1.1), src/bniutils/tga.h (1.1),
+	src/bniutils/tgainfo.c (1.1), src/bnpass/Makefile (1.1),
+	src/bnpass/bnpass.c (1.1), src/client/Makefile (1.1),
+	src/client/ansi_term.h (1.1), src/client/bnbot.c (1.1),
+	src/client/bnchat.c (1.1), src/client/bnftp.c (1.1),
+	src/client/bnstat.c (1.1), src/client/client.c (1.1),
+	src/client/client.h (1.1), src/client/client_connect.c (1.1),
+	src/client/client_connect.h (1.1), src/client/udptest.c (1.1),
+	src/client/udptest.h (1.1), src/common/addr.c (1.1),
+	src/common/addr.h (1.1), src/common/auth_protocol.h (1.1),
+	src/common/bits_protocol.h (1.1), src/common/bn_type.c (1.1),
+	src/common/bn_type.h (1.1), src/common/bnet_protocol.h (1.1),
+	src/common/bnethash.c (1.1), src/common/bnethash.h (1.1),
+	src/common/bnethashconv.c (1.1), src/common/bnethashconv.h (1.1),
+	src/common/bnettime.c (1.1), src/common/bnettime.h (1.1),
+	src/common/bot_protocol.h (1.1), src/common/check_alloc.c (1.1),
+	src/common/check_alloc.h (1.1), src/common/d2char_file.h (1.1),
+	src/common/d2game_protocol.h (1.1), src/common/eventlog.c (1.1),
+	src/common/eventlog.h (1.1), src/common/field_sizes.h (1.1),
+	src/common/file_protocol.h (1.1), src/common/hashtable.c (1.1),
+	src/common/hashtable.h (1.1), src/common/hexdump.c (1.1),
+	src/common/hexdump.h (1.1), src/common/init_protocol.h (1.1),
+	src/common/introtate.h (1.1), src/common/list.c (1.1),
+	src/common/list.h (1.1), src/common/network.c (1.1),
+	src/common/network.h (1.1), src/common/packet.c (1.1),
+	src/common/packet.h (1.1), src/common/queue.c (1.1),
+	src/common/queue.h (1.1), src/common/setup_after.h (1.1),
+	src/common/setup_before.h (1.1), src/common/tag.h (1.1),
+	src/common/tracker.h (1.1), src/common/udp_protocol.h (1.1),
+	src/common/util.c (1.1), src/common/util.h (1.1),
+	src/common/version.h (1.1), src/debug/Makefile (1.1),
+	src/debug/addrtest.c (1.1), src/debug/hashtabletest.c (1.1),
+	src/debug/listtest.c (1.1), src/debug/sbnetd.c (1.1),
+	src/debug/timetest.c (1.1): Initial revision
+
+2001-04-26 17:43  hakan
+
+	* CHANGELOG (1.1.1.24), COPYING (1.1.1.3), CREDITS (1.1.1.14),
+	INSTALL (1.1.1.24), README (1.1.1.25), TODO (1.1.1.20),
+	conf/ad.list (1.1.1.3), conf/autoupdate (1.1.1.2),
+	conf/bnetd.conf.in (1.1.1.3), conf/bnetd.conf.win32 (1.1.1.2),
+	conf/bnetd_default_user (1.1.1.9), conf/bnhelp (1.1.1.3),
+	conf/bnissue.txt (1.1.1.1), conf/bnmotd.txt (1.1.1.7),
+	conf/channel.list (1.1.1.10), conf/gametrans (1.1.1.3),
+	conf/realm.list (1.1.1.1), files/icons.bni (1.1.1.3),
+	files/tos_USA.txt (1.1.1.1), man/bnbot.1 (1.1.1.2), man/bnchat.1
+	(1.1.1.5), man/bnetd.1 (1.1.1.5), man/bnetd.conf.5 (1.1.1.3),
+	man/bnftp.1 (1.1.1.4), man/bni2tga.1 (1.1.1.1), man/bnibuild.1
+	(1.1.1.1), man/bniextract.1 (1.1.1.1), man/bnilist.1 (1.1.1.1),
+	man/bnpass.1 (1.1.1.5), man/bnproxy.1 (1.1.1.2), man/bnstat.1
+	(1.1.1.2), man/bntext.5 (1.1.1.3), man/bntrackd.1 (1.1.1.1),
+	man/tgainfo.1 (1.1.1.1), scripts/bnetd.init (1.1.1.2),
+	scripts/process.pl (1.1.1.1), src/Makefile.BORLAND (1.1.1.2),
+	src/Makefile.in (1.1.1.11), src/config.h.in (1.1.1.3),
+	src/config.h.win32 (1.1.1.1), src/configure (1.1.1.8),
+	src/configure.in (1.1.1.9), src/bnproxy/Makefile (1.1.1.1),
+	src/bnproxy/bnproxy.c (1.1.1.1), src/bnproxy/virtconn.c (1.1.1.1),
+	src/bnproxy/virtconn.h (1.1.1.1), src/bntrackd/Makefile (1.1.1.1),
+	src/bntrackd/bntrackd.c (1.1.1.1), src/compat/char_bit.h (1.1.1.1),
+	src/compat/difftime.c (1.1.1.2), src/compat/difftime.h (1.1.1.2),
+	src/compat/exitstatus.h (1.1.1.1), src/compat/gethostname.h
+	(1.1.1.2), src/compat/gettimeofday.c (1.1.1.2),
+	src/compat/gettimeofday.h (1.1.1.2), src/compat/inet_aton.c
+	(1.1.1.5), src/compat/inet_ntoa.h (1.1.1.3), src/compat/memcpy.c
+	(1.1.1.2), src/compat/memset.c (1.1.1.2), src/compat/memset.h
+	(1.1.1.2), src/compat/mkdir.h (1.1.1.1), src/compat/nls.h
+	(1.1.1.1), src/compat/psock.c (1.1.1.3), src/compat/read.h
+	(1.1.1.1), src/compat/seek.h (1.1.1.1), src/compat/send.h
+	(1.1.1.3), src/compat/socket.h (1.1.1.2), src/compat/statmacros.h
+	(1.1.1.1), src/compat/stdfileno.h (1.1.1.1),
+	src/compat/strcasecmp.c (1.1.1.3), src/compat/strcasecmp.h
+	(1.1.1.2), src/compat/strdup.c (1.1.1.4), src/compat/strdup.h
+	(1.1.1.2), src/compat/strerror.h (1.1.1.2), src/compat/strftime.c
+	(1.1.1.2), src/compat/strftime.h (1.1.1.2),
+	src/compat/strncasecmp.c (1.1.1.3), src/compat/strncasecmp.h
+	(1.1.1.2), src/compat/strtoul.h (1.1.1.2), src/compat/termios.h
+	(1.1.1.1), src/compat/uint.h (1.1.1.1), src/compat/uname.c
+	(1.1.1.3), src/compat/uname.h (1.1.1.2), docs/CHANGES_BNIUTILS
+	(1.1.1.1), docs/CHANGE_BUCKY (1.1.1.1), docs/CHANGE_VAP (1.1.1.1),
+	docs/FAQ.html (1.1.1.1), docs/README.BORLAND (1.1.1.1),
+	docs/README.adbanner (1.1.1.1), docs/README.bits (1.1.1.1),
+	docs/README.bni (1.1.1.1), docs/README.debugging (1.1.1.1),
+	docs/README.diablo108 (1.1.1.1), docs/README.ladder (1.1.1.1),
+	docs/README.registry (1.1.1.1), docs/TODO_BUCKY (1.1.1.1),
+	docs/TODO_VAP (1.1.1.1), docs/bniheader.txt (1.1.1.1),
+	src/autoconf/ansi2knr.c (1.1.1.1), src/autoconf/ccstdc.m4
+	(1.1.1.1), src/autoconf/termios.m4 (1.1.1.1), src/autoconf/winsz.m4
+	(1.1.1.1), src/bnetd/Makefile (1.1.1.1), src/bnetd/account.c
+	(1.1.1.1), src/bnetd/account.h (1.1.1.1), src/bnetd/account_wrap.c
+	(1.1.1.1), src/bnetd/account_wrap.h (1.1.1.1), src/bnetd/adbanner.c
+	(1.1.1.1), src/bnetd/adbanner.h (1.1.1.1), src/bnetd/autoupdate.c
+	(1.1.1.1), src/bnetd/autoupdate.h (1.1.1.1), src/bnetd/bits.c
+	(1.1.1.1), src/bnetd/bits.h (1.1.1.1), src/bnetd/bits_chat.c
+	(1.1.1.1), src/bnetd/bits_chat.h (1.1.1.1), src/bnetd/bits_ext.c
+	(1.1.1.1), src/bnetd/bits_ext.h (1.1.1.1), src/bnetd/bits_game.c
+	(1.1.1.1), src/bnetd/bits_game.h (1.1.1.1), src/bnetd/bits_login.c
+	(1.1.1.1), src/bnetd/bits_login.h (1.1.1.1), src/bnetd/bits_net.c
+	(1.1.1.1), src/bnetd/bits_net.h (1.1.1.1), src/bnetd/bits_packet.c
+	(1.1.1.1), src/bnetd/bits_packet.h (1.1.1.1),
+	src/bnetd/bits_query.c (1.1.1.1), src/bnetd/bits_query.h (1.1.1.1),
+	src/bnetd/bits_rconn.c (1.1.1.1), src/bnetd/bits_rconn.h (1.1.1.1),
+	src/bnetd/bits_va.c (1.1.1.1), src/bnetd/bits_va.h (1.1.1.1),
+	src/bnetd/channel.c (1.1.1.1), src/bnetd/channel.h (1.1.1.1),
+	src/bnetd/character.c (1.1.1.1), src/bnetd/character.h (1.1.1.1),
+	src/bnetd/command.c (1.1.1.1), src/bnetd/command.h (1.1.1.1),
+	src/bnetd/connection.c (1.1.1.1), src/bnetd/connection.h (1.1.1.1),
+	src/bnetd/file.c (1.1.1.1), src/bnetd/file.h (1.1.1.1),
+	src/bnetd/game.c (1.1.1.1), src/bnetd/game.h (1.1.1.1),
+	src/bnetd/game_conv.c (1.1.1.1), src/bnetd/game_conv.h (1.1.1.1),
+	src/bnetd/game_rule.c (1.1.1.1), src/bnetd/game_rule.h (1.1.1.1),
+	src/bnetd/gametrans.c (1.1.1.1), src/bnetd/gametrans.h (1.1.1.1),
+	src/bnetd/handle_auth.c (1.1.1.1), src/bnetd/handle_auth.h
+	(1.1.1.1), src/bnetd/handle_bits.c (1.1.1.1),
+	src/bnetd/handle_bits.h (1.1.1.1), src/bnetd/handle_bnet.c
+	(1.1.1.1), src/bnetd/handle_bnet.h (1.1.1.1),
+	src/bnetd/handle_bot.c (1.1.1.1), src/bnetd/handle_bot.h (1.1.1.1),
+	src/bnetd/handle_file.c (1.1.1.1), src/bnetd/handle_file.h
+	(1.1.1.1), src/bnetd/handle_init.c (1.1.1.1),
+	src/bnetd/handle_init.h (1.1.1.1), src/bnetd/handle_telnet.c
+	(1.1.1.1), src/bnetd/handle_telnet.h (1.1.1.1),
+	src/bnetd/handle_udp.c (1.1.1.1), src/bnetd/handle_udp.h (1.1.1.1),
+	src/bnetd/helpfile.c (1.1.1.1), src/bnetd/helpfile.h (1.1.1.1),
+	src/bnetd/ipban.c (1.1.1.1), src/bnetd/ipban.h (1.1.1.1),
+	src/bnetd/ladder.c (1.1.1.1), src/bnetd/ladder.h (1.1.1.1),
+	src/bnetd/ladder_calc.c (1.1.1.1), src/bnetd/ladder_calc.h
+	(1.1.1.1), src/bnetd/main.c (1.1.1.1), src/bnetd/message.c
+	(1.1.1.1), src/bnetd/message.h (1.1.1.1), src/bnetd/prefs.c
+	(1.1.1.1), src/bnetd/prefs.h (1.1.1.1), src/bnetd/quota.h
+	(1.1.1.1), src/bnetd/realm.c (1.1.1.1), src/bnetd/realm.h
+	(1.1.1.1), src/bnetd/runprog.c (1.1.1.1), src/bnetd/runprog.h
+	(1.1.1.1), src/bnetd/server.c (1.1.1.1), src/bnetd/server.h
+	(1.1.1.1), src/bnetd/tick.c (1.1.1.1), src/bnetd/tick.h (1.1.1.1),
+	src/bnetd/timer.c (1.1.1.1), src/bnetd/timer.h (1.1.1.1),
+	src/bnetd/tracker.c (1.1.1.1), src/bnetd/udptest_send.c (1.1.1.1),
+	src/bnetd/udptest_send.h (1.1.1.1), src/bnetd/watch.c (1.1.1.1),
+	src/bnetd/watch.h (1.1.1.1), src/bniutils/Makefile (1.1.1.1),
+	src/bniutils/bni.c (1.1.1.1), src/bniutils/bni.h (1.1.1.1),
+	src/bniutils/bni2tga.c (1.1.1.1), src/bniutils/bnibuild.c
+	(1.1.1.1), src/bniutils/bniextract.c (1.1.1.1),
+	src/bniutils/bnilist.c (1.1.1.1), src/bniutils/fileio.c (1.1.1.1),
+	src/bniutils/fileio.h (1.1.1.1), src/bniutils/tga.c (1.1.1.1),
+	src/bniutils/tga.h (1.1.1.1), src/bniutils/tgainfo.c (1.1.1.1),
+	src/bnpass/Makefile (1.1.1.1), src/bnpass/bnpass.c (1.1.1.1),
+	src/client/Makefile (1.1.1.1), src/client/ansi_term.h (1.1.1.1),
+	src/client/bnbot.c (1.1.1.1), src/client/bnchat.c (1.1.1.1),
+	src/client/bnftp.c (1.1.1.1), src/client/bnstat.c (1.1.1.1),
+	src/client/client.c (1.1.1.1), src/client/client.h (1.1.1.1),
+	src/client/client_connect.c (1.1.1.1), src/client/client_connect.h
+	(1.1.1.1), src/client/udptest.c (1.1.1.1), src/client/udptest.h
+	(1.1.1.1), src/common/addr.c (1.1.1.1), src/common/addr.h
+	(1.1.1.1), src/common/auth_protocol.h (1.1.1.1),
+	src/common/bits_protocol.h (1.1.1.1), src/common/bn_type.c
+	(1.1.1.1), src/common/bn_type.h (1.1.1.1),
+	src/common/bnet_protocol.h (1.1.1.1), src/common/bnethash.c
+	(1.1.1.1), src/common/bnethash.h (1.1.1.1),
+	src/common/bnethashconv.c (1.1.1.1), src/common/bnethashconv.h
+	(1.1.1.1), src/common/bnettime.c (1.1.1.1), src/common/bnettime.h
+	(1.1.1.1), src/common/bot_protocol.h (1.1.1.1),
+	src/common/check_alloc.c (1.1.1.1), src/common/check_alloc.h
+	(1.1.1.1), src/common/d2char_file.h (1.1.1.1),
+	src/common/d2game_protocol.h (1.1.1.1), src/common/eventlog.c
+	(1.1.1.1), src/common/eventlog.h (1.1.1.1),
+	src/common/field_sizes.h (1.1.1.1), src/common/file_protocol.h
+	(1.1.1.1), src/common/hashtable.c (1.1.1.1), src/common/hashtable.h
+	(1.1.1.1), src/common/hexdump.c (1.1.1.1), src/common/hexdump.h
+	(1.1.1.1), src/common/init_protocol.h (1.1.1.1),
+	src/common/introtate.h (1.1.1.1), src/common/list.c (1.1.1.1),
+	src/common/list.h (1.1.1.1), src/common/network.c (1.1.1.1),
+	src/common/network.h (1.1.1.1), src/common/packet.c (1.1.1.1),
+	src/common/packet.h (1.1.1.1), src/common/queue.c (1.1.1.1),
+	src/common/queue.h (1.1.1.1), src/common/setup_after.h (1.1.1.1),
+	src/common/setup_before.h (1.1.1.1), src/common/tag.h (1.1.1.1),
+	src/common/tracker.h (1.1.1.1), src/common/udp_protocol.h
+	(1.1.1.1), src/common/util.c (1.1.1.1), src/common/util.h
+	(1.1.1.1), src/common/version.h (1.1.1.1), src/compat/inet_aton.h
+	(1.1.1.3), src/compat/inet_ntoa.c (1.1.1.3), src/compat/memcpy.h
+	(1.1.1.2), src/compat/psock.h (1.1.1.4), src/compat/recv.h
+	(1.1.1.3), src/compat/strchr.h (1.1.1.2), src/compat/strerror.c
+	(1.1.1.4), src/compat/strrchr.h (1.1.1.2), src/compat/strtoul.c
+	(1.1.1.2), src/debug/Makefile (1.1.1.1), src/debug/addrtest.c
+	(1.1.1.1), src/debug/hashtabletest.c (1.1.1.1),
+	src/debug/listtest.c (1.1.1.1), src/debug/sbnetd.c (1.1.1.1),
+	src/debug/timetest.c (1.1.1.1): Importing historical release 0.4.24
+
+2001-04-26 17:31  hakan
+
+	* include/bnetd.h (1.2), src/bnetd.c (1.2): No more present in
+	0.4.22
+
+2001-04-26 17:31  hakan
+
+	* CHANGELOG (1.1.1.23), CHANGE_BUCKY (1.1.1.1), CHANGE_VAP
+	(1.1.1.1), CREDITS (1.1.1.13), INSTALL (1.1.1.23), README
+	(1.1.1.24), README.BORLAND (1.1.1.1), README.bits (1.1.1.2), TODO
+	(1.1.1.19), TODO_BUCKY (1.1.1.1), TODO_VAP (1.1.1.1),
+	conf/autoupdate (1.1.1.1), conf/bits_passwd (1.1.1.2), conf/bnban
+	(1.1.1.2), conf/bnetd.conf.in (1.1.1.2), conf/bnetd.conf.win32
+	(1.1.1.1), conf/bnhelp (1.1.1.2), conf/channel.list (1.1.1.9),
+	conf/gametrans (1.1.1.2), include/addr.h (1.1.1.3),
+	include/ansi_term.h (1.1.1.3), include/auth_protocol.h (1.1.1.1),
+	include/autoupdate.h (1.1.1.1), include/bits.h (1.1.1.2),
+	include/bits_chat.h (1.1.1.1), include/bits_ext.h (1.1.1.2),
+	include/bits_packet.h (1.1.1.2), include/bits_protocol.h (1.1.1.3),
+	include/bits_query.h (1.1.1.2), include/bits_rconn.h (1.1.1.1),
+	include/bits_va.h (1.1.1.2), include/bn_type.h (1.1.1.3),
+	include/bnet_protocol.h (1.1.1.4), include/channel.h (1.1.1.3),
+	include/client.h (1.1.1.2), include/client_connect.h (1.1.1.1),
+	include/config.h.in (1.1.1.3), include/config.h.win32 (1.1.1.2),
+	include/connection.h (1.1.1.4), include/d2char_file.h (1.1.1.1),
+	include/field_sizes.h (1.1.1.4), include/gametrans.h (1.1.1.2),
+	include/handle_auth.h (1.1.1.1), include/handle_bits.h (1.1.1.1),
+	include/handle_bot.h (1.1.1.1), include/handle_file.h (1.1.1.1),
+	include/handle_init.h (1.1.1.1), include/handle_normal.h (1.1.1.1),
+	include/handle_udp.h (1.1.1.1), include/init_protocol.h (1.1.1.3),
+	include/packet.h (1.1.1.4), include/prefs.h (1.1.1.4),
+	include/runprog.h (1.1.1.2), include/setup.h (1.1.1.4),
+	include/tag.h (1.1.1.4), include/udptest.h (1.1.1.2),
+	include/version.h (1.1.1.4), man/bnbot.1 (1.1.1.1), man/bnchat.1
+	(1.1.1.4), man/bnetd.1 (1.1.1.4), man/bnetd.conf.5 (1.1.1.2),
+	man/bnftp.1 (1.1.1.3), man/bnpass.1 (1.1.1.4), man/bnproxy.1
+	(1.1.1.1), man/bnstat.1 (1.1.1.1), man/bntext.5 (1.1.1.2),
+	src/Makefile.BORLAND (1.1.1.1), src/Makefile.in (1.1.1.10),
+	src/account.c (1.1.1.19), src/addr.c (1.1.1.4), src/autoupdate.c
+	(1.1.1.1), src/bits.c (1.1.1.2), src/bits_chat.c (1.1.1.1),
+	src/bits_ext.c (1.1.1.2), src/bits_packet.c (1.1.1.2),
+	src/bits_query.c (1.1.1.2), src/bits_rconn.c (1.1.1.1),
+	src/bits_va.c (1.1.1.2), src/bn_type.c (1.1.1.3), src/bnchat.c
+	(1.1.1.13), src/bnproxy.c (1.1.1.8), src/bnstat.c (1.1.1.10),
+	src/channel.c (1.1.1.20), src/client_connect.c (1.1.1.1),
+	src/command.c (1.1.1.21), src/configure (1.1.1.7), src/configure.in
+	(1.1.1.8), src/connection.c (1.1.1.20), src/d2char_file.c
+	(1.1.1.1), src/eventlog.c (1.1.1.12), src/file.c (1.1.1.5),
+	src/game.c (1.1.1.19), src/game_conv.c (1.1.1.2), src/gametrans.c
+	(1.1.1.2), src/handle_auth.c (1.1.1.1), src/handle_bits.c
+	(1.1.1.1), src/handle_bot.c (1.1.1.1), src/handle_file.c (1.1.1.1),
+	src/handle_init.c (1.1.1.1), src/handle_normal.c (1.1.1.1),
+	src/handle_udp.c (1.1.1.1), src/ladder.c (1.1.1.11), src/main.c
+	(1.1.1.17), src/message.c (1.1.1.17), src/network.c (1.1.1.15),
+	src/packet.c (1.1.1.16), src/prefs.c (1.1.1.16), src/runprog.c
+	(1.1.1.2), src/server.c (1.1.1.20), src/tracker.c (1.1.1.15),
+	src/udptest.c (1.1.1.2), src/util.c (1.1.1.10), src/compat/psock.h
+	(1.1.1.3), src/compat/strcasecmp.c (1.1.1.2),
+	src/compat/strncasecmp.c (1.1.1.2), src/compat/uname.c (1.1.1.2):
+	Importing historical release 0.4.22
+
+2001-04-26 17:30  hakan
+
+	* conf/bnetd.conf (1.2), src/account.keep.c (1.2): No more present
+	in 0.4.21
+
+2001-04-26 17:30  hakan
+
+	* CHANGELOG (1.1.1.22), CREDITS (1.1.1.12), INSTALL (1.1.1.22),
+	README (1.1.1.23), README.adbanner (1.1.1.5), README.bits
+	(1.1.1.1), TODO (1.1.1.18), conf/bits_passwd (1.1.1.1), conf/bnban
+	(1.1.1.1), conf/bnetd.conf.in (1.1.1.1), conf/bnhelp (1.1.1.1),
+	conf/gametrans (1.1.1.1), files/icons.bni (1.1.1.2),
+	include/account.h (1.1.1.2), include/account_wrap.h (1.1.1.3),
+	include/adbanner.h (1.1.1.2), include/addr.h (1.1.1.2),
+	include/ansi_term.h (1.1.1.2), include/bits.h (1.1.1.1),
+	include/bits_ext.h (1.1.1.1), include/bits_net.h (1.1.1.1),
+	include/bits_packet.h (1.1.1.1), include/bits_protocol.h (1.1.1.2),
+	include/bits_query.h (1.1.1.1), include/bits_va.h (1.1.1.1),
+	include/bn_type.h (1.1.1.2), include/bnet_protocol.h (1.1.1.3),
+	include/bnetd.h (1.1.1.3), include/bnethash.h (1.1.1.2),
+	include/bnettime.h (1.1.1.3), include/bot_protocol.h (1.1.1.2),
+	include/channel.h (1.1.1.2), include/command.h (1.1.1.2),
+	include/config.h.in (1.1.1.2), include/connection.h (1.1.1.3),
+	include/eventlog.h (1.1.1.2), include/field_sizes.h (1.1.1.3),
+	include/file.h (1.1.1.2), include/file_protocol.h (1.1.1.2),
+	include/game.h (1.1.1.3), include/game_conv.h (1.1.1.1),
+	include/gametrans.h (1.1.1.1), include/helpfile.h (1.1.1.1),
+	include/hexdump.h (1.1.1.2), include/init_protocol.h (1.1.1.2),
+	include/ipban.h (1.1.1.1), include/ladder.h (1.1.1.3),
+	include/list.h (1.1.1.2), include/message.h (1.1.1.2),
+	include/network.h (1.1.1.2), include/packet.h (1.1.1.3),
+	include/prefs.h (1.1.1.3), include/queue.h (1.1.1.2),
+	include/runprog.h (1.1.1.1), include/server.h (1.1.1.3),
+	include/setup.h (1.1.1.3), include/tag.h (1.1.1.3), include/timer.h
+	(1.1.1.2), include/tracker.h (1.1.1.2), include/udp_protocol.h
+	(1.1.1.3), include/udptest.h (1.1.1.1), include/util.h (1.1.1.3),
+	include/version.h (1.1.1.3), include/virtconn.h (1.1.1.2),
+	include/watch.h (1.1.1.2), scripts/bnetd.init (1.1.1.1),
+	scripts/bnetd.logrotate (1.1.1.1), scripts/bnetmasq.sh (1.1.1.1),
+	src/Makefile.in (1.1.1.9), src/account.c (1.1.1.18),
+	src/account_wrap.c (1.1.1.13), src/adbanner.c (1.1.1.6), src/addr.c
+	(1.1.1.3), src/bits.c (1.1.1.1), src/bits_ext.c (1.1.1.1),
+	src/bits_net.c (1.1.1.1), src/bits_packet.c (1.1.1.1),
+	src/bits_query.c (1.1.1.1), src/bits_va.c (1.1.1.1), src/bn_type.c
+	(1.1.1.2), src/bnbot.c (1.1.1.16), src/bnchat.c (1.1.1.12),
+	src/bnetd.c (1.1.1.21), src/bnethash.c (1.1.1.8), src/bnettime.c
+	(1.1.1.10), src/bnftp.c (1.1.1.12), src/bnpass.c (1.1.1.10),
+	src/bnproxy.c (1.1.1.7), src/bnstat.c (1.1.1.9), src/channel.c
+	(1.1.1.19), src/client.c (1.1.1.7), src/command.c (1.1.1.20),
+	src/configure (1.1.1.6), src/configure.in (1.1.1.7),
+	src/connection.c (1.1.1.19), src/eventlog.c (1.1.1.11), src/file.c
+	(1.1.1.4), src/game.c (1.1.1.18), src/game_conv.c (1.1.1.1),
+	src/gametrans.c (1.1.1.1), src/helpfile.c (1.1.1.1), src/hexdump.c
+	(1.1.1.6), src/ipban.c (1.1.1.1), src/ladder.c (1.1.1.10),
+	src/list.c (1.1.1.11), src/main.c (1.1.1.16), src/message.c
+	(1.1.1.16), src/network.c (1.1.1.14), src/packet.c (1.1.1.15),
+	src/prefs.c (1.1.1.15), src/queue.c (1.1.1.9), src/runprog.c
+	(1.1.1.1), src/server.c (1.1.1.19), src/tick.c (1.1.1.4),
+	src/timer.c (1.1.1.2), src/tracker.c (1.1.1.14), src/udptest.c
+	(1.1.1.1), src/util.c (1.1.1.9), src/virtconn.c (1.1.1.7),
+	src/watch.c (1.1.1.7), src/compat/difftime.c (1.1.1.1),
+	src/compat/difftime.h (1.1.1.1), src/compat/gettimeofday.c
+	(1.1.1.1), src/compat/gettimeofday.h (1.1.1.1),
+	src/compat/inet_aton.c (1.1.1.4), src/compat/inet_aton.h (1.1.1.2),
+	src/compat/inet_ntoa.c (1.1.1.2), src/compat/inet_ntoa.h (1.1.1.2),
+	src/compat/memcpy.c (1.1.1.1), src/compat/memcpy.h (1.1.1.1),
+	src/compat/memset.c (1.1.1.1), src/compat/memset.h (1.1.1.1),
+	src/compat/psock.c (1.1.1.2), src/compat/psock.h (1.1.1.2),
+	src/compat/recv.h (1.1.1.2), src/compat/send.h (1.1.1.2),
+	src/compat/strchr.h (1.1.1.1), src/compat/strdup.c (1.1.1.3),
+	src/compat/strerror.c (1.1.1.3), src/compat/strrchr.h (1.1.1.1),
+	src/compat/uname.c (1.1.1.1), src/compat/uname.h (1.1.1.1):
+	Importing historical release 0.4.21
+
+2001-04-26 17:30  hakan
+
+	* README.bits (1.1), conf/bits_passwd (1.1), conf/bnban (1.1),
+	conf/bnetd.conf.in (1.1), conf/bnhelp (1.1), conf/gametrans (1.1),
+	include/bits.h (1.1), include/bits_ext.h (1.1), include/bits_net.h
+	(1.1), include/bits_packet.h (1.1), include/bits_query.h (1.1),
+	include/bits_va.h (1.1), include/game_conv.h (1.1),
+	include/gametrans.h (1.1), include/helpfile.h (1.1),
+	include/ipban.h (1.1), include/runprog.h (1.1), include/udptest.h
+	(1.1), scripts/bnetd.init (1.1), scripts/bnetd.logrotate (1.1),
+	scripts/bnetmasq.sh (1.1), src/bits.c (1.1), src/bits_ext.c (1.1),
+	src/bits_net.c (1.1), src/bits_packet.c (1.1), src/bits_query.c
+	(1.1), src/bits_va.c (1.1), src/game_conv.c (1.1), src/gametrans.c
+	(1.1), src/helpfile.c (1.1), src/ipban.c (1.1), src/runprog.c
+	(1.1), src/udptest.c (1.1), src/compat/difftime.c (1.1),
+	src/compat/difftime.h (1.1), src/compat/gettimeofday.c (1.1),
+	src/compat/gettimeofday.h (1.1), src/compat/memcpy.c (1.1),
+	src/compat/memcpy.h (1.1), src/compat/memset.c (1.1),
+	src/compat/memset.h (1.1), src/compat/strchr.h (1.1),
+	src/compat/strrchr.h (1.1), src/compat/uname.c (1.1),
+	src/compat/uname.h (1.1), CHANGE_BUCKY (1.1), CHANGE_VAP (1.1),
+	README.BORLAND (1.1), TODO_BUCKY (1.1), TODO_VAP (1.1),
+	conf/autoupdate (1.1), conf/bnetd.conf.win32 (1.1),
+	include/auth_protocol.h (1.1), include/autoupdate.h (1.1),
+	include/bits_chat.h (1.1), include/bits_rconn.h (1.1),
+	include/client_connect.h (1.1), include/d2char_file.h (1.1),
+	include/handle_auth.h (1.1), include/handle_bits.h (1.1),
+	include/handle_bot.h (1.1), include/handle_file.h (1.1),
+	include/handle_init.h (1.1), include/handle_normal.h (1.1),
+	include/handle_udp.h (1.1), man/bnbot.1 (1.1), man/bnproxy.1 (1.1),
+	man/bnstat.1 (1.1), src/Makefile.BORLAND (1.1), src/autoupdate.c
+	(1.1), src/bits_chat.c (1.1), src/bits_rconn.c (1.1),
+	src/client_connect.c (1.1), src/d2char_file.c (1.1),
+	src/handle_auth.c (1.1), src/handle_bits.c (1.1), src/handle_bot.c
+	(1.1), src/handle_file.c (1.1), src/handle_init.c (1.1),
+	src/handle_normal.c (1.1), src/handle_udp.c (1.1): Initial revision
+
+2001-04-26 17:25  hakan
+
+	* man/bnetd.conf.4 (1.2), man/bntext.4 (1.2), src/Makefile.generic
+	(1.2), src/config.h.generic (1.2), src/config.h.in (1.2): No more
+	present in 0.4.20
+
+2001-04-26 17:25  hakan
+
+	* include/config.h.in (1.1), include/config.h.win32 (1.1),
+	man/bnetd.conf.5 (1.1), man/bntext.5 (1.1), src/account.keep.c
+	(1.1), src/compat/access.h (1.1), src/compat/gethostname.h (1.1),
+	src/compat/psock.c (1.1), src/compat/psock.h (1.1),
+	src/compat/recv.h (1.1), src/compat/send.h (1.1),
+	src/compat/socket.h (1.1), src/compat/strcasecmp.c (1.1),
+	src/compat/strcasecmp.h (1.1), src/compat/strncasecmp.c (1.1),
+	src/compat/strncasecmp.h (1.1): Initial revision
+
+2001-04-26 17:25  hakan
+
+	* CHANGELOG (1.1.1.21), CREDITS (1.1.1.11), INSTALL (1.1.1.21),
+	README (1.1.1.22), TODO (1.1.1.17), conf/bnetd.conf (1.1.1.20),
+	conf/channel.list (1.1.1.8), include/account_wrap.h (1.1.1.2),
+	include/bnet_protocol.h (1.1.1.2), include/bnetd.h (1.1.1.2),
+	include/bnettime.h (1.1.1.2), include/config.h.in (1.1.1.1),
+	include/config.h.win32 (1.1.1.1), include/connection.h (1.1.1.2),
+	include/field_sizes.h (1.1.1.2), include/game.h (1.1.1.2),
+	include/ladder.h (1.1.1.2), include/packet.h (1.1.1.2),
+	include/prefs.h (1.1.1.2), include/server.h (1.1.1.2),
+	include/setup.h (1.1.1.2), include/tag.h (1.1.1.2),
+	include/udp_protocol.h (1.1.1.2), include/util.h (1.1.1.2),
+	include/version.h (1.1.1.2), man/bnchat.1 (1.1.1.3), man/bnetd.1
+	(1.1.1.3), man/bnetd.conf.5 (1.1.1.1), man/bnftp.1 (1.1.1.2),
+	man/bnpass.1 (1.1.1.3), man/bntext.5 (1.1.1.1), src/Makefile.in
+	(1.1.1.8), src/account.c (1.1.1.17), src/account.keep.c (1.1.1.1),
+	src/account_wrap.c (1.1.1.12), src/adbanner.c (1.1.1.5), src/addr.c
+	(1.1.1.2), src/bnbot.c (1.1.1.15), src/bnchat.c (1.1.1.11),
+	src/bnetd.c (1.1.1.20), src/bnettime.c (1.1.1.9), src/bnftp.c
+	(1.1.1.11), src/bnpass.c (1.1.1.9), src/bnproxy.c (1.1.1.6),
+	src/bnstat.c (1.1.1.8), src/channel.c (1.1.1.18), src/client.c
+	(1.1.1.6), src/command.c (1.1.1.19), src/configure (1.1.1.5),
+	src/configure.in (1.1.1.6), src/connection.c (1.1.1.18),
+	src/eventlog.c (1.1.1.10), src/file.c (1.1.1.3), src/game.c
+	(1.1.1.17), src/ladder.c (1.1.1.9), src/main.c (1.1.1.15),
+	src/message.c (1.1.1.15), src/network.c (1.1.1.13), src/packet.c
+	(1.1.1.14), src/prefs.c (1.1.1.14), src/server.c (1.1.1.18),
+	src/tick.c (1.1.1.3), src/tracker.c (1.1.1.13), src/util.c
+	(1.1.1.8), src/virtconn.c (1.1.1.6), src/compat/access.h (1.1.1.1),
+	src/compat/gethostname.h (1.1.1.1), src/compat/psock.c (1.1.1.1),
+	src/compat/psock.h (1.1.1.1), src/compat/recv.h (1.1.1.1),
+	src/compat/send.h (1.1.1.1), src/compat/socket.h (1.1.1.1),
+	src/compat/strcasecmp.c (1.1.1.1), src/compat/strcasecmp.h
+	(1.1.1.1), src/compat/strncasecmp.c (1.1.1.1),
+	src/compat/strncasecmp.h (1.1.1.1): Importing historical release
+	0.4.20
+
+2001-04-26 17:25  hakan
+
+	* src/: account.h (1.2), account_wrap.h (1.2), adbanner.h (1.2),
+	ansi_term.h (1.2), bnet_protocol.h (1.2), bnetd.h (1.2), bnethash.h
+	(1.2), bnethashconv.h (1.2), bnettime.h (1.2), bot_protocol.h
+	(1.2), channel.h (1.2), client.h (1.2), command.h (1.2),
+	connection.h (1.2), convert.c (1.2), convert.h (1.2), eventlog.h
+	(1.2), field_sizes.h (1.2), field_types.h (1.2), file.h (1.2),
+	game.h (1.2), hexdump.h (1.2), ladder.h (1.2), list.h (1.2),
+	message.h (1.2), network.h (1.2), packet.h (1.2), prefs.h (1.2),
+	queue.h (1.2), server.h (1.2), setup.h (1.2), tick.h (1.2), timer.h
+	(1.2), tracker.h (1.2), util.h (1.2), version.h (1.2), virtconn.h
+	(1.2), watch.h (1.2): No more present in 0.4.19
+
+2001-04-26 17:24  hakan
+
+	* CHANGELOG (1.1.1.20), CREDITS (1.1.1.10), INSTALL (1.1.1.20),
+	README (1.1.1.21), README.debugging (1.1.1.1), README.ladder
+	(1.1.1.5), TODO (1.1.1.16), conf/ad.list (1.1.1.2), conf/bnetd.conf
+	(1.1.1.19), conf/bnetd_default_user (1.1.1.8), conf/channel.list
+	(1.1.1.7), include/account.h (1.1.1.1), include/account_wrap.h
+	(1.1.1.1), include/adbanner.h (1.1.1.1), include/addr.h (1.1.1.1),
+	include/ansi_term.h (1.1.1.1), include/bits_protocol.h (1.1.1.1),
+	include/bn_type.h (1.1.1.1), include/bnet_protocol.h (1.1.1.1),
+	include/bnetd.h (1.1.1.1), include/bnethash.h (1.1.1.1),
+	include/bnethashconv.h (1.1.1.1), include/bnettime.h (1.1.1.1),
+	include/bot_protocol.h (1.1.1.1), include/channel.h (1.1.1.1),
+	include/client.h (1.1.1.1), include/command.h (1.1.1.1),
+	include/connection.h (1.1.1.1), include/eventlog.h (1.1.1.1),
+	include/field_sizes.h (1.1.1.1), include/file.h (1.1.1.1),
+	include/file_protocol.h (1.1.1.1), include/game.h (1.1.1.1),
+	include/hexdump.h (1.1.1.1), include/init_protocol.h (1.1.1.1),
+	include/ladder.h (1.1.1.1), include/list.h (1.1.1.1),
+	include/message.h (1.1.1.1), include/network.h (1.1.1.1),
+	include/packet.h (1.1.1.1), include/prefs.h (1.1.1.1),
+	include/queue.h (1.1.1.1), include/server.h (1.1.1.1),
+	include/setup.h (1.1.1.1), include/tag.h (1.1.1.1), include/tick.h
+	(1.1.1.1), include/timer.h (1.1.1.1), include/tracker.h (1.1.1.1),
+	include/udp_protocol.h (1.1.1.1), include/util.h (1.1.1.1),
+	include/version.h (1.1.1.1), include/virtconn.h (1.1.1.1),
+	include/watch.h (1.1.1.1), src/Makefile.generic (1.1.1.7),
+	src/Makefile.in (1.1.1.7), src/account.c (1.1.1.16),
+	src/account_wrap.c (1.1.1.11), src/adbanner.c (1.1.1.4), src/addr.c
+	(1.1.1.1), src/bn_type.c (1.1.1.1), src/bnbot.c (1.1.1.14),
+	src/bnchat.c (1.1.1.10), src/bnetd.c (1.1.1.19), src/bnethashconv.c
+	(1.1.1.6), src/bnettime.c (1.1.1.8), src/bnftp.c (1.1.1.10),
+	src/bnproxy.c (1.1.1.5), src/bnstat.c (1.1.1.7), src/channel.c
+	(1.1.1.17), src/command.c (1.1.1.18), src/configure.in (1.1.1.5),
+	src/connection.c (1.1.1.17), src/file.c (1.1.1.2), src/game.c
+	(1.1.1.16), src/ladder.c (1.1.1.8), src/main.c (1.1.1.14),
+	src/message.c (1.1.1.14), src/network.c (1.1.1.12), src/packet.c
+	(1.1.1.13), src/prefs.c (1.1.1.13), src/server.c (1.1.1.17),
+	src/tick.c (1.1.1.2), src/tracker.c (1.1.1.12), src/util.c
+	(1.1.1.7), src/virtconn.c (1.1.1.5), src/compat/inet_aton.c
+	(1.1.1.3), src/compat/netinet_in.h (1.1.1.1), src/compat/signal.h
+	(1.1.1.1): Importing historical release 0.4.19
+
+2001-04-26 17:24  hakan
+
+	* CHANGELOG (1.1.1.19), INSTALL (1.1.1.19), README (1.1.1.20),
+	conf/bnetd.conf (1.1.1.18), conf/bnmotd.txt (1.1.1.6),
+	src/Makefile.generic (1.1.1.6), src/Makefile.in (1.1.1.6),
+	src/bnbot.c (1.1.1.13), src/bnchat.c (1.1.1.9), src/bnftp.c
+	(1.1.1.9), src/bnstat.c (1.1.1.6), src/game.c (1.1.1.15),
+	src/main.c (1.1.1.13), src/setup.h (1.1.1.9), src/version.h
+	(1.1.1.19): Importing historical release 0.4.18
+
+2001-04-26 17:23  hakan
+
+	* src/: filetransfer.c (1.2), filetransfer.h (1.2), timestamp.c
+	(1.2), timestamp.h (1.2): No more present in 0.4.17
+
+2001-04-26 17:23  hakan
+
+	* CHANGELOG (1.1.1.18), INSTALL (1.1.1.18), README (1.1.1.19),
+	README.adbanner (1.1.1.4), README.ladder (1.1.1.4), TODO
+	(1.1.1.15), conf/bnetd.conf (1.1.1.17), files/tos.txt (1.1.1.4),
+	src/Makefile.generic (1.1.1.5), src/Makefile.in (1.1.1.5),
+	src/account.c (1.1.1.15), src/account_wrap.c (1.1.1.10),
+	src/account_wrap.h (1.1.1.8), src/adbanner.c (1.1.1.3),
+	src/adbanner.h (1.1.1.2), src/bnbot.c (1.1.1.12), src/bnchat.c
+	(1.1.1.8), src/bnet_protocol.h (1.1.1.13), src/bnetd.c (1.1.1.18),
+	src/bnettime.c (1.1.1.7), src/bnettime.h (1.1.1.4), src/bnftp.c
+	(1.1.1.8), src/bnproxy.c (1.1.1.4), src/bnstat.c (1.1.1.5),
+	src/command.c (1.1.1.17), src/configure (1.1.1.4), src/configure.in
+	(1.1.1.4), src/connection.c (1.1.1.16), src/connection.h (1.1.1.9),
+	src/convert.c (1.1.1.7), src/convert.h (1.1.1.4), src/eventlog.c
+	(1.1.1.9), src/field_sizes.h (1.1.1.4), src/field_types.h
+	(1.1.1.3), src/file.c (1.1.1.1), src/file.h (1.1.1.1), src/game.c
+	(1.1.1.14), src/ladder.c (1.1.1.7), src/ladder.h (1.1.1.3),
+	src/network.c (1.1.1.11), src/packet.c (1.1.1.12), src/packet.h
+	(1.1.1.7), src/prefs.c (1.1.1.12), src/prefs.h (1.1.1.8),
+	src/server.c (1.1.1.16), src/setup.h (1.1.1.8), src/tick.c
+	(1.1.1.1), src/tick.h (1.1.1.1), src/timer.c (1.1.1.1), src/timer.h
+	(1.1.1.1), src/tracker.c (1.1.1.11), src/version.h (1.1.1.18),
+	src/virtconn.c (1.1.1.4): Importing historical release 0.4.17
+
+2001-04-26 17:23  hakan
+
+	* CHANGELOG (1.1.1.17), CREDITS (1.1.1.9), INSTALL (1.1.1.17),
+	README (1.1.1.18), README.adbanner (1.1.1.3), TODO (1.1.1.14),
+	conf/bnetd.conf (1.1.1.16), src/account.c (1.1.1.14), src/bnchat.c
+	(1.1.1.7), src/bnet_protocol.h (1.1.1.12), src/bnetd.c (1.1.1.17),
+	src/bnftp.c (1.1.1.7), src/bnproxy.c (1.1.1.3), src/bnstat.c
+	(1.1.1.4), src/channel.c (1.1.1.16), src/channel.h (1.1.1.10),
+	src/command.c (1.1.1.16), src/connection.c (1.1.1.15),
+	src/connection.h (1.1.1.8), src/game.c (1.1.1.13), src/game.h
+	(1.1.1.9), src/ladder.c (1.1.1.6), src/list.c (1.1.1.10),
+	src/list.h (1.1.1.5), src/server.c (1.1.1.15), src/version.h
+	(1.1.1.17), src/virtconn.c (1.1.1.3): Importing historical release
+	0.4.16
+
+2001-04-26 17:22  hakan
+
+	* CHANGELOG (1.1.1.16), CREDITS (1.1.1.8), INSTALL (1.1.1.16),
+	README (1.1.1.17), TODO (1.1.1.13), conf/bnmotd.txt (1.1.1.5),
+	man/bnchat.1 (1.1.1.2), src/adbanner.c (1.1.1.2), src/bnbot.c
+	(1.1.1.11), src/bnchat.c (1.1.1.6), src/bnetd.c (1.1.1.16),
+	src/bnftp.c (1.1.1.6), src/bnstat.c (1.1.1.3), src/command.c
+	(1.1.1.15), src/game.c (1.1.1.12), src/game.h (1.1.1.8),
+	src/setup.h (1.1.1.7), src/version.h (1.1.1.16), src/watch.c
+	(1.1.1.6): Importing historical release 0.4.15
+
+2001-04-26 17:22  hakan
+
+	* files/ad0512b.pcx (1.2): No more present in 0.4.14
+
+2001-04-26 17:22  hakan
+
+	* CHANGELOG (1.1.1.15), CREDITS (1.1.1.7), INSTALL (1.1.1.15),
+	README (1.1.1.16), README.adbanner (1.1.1.2), TODO (1.1.1.12),
+	conf/ad.list (1.1.1.1), conf/bnetd.conf (1.1.1.15), conf/bnmotd.txt
+	(1.1.1.4), files/ad000001.pcx (1.1.1.1), src/Makefile.generic
+	(1.1.1.4), src/Makefile.in (1.1.1.4), src/account.c (1.1.1.13),
+	src/adbanner.c (1.1.1.1), src/adbanner.h (1.1.1.1), src/ansi_term.h
+	(1.1.1.2), src/bnbot.c (1.1.1.10), src/bnet_protocol.h (1.1.1.11),
+	src/bnetd.c (1.1.1.15), src/bnproxy.c (1.1.1.2), src/channel.c
+	(1.1.1.15), src/command.c (1.1.1.14), src/configure (1.1.1.3),
+	src/configure.in (1.1.1.3), src/connection.c (1.1.1.14),
+	src/filetransfer.c (1.1.1.8), src/game.c (1.1.1.11), src/game.h
+	(1.1.1.7), src/ladder.c (1.1.1.5), src/list.c (1.1.1.9), src/list.h
+	(1.1.1.4), src/main.c (1.1.1.12), src/message.c (1.1.1.13),
+	src/network.c (1.1.1.10), src/packet.c (1.1.1.11), src/packet.h
+	(1.1.1.6), src/prefs.c (1.1.1.11), src/prefs.h (1.1.1.7),
+	src/queue.c (1.1.1.8), src/server.c (1.1.1.14), src/setup.h
+	(1.1.1.6), src/tracker.c (1.1.1.10), src/util.c (1.1.1.6),
+	src/version.h (1.1.1.15), src/virtconn.c (1.1.1.2), src/watch.c
+	(1.1.1.5): Importing historical release 0.4.14
+
+2001-04-26 17:22  hakan
+
+	* src/: port.h (1.2), proxy.c (1.2): No more present in 0.4.13
+
+2001-04-26 17:22  hakan
+
+	* CHANGELOG (1.1.1.14), CREDITS (1.1.1.6), INSTALL (1.1.1.14),
+	README (1.1.1.15), README.adbanner (1.1.1.1), README.ladder
+	(1.1.1.3), TODO (1.1.1.11), conf/bnetd.conf (1.1.1.14),
+	conf/bnetd_default_user (1.1.1.7), conf/channel.list (1.1.1.6),
+	files/tos.txt (1.1.1.3), src/Makefile.generic (1.1.1.3),
+	src/Makefile.in (1.1.1.3), src/account.c (1.1.1.12),
+	src/account_wrap.c (1.1.1.9), src/account_wrap.h (1.1.1.7),
+	src/bnbot.c (1.1.1.9), src/bnchat.c (1.1.1.5), src/bnet_protocol.h
+	(1.1.1.10), src/bnetd.c (1.1.1.14), src/bnettime.c (1.1.1.6),
+	src/bnftp.c (1.1.1.5), src/bnpass.c (1.1.1.8), src/bnproxy.c
+	(1.1.1.1), src/bnstat.c (1.1.1.2), src/channel.c (1.1.1.14),
+	src/channel.h (1.1.1.9), src/client.c (1.1.1.5), src/command.c
+	(1.1.1.13), src/connection.c (1.1.1.13), src/connection.h
+	(1.1.1.7), src/eventlog.c (1.1.1.8), src/eventlog.h (1.1.1.7),
+	src/filetransfer.c (1.1.1.7), src/game.c (1.1.1.10), src/game.h
+	(1.1.1.6), src/list.c (1.1.1.8), src/main.c (1.1.1.11),
+	src/message.c (1.1.1.12), src/network.c (1.1.1.9), src/packet.c
+	(1.1.1.10), src/packet.h (1.1.1.5), src/queue.c (1.1.1.7),
+	src/server.c (1.1.1.13), src/tracker.c (1.1.1.9), src/version.h
+	(1.1.1.14), src/virtconn.c (1.1.1.1), src/virtconn.h (1.1.1.1),
+	src/watch.c (1.1.1.4), src/watch.h (1.1.1.3), src/compat/strerror.c
+	(1.1.1.2): Importing historical release 0.4.13
+
+2001-04-26 17:22  hakan
+
+	* CHANGELOG (1.1.1.13), CREDITS (1.1.1.5), INSTALL (1.1.1.13),
+	README (1.1.1.14), README.ladder (1.1.1.2), TODO (1.1.1.10),
+	conf/bnetd.conf (1.1.1.13), src/Makefile.generic (1.1.1.2),
+	src/Makefile.in (1.1.1.2), src/account.c (1.1.1.11),
+	src/account_wrap.c (1.1.1.8), src/bnbot.c (1.1.1.8), src/bnchat.c
+	(1.1.1.4), src/bnetd.c (1.1.1.13), src/bnethash.c (1.1.1.7),
+	src/bnettime.c (1.1.1.5), src/bnettime.h (1.1.1.3), src/bnftp.c
+	(1.1.1.4), src/bnpass.c (1.1.1.7), src/bnstat.c (1.1.1.1),
+	src/channel.c (1.1.1.13), src/client.c (1.1.1.4), src/command.c
+	(1.1.1.12), src/config.h.generic (1.1.1.2), src/config.h.in
+	(1.1.1.2), src/configure (1.1.1.2), src/configure.in (1.1.1.2),
+	src/connection.c (1.1.1.12), src/convert.c (1.1.1.6),
+	src/eventlog.c (1.1.1.7), src/filetransfer.c (1.1.1.6), src/game.c
+	(1.1.1.9), src/hexdump.c (1.1.1.5), src/ladder.c (1.1.1.4),
+	src/list.c (1.1.1.7), src/main.c (1.1.1.10), src/message.c
+	(1.1.1.11), src/network.c (1.1.1.8), src/packet.c (1.1.1.9),
+	src/prefs.c (1.1.1.10), src/queue.c (1.1.1.6), src/server.c
+	(1.1.1.12), src/setup.h (1.1.1.5), src/timestamp.c (1.1.1.5),
+	src/tracker.c (1.1.1.8), src/util.c (1.1.1.5), src/util.h
+	(1.1.1.3), src/version.h (1.1.1.13), src/compat/inet_aton.c
+	(1.1.1.2), src/compat/strdup.c (1.1.1.2), src/compat/strerror.c
+	(1.1.1.1), src/compat/strerror.h (1.1.1.1), src/compat/strftime.c
+	(1.1.1.1), src/compat/strftime.h (1.1.1.1), src/compat/strtoul.c
+	(1.1.1.1), src/compat/strtoul.h (1.1.1.1): Importing historical
+	release 0.4.12
+
+2001-04-26 17:22  hakan
+
+	* src/: Makefile (1.2), strdup.c (1.2), strdup.h (1.2): No more
+	present in 0.4.11
+
+2001-04-26 17:22  hakan
+
+	* src/Makefile.generic (1.1), src/Makefile.in (1.1),
+	src/config.h.generic (1.1), src/config.h.in (1.1), src/configure
+	(1.1), src/configure.in (1.1), src/autoconf/config.guess (1.1),
+	src/autoconf/config.sub (1.1), src/autoconf/install-sh (1.1),
+	src/autoconf/mkdir-p (1.1), src/compat/inet_aton.c (1.1),
+	src/compat/inet_aton.h (1.1), src/compat/inet_ntoa.c (1.1),
+	src/compat/inet_ntoa.h (1.1), src/compat/strdup.c (1.1),
+	src/compat/strdup.h (1.1), src/bnstat.c (1.1),
+	src/compat/strerror.c (1.1), src/compat/strerror.h (1.1),
+	src/compat/strftime.c (1.1), src/compat/strftime.h (1.1),
+	src/compat/strtoul.c (1.1), src/compat/strtoul.h (1.1),
+	README.adbanner (1.1), src/bnproxy.c (1.1), src/virtconn.c (1.1),
+	src/virtconn.h (1.1), conf/ad.list (1.1), files/ad000001.pcx (1.1),
+	src/adbanner.c (1.1), src/adbanner.h (1.1), src/file.c (1.1),
+	src/file.h (1.1), src/tick.c (1.1), src/tick.h (1.1), src/timer.c
+	(1.1), src/timer.h (1.1), README.debugging (1.1), include/account.h
+	(1.1), include/account_wrap.h (1.1), include/adbanner.h (1.1),
+	include/addr.h (1.1), include/ansi_term.h (1.1),
+	include/bits_protocol.h (1.1), include/bn_type.h (1.1),
+	include/bnet_protocol.h (1.1), include/bnetd.h (1.1),
+	include/bnethash.h (1.1), include/bnethashconv.h (1.1),
+	include/bnettime.h (1.1), include/bot_protocol.h (1.1),
+	include/channel.h (1.1), include/client.h (1.1), include/command.h
+	(1.1), include/connection.h (1.1), include/eventlog.h (1.1),
+	include/field_sizes.h (1.1), include/file.h (1.1),
+	include/file_protocol.h (1.1), include/game.h (1.1),
+	include/hexdump.h (1.1), include/init_protocol.h (1.1),
+	include/ladder.h (1.1), include/list.h (1.1), include/message.h
+	(1.1), include/network.h (1.1), include/packet.h (1.1),
+	include/prefs.h (1.1), include/queue.h (1.1), include/server.h
+	(1.1), include/setup.h (1.1), include/tag.h (1.1), include/tick.h
+	(1.1), include/timer.h (1.1), include/tracker.h (1.1),
+	include/udp_protocol.h (1.1), include/util.h (1.1),
+	include/version.h (1.1), include/virtconn.h (1.1), include/watch.h
+	(1.1), src/addr.c (1.1), src/bn_type.c (1.1),
+	src/compat/netinet_in.h (1.1), src/compat/signal.h (1.1): Initial
+	revision
+
+2001-04-26 17:22  hakan
+
+	* CHANGELOG (1.1.1.12), CREDITS (1.1.1.4), INSTALL (1.1.1.12),
+	README (1.1.1.13), TODO (1.1.1.9), conf/bnetd.conf (1.1.1.12),
+	src/Makefile.generic (1.1.1.1), src/Makefile.in (1.1.1.1),
+	src/account.c (1.1.1.10), src/account_wrap.c (1.1.1.7), src/bnbot.c
+	(1.1.1.7), src/bnchat.c (1.1.1.3), src/bnetd.c (1.1.1.12),
+	src/bnethash.c (1.1.1.6), src/bnethashconv.c (1.1.1.5),
+	src/bnettime.c (1.1.1.4), src/bnftp.c (1.1.1.3), src/bnpass.c
+	(1.1.1.6), src/channel.c (1.1.1.12), src/client.c (1.1.1.3),
+	src/command.c (1.1.1.11), src/config.h.generic (1.1.1.1),
+	src/config.h.in (1.1.1.1), src/configure (1.1.1.1),
+	src/configure.in (1.1.1.1), src/connection.c (1.1.1.11),
+	src/convert.c (1.1.1.5), src/eventlog.c (1.1.1.6),
+	src/filetransfer.c (1.1.1.5), src/game.c (1.1.1.8), src/hexdump.c
+	(1.1.1.4), src/ladder.c (1.1.1.3), src/list.c (1.1.1.6), src/main.c
+	(1.1.1.9), src/message.c (1.1.1.10), src/network.c (1.1.1.7),
+	src/packet.c (1.1.1.8), src/prefs.c (1.1.1.9), src/queue.c
+	(1.1.1.5), src/server.c (1.1.1.11), src/setup.h (1.1.1.4),
+	src/timestamp.c (1.1.1.4), src/tracker.c (1.1.1.7), src/util.c
+	(1.1.1.4), src/version.h (1.1.1.12), src/watch.c (1.1.1.3),
+	src/autoconf/config.guess (1.1.1.1), src/autoconf/config.sub
+	(1.1.1.1), src/autoconf/install-sh (1.1.1.1), src/autoconf/mkdir-p
+	(1.1.1.1), src/compat/inet_aton.c (1.1.1.1), src/compat/inet_aton.h
+	(1.1.1.1), src/compat/inet_ntoa.c (1.1.1.1), src/compat/inet_ntoa.h
+	(1.1.1.1), src/compat/strdup.c (1.1.1.1), src/compat/strdup.h
+	(1.1.1.1): Importing historical release 0.4.11
+
+2001-04-26 17:19  hakan
+
+	* CHANGELOG (1.1.1.11), INSTALL (1.1.1.11), README (1.1.1.12), TODO
+	(1.1.1.8), conf/bnetd.conf (1.1.1.11), conf/bnetd_default_user
+	(1.1.1.6), conf/channel.list (1.1.1.5), conf/news.txt (1.1.1.1),
+	src/Makefile (1.1.1.10), src/bnbot.c (1.1.1.6), src/bnchat.c
+	(1.1.1.2), src/bnet_protocol.h (1.1.1.9), src/bnetd.c (1.1.1.11),
+	src/bnettime.c (1.1.1.3), src/bnftp.c (1.1.1.2), src/channel.c
+	(1.1.1.11), src/channel.h (1.1.1.8), src/client.c (1.1.1.2),
+	src/command.c (1.1.1.10), src/connection.c (1.1.1.10), src/game.c
+	(1.1.1.7), src/ladder.c (1.1.1.2), src/ladder.h (1.1.1.2),
+	src/list.c (1.1.1.5), src/main.c (1.1.1.8), src/packet.c (1.1.1.7),
+	src/packet.h (1.1.1.4), src/prefs.c (1.1.1.8), src/server.c
+	(1.1.1.10), src/setup.h (1.1.1.3), src/tracker.c (1.1.1.6),
+	src/version.h (1.1.1.11): Importing historical release 0.4.10
+
+2001-04-26 17:19  hakan
+
+	* man/bnclient.1 (1.2), src/bnclient.c (1.2): No more present in
+	0.4.9
+
+2001-04-26 17:19  hakan
+
+	* CHANGELOG (1.1.1.10), CREDITS (1.1.1.3), INSTALL (1.1.1.10),
+	README (1.1.1.11), README.ladder (1.1.1.1), TODO (1.1.1.7),
+	conf/bnetd.conf (1.1.1.10), conf/bnetd_default_user (1.1.1.5),
+	conf/bnmotd.txt (1.1.1.3), conf/channel.list (1.1.1.4),
+	files/tos.txt (1.1.1.2), man/bnchat.1 (1.1.1.1), man/bnetd.1
+	(1.1.1.2), man/bnftp.1 (1.1.1.1), man/bnpass.1 (1.1.1.2),
+	src/Makefile (1.1.1.9), src/account.c (1.1.1.9), src/account.h
+	(1.1.1.5), src/account_wrap.c (1.1.1.6), src/account_wrap.h
+	(1.1.1.6), src/ansi_term.h (1.1.1.1), src/bnbot.c (1.1.1.5),
+	src/bnchat.c (1.1.1.1), src/bnet_protocol.h (1.1.1.8), src/bnetd.c
+	(1.1.1.10), src/bnetd.h (1.1.1.2), src/bnethash.c (1.1.1.5),
+	src/bnethash.h (1.1.1.3), src/bnethashconv.c (1.1.1.4),
+	src/bnethashconv.h (1.1.1.3), src/bnettime.h (1.1.1.2), src/bnftp.c
+	(1.1.1.1), src/bnpass.c (1.1.1.5), src/bot_protocol.h (1.1.1.2),
+	src/channel.c (1.1.1.10), src/channel.h (1.1.1.7), src/client.c
+	(1.1.1.1), src/client.h (1.1.1.1), src/command.c (1.1.1.9),
+	src/command.h (1.1.1.2), src/connection.c (1.1.1.9),
+	src/connection.h (1.1.1.6), src/convert.c (1.1.1.4), src/convert.h
+	(1.1.1.3), src/eventlog.c (1.1.1.5), src/eventlog.h (1.1.1.6),
+	src/field_sizes.h (1.1.1.3), src/field_types.h (1.1.1.2),
+	src/filetransfer.c (1.1.1.4), src/filetransfer.h (1.1.1.2),
+	src/game.c (1.1.1.6), src/game.h (1.1.1.5), src/hexdump.c
+	(1.1.1.3), src/hexdump.h (1.1.1.2), src/ladder.c (1.1.1.1),
+	src/ladder.h (1.1.1.1), src/list.c (1.1.1.4), src/list.h (1.1.1.3),
+	src/main.c (1.1.1.7), src/message.c (1.1.1.9), src/message.h
+	(1.1.1.5), src/network.c (1.1.1.6), src/network.h (1.1.1.2),
+	src/packet.c (1.1.1.6), src/packet.h (1.1.1.3), src/port.h
+	(1.1.1.2), src/prefs.c (1.1.1.7), src/prefs.h (1.1.1.6),
+	src/queue.c (1.1.1.4), src/queue.h (1.1.1.2), src/server.c
+	(1.1.1.9), src/server.h (1.1.1.2), src/setup.h (1.1.1.2),
+	src/strdup.c (1.1.1.1), src/strdup.h (1.1.1.1), src/timestamp.c
+	(1.1.1.3), src/timestamp.h (1.1.1.2), src/tracker.c (1.1.1.5),
+	src/tracker.h (1.1.1.3), src/util.c (1.1.1.3), src/util.h
+	(1.1.1.2), src/version.h (1.1.1.10), src/watch.c (1.1.1.2),
+	src/watch.h (1.1.1.2): Importing historical release 0.4.9
+
+2001-04-26 17:18  hakan
+
+	* CHANGELOG (1.1.1.9), CREDITS (1.1.1.2), INSTALL (1.1.1.9), README
+	(1.1.1.10), TODO (1.1.1.6), conf/bnetd.conf (1.1.1.9),
+	conf/bnetd_default_user (1.1.1.4), src/Makefile (1.1.1.8),
+	src/account.c (1.1.1.8), src/account.h (1.1.1.4),
+	src/account_wrap.c (1.1.1.5), src/account_wrap.h (1.1.1.5),
+	src/bnbot.c (1.1.1.4), src/bnclient.c (1.1.1.7),
+	src/bnet_protocol.h (1.1.1.7), src/bnetd.c (1.1.1.9),
+	src/bnethash.c (1.1.1.4), src/bnethashconv.c (1.1.1.3),
+	src/bnettime.c (1.1.1.2), src/bnpass.c (1.1.1.4), src/channel.c
+	(1.1.1.9), src/channel.h (1.1.1.6), src/command.c (1.1.1.8),
+	src/connection.c (1.1.1.8), src/connection.h (1.1.1.5),
+	src/convert.c (1.1.1.3), src/eventlog.c (1.1.1.4),
+	src/field_sizes.h (1.1.1.2), src/filetransfer.c (1.1.1.3),
+	src/game.c (1.1.1.5), src/game.h (1.1.1.4), src/hexdump.c
+	(1.1.1.2), src/list.c (1.1.1.3), src/main.c (1.1.1.6),
+	src/message.c (1.1.1.8), src/message.h (1.1.1.4), src/network.c
+	(1.1.1.5), src/packet.c (1.1.1.5), src/prefs.c (1.1.1.6),
+	src/prefs.h (1.1.1.5), src/proxy.c (1.1.1.2), src/queue.c
+	(1.1.1.3), src/server.c (1.1.1.8), src/setup.h (1.1.1.1),
+	src/timestamp.c (1.1.1.2), src/tracker.c (1.1.1.4), src/util.c
+	(1.1.1.2), src/version.h (1.1.1.9), src/watch.c (1.1.1.1),
+	src/watch.h (1.1.1.1): Importing historical release 0.4.8
+
+2001-04-26 17:18  hakan
+
+	* CHANGELOG (1.1.1.8), CREDITS (1.1.1.1), INSTALL (1.1.1.8), README
+	(1.1.1.9), TODO (1.1.1.5), conf/bnetd.conf (1.1.1.8),
+	conf/bnetd_default_user (1.1.1.3), conf/channel.list (1.1.1.3),
+	files/icons.bni (1.1.1.1), src/account.c (1.1.1.7), src/account.h
+	(1.1.1.3), src/account_wrap.c (1.1.1.4), src/account_wrap.h
+	(1.1.1.4), src/bnclient.c (1.1.1.6), src/bnet_protocol.h (1.1.1.6),
+	src/bnetd.c (1.1.1.8), src/channel.c (1.1.1.8), src/channel.h
+	(1.1.1.5), src/command.c (1.1.1.7), src/message.c (1.1.1.7),
+	src/server.c (1.1.1.7), src/tracker.c (1.1.1.3), src/version.h
+	(1.1.1.8): Importing historical release 0.4.7
+
+2001-04-26 17:18  hakan
+
+	* CHANGELOG (1.1.1.7), INSTALL (1.1.1.7), README (1.1.1.8),
+	conf/bnetd.conf (1.1.1.7), conf/channel.list (1.1.1.2),
+	src/Makefile (1.1.1.7), src/account_wrap.c (1.1.1.3),
+	src/account_wrap.h (1.1.1.3), src/bnclient.c (1.1.1.5),
+	src/bnet_protocol.h (1.1.1.5), src/bnetd.c (1.1.1.7), src/bnpass.c
+	(1.1.1.3), src/channel.c (1.1.1.7), src/channel.h (1.1.1.4),
+	src/command.c (1.1.1.6), src/connection.c (1.1.1.7), src/game.c
+	(1.1.1.4), src/game.h (1.1.1.3), src/main.c (1.1.1.5),
+	src/message.c (1.1.1.6), src/prefs.c (1.1.1.5), src/prefs.h
+	(1.1.1.4), src/version.h (1.1.1.7): Importing historical release
+	0.4.6
+
+2001-04-26 17:18  hakan
+
+	* CHANGELOG (1.1.1.6), INSTALL (1.1.1.6), README (1.1.1.7), TODO
+	(1.1.1.4), conf/bnetd.conf (1.1.1.6), conf/bnmotd.txt (1.1.1.2),
+	conf/channel.list (1.1.1.1), src/Makefile (1.1.1.6), src/account.c
+	(1.1.1.6), src/bnclient.c (1.1.1.4), src/bnet_protocol.h (1.1.1.4),
+	src/bnetd.c (1.1.1.6), src/bnethash.c (1.1.1.3), src/bnethash.h
+	(1.1.1.2), src/bnethashconv.c (1.1.1.2), src/bnethashconv.h
+	(1.1.1.2), src/bnpass.c (1.1.1.2), src/channel.c (1.1.1.6),
+	src/channel.h (1.1.1.3), src/command.c (1.1.1.5), src/connection.c
+	(1.1.1.6), src/connection.h (1.1.1.4), src/convert.c (1.1.1.2),
+	src/convert.h (1.1.1.2), src/eventlog.c (1.1.1.3), src/eventlog.h
+	(1.1.1.5), src/game.c (1.1.1.3), src/game.h (1.1.1.2), src/main.c
+	(1.1.1.4), src/message.c (1.1.1.5), src/packet.c (1.1.1.4),
+	src/prefs.c (1.1.1.4), src/prefs.h (1.1.1.3), src/server.c
+	(1.1.1.6), src/version.h (1.1.1.6): Importing historical release
+	0.4.5
+
+2001-04-26 17:17  hakan
+
+	* conf/motd (1.2): No more present in 0.4.4
+
+2001-04-26 17:17  hakan
+
+	* CHANGELOG (1.1.1.5), INSTALL (1.1.1.5), README (1.1.1.6),
+	conf/bnetd.conf (1.1.1.5), conf/bnmotd.txt (1.1.1.1),
+	man/bnclient.1 (1.1.1.1), man/bnetd.1 (1.1.1.1), man/bnetd.conf.4
+	(1.1.1.1), man/bnpass.1 (1.1.1.1), man/bntext.4 (1.1.1.1),
+	src/Makefile (1.1.1.5), src/account.c (1.1.1.5), src/bnclient.c
+	(1.1.1.3), src/bnetd.c (1.1.1.5), src/channel.c (1.1.1.5),
+	src/channel.h (1.1.1.2), src/command.c (1.1.1.4), src/connection.c
+	(1.1.1.5), src/connection.h (1.1.1.3), src/eventlog.h (1.1.1.4),
+	src/message.c (1.1.1.4), src/message.h (1.1.1.3), src/network.c
+	(1.1.1.4), src/packet.c (1.1.1.3), src/prefs.c (1.1.1.3),
+	src/prefs.h (1.1.1.2), src/server.c (1.1.1.5), src/version.h
+	(1.1.1.5): Importing historical release 0.4.4
+
+2001-04-26 17:17  hakan
+
+	* CHANGELOG (1.1.1.4), INSTALL (1.1.1.4), README (1.1.1.5), TODO
+	(1.1.1.3), conf/bnetd.conf (1.1.1.4), src/Makefile (1.1.1.4),
+	src/account.c (1.1.1.4), src/account_wrap.c (1.1.1.2),
+	src/account_wrap.h (1.1.1.2), src/bnbot.c (1.1.1.3),
+	src/bnet_protocol.h (1.1.1.3), src/bnetd.c (1.1.1.4), src/channel.c
+	(1.1.1.4), src/command.c (1.1.1.3), src/connection.c (1.1.1.4),
+	src/eventlog.h (1.1.1.3), src/main.c (1.1.1.3), src/message.c
+	(1.1.1.3), src/message.h (1.1.1.2), src/server.c (1.1.1.4),
+	src/tracker.c (1.1.1.2), src/version.h (1.1.1.4): Importing
+	historical release 0.4.3
+
+2001-04-26 17:17  hakan
+
+	* CHANGELOG (1.1.1.3), INSTALL (1.1.1.3), README (1.1.1.4), TODO
+	(1.1.1.2), conf/bnetd.conf (1.1.1.3), conf/bnetd_default_user
+	(1.1.1.2), conf/motd (1.1.1.3), src/Makefile (1.1.1.3),
+	src/account.c (1.1.1.3), src/bnbot.c (1.1.1.2), src/bnclient.c
+	(1.1.1.2), src/bnet_protocol.h (1.1.1.2), src/bnetd.c (1.1.1.3),
+	src/bnethash.c (1.1.1.2), src/channel.c (1.1.1.3), src/command.c
+	(1.1.1.2), src/connection.c (1.1.1.3), src/connection.h (1.1.1.2),
+	src/eventlog.c (1.1.1.2), src/eventlog.h (1.1.1.2),
+	src/filetransfer.c (1.1.1.2), src/game.c (1.1.1.2), src/list.c
+	(1.1.1.2), src/list.h (1.1.1.2), src/main.c (1.1.1.2),
+	src/message.c (1.1.1.2), src/network.c (1.1.1.3), src/packet.c
+	(1.1.1.2), src/packet.h (1.1.1.2), src/prefs.c (1.1.1.2),
+	src/queue.c (1.1.1.2), src/server.c (1.1.1.3), src/tracker.c
+	(1.1.1.1), src/tracker.h (1.1.1.2), src/version.h (1.1.1.3):
+	Importing historical release 0.4.2
+
+2001-04-26 17:17  hakan
+
+	* TESTED (1.2): No more present in 0.4.1
+
+2001-04-26 17:17  hakan
+
+	* TODO (1.1), src/tracker.c (1.1), conf/bnmotd.txt (1.1),
+	man/bnclient.1 (1.1), man/bnetd.1 (1.1), man/bnetd.conf.4 (1.1),
+	man/bnpass.1 (1.1), man/bntext.4 (1.1), conf/channel.list (1.1),
+	CREDITS (1.1), files/icons.bni (1.1), src/setup.h (1.1),
+	src/watch.c (1.1), src/watch.h (1.1), README.ladder (1.1),
+	man/bnchat.1 (1.1), man/bnftp.1 (1.1), src/ansi_term.h (1.1),
+	src/bnchat.c (1.1), src/bnftp.c (1.1), src/client.c (1.1),
+	src/client.h (1.1), src/ladder.c (1.1), src/ladder.h (1.1),
+	src/strdup.c (1.1), src/strdup.h (1.1), conf/news.txt (1.1):
+	Initial revision
+
+2001-04-26 17:17  hakan
+
+	* CHANGELOG (1.1.1.2), INSTALL (1.1.1.2), README (1.1.1.3), TODO
+	(1.1.1.1), conf/bnetd.conf (1.1.1.2), conf/motd (1.1.1.2),
+	src/Makefile (1.1.1.2), src/account.c (1.1.1.2), src/account.h
+	(1.1.1.2), src/bnetd.c (1.1.1.2), src/channel.c (1.1.1.2),
+	src/connection.c (1.1.1.2), src/network.c (1.1.1.2), src/server.c
+	(1.1.1.2), src/version.h (1.1.1.2): Importing historical release
+	0.4.1
+
+2001-04-26 16:45  hakan
+
+	* Makefile (1.2), bnet_protocol.h (1.2), bnetd.c (1.2), bnetd.h
+	(1.2), channels.c (1.2), channels.h (1.2), games.c (1.2), games.h
+	(1.2), hexdump.c (1.2), hexdump.h (1.2), main.c (1.2), network.c
+	(1.2), network.h (1.2): No more present in 0.4
+
+2001-04-26 16:45  hakan
+
+	* CHANGELOG (1.1), INSTALL (1.1), TESTED (1.1), conf/bnetd.conf
+	(1.1), conf/bnetd_default_user (1.1), conf/motd (1.1),
+	files/ad0512b.pcx (1.1), files/tos.txt (1.1), src/Makefile (1.1),
+	src/account.c (1.1), src/account.h (1.1), src/account_wrap.c (1.1),
+	src/account_wrap.h (1.1), src/bnbot.c (1.1), src/bnclient.c (1.1),
+	src/bnet_protocol.h (1.1), src/bnetd.c (1.1), src/bnetd.h (1.1),
+	src/bnethash.c (1.1), src/bnethash.h (1.1), src/bnethashconv.c
+	(1.1), src/bnethashconv.h (1.1), src/bnettime.c (1.1),
+	src/bnettime.h (1.1), src/bnpass.c (1.1), src/bot_protocol.h (1.1),
+	src/channel.c (1.1), src/channel.h (1.1), src/command.c (1.1),
+	src/command.h (1.1), src/connection.c (1.1), src/connection.h
+	(1.1), src/convert.c (1.1), src/convert.h (1.1), src/eventlog.c
+	(1.1), src/eventlog.h (1.1), src/field_sizes.h (1.1),
+	src/field_types.h (1.1), src/filetransfer.c (1.1),
+	src/filetransfer.h (1.1), src/game.c (1.1), src/game.h (1.1),
+	src/hexdump.c (1.1), src/hexdump.h (1.1), src/list.c (1.1),
+	src/list.h (1.1), src/main.c (1.1), src/message.c (1.1),
+	src/message.h (1.1), src/network.c (1.1), src/network.h (1.1),
+	src/packet.c (1.1), src/packet.h (1.1), src/port.h (1.1),
+	src/prefs.c (1.1), src/prefs.h (1.1), src/proxy.c (1.1),
+	src/queue.c (1.1), src/queue.h (1.1), src/server.c (1.1),
+	src/server.h (1.1), src/timestamp.c (1.1), src/timestamp.h (1.1),
+	src/tracker.h (1.1), src/util.c (1.1), src/util.h (1.1),
+	src/version.h (1.1): Initial revision
+
+2001-04-26 16:45  hakan
+
+	* CHANGELOG (1.1.1.1), COPYING (1.1.1.2), INSTALL (1.1.1.1), README
+	(1.1.1.2), TESTED (1.1.1.1), conf/bnetd.conf (1.1.1.1),
+	conf/bnetd_default_user (1.1.1.1), conf/motd (1.1.1.1),
+	files/ad0512b.pcx (1.1.1.1), files/tos.txt (1.1.1.1), src/Makefile
+	(1.1.1.1), src/account.c (1.1.1.1), src/account.h (1.1.1.1),
+	src/account_wrap.c (1.1.1.1), src/account_wrap.h (1.1.1.1),
+	src/bnbot.c (1.1.1.1), src/bnclient.c (1.1.1.1),
+	src/bnet_protocol.h (1.1.1.1), src/bnetd.c (1.1.1.1), src/bnetd.h
+	(1.1.1.1), src/bnethash.c (1.1.1.1), src/bnethash.h (1.1.1.1),
+	src/bnethashconv.c (1.1.1.1), src/bnethashconv.h (1.1.1.1),
+	src/bnettime.c (1.1.1.1), src/bnettime.h (1.1.1.1), src/bnpass.c
+	(1.1.1.1), src/bot_protocol.h (1.1.1.1), src/channel.c (1.1.1.1),
+	src/channel.h (1.1.1.1), src/command.c (1.1.1.1), src/command.h
+	(1.1.1.1), src/connection.c (1.1.1.1), src/connection.h (1.1.1.1),
+	src/convert.c (1.1.1.1), src/convert.h (1.1.1.1), src/eventlog.c
+	(1.1.1.1), src/eventlog.h (1.1.1.1), src/field_sizes.h (1.1.1.1),
+	src/field_types.h (1.1.1.1), src/filetransfer.c (1.1.1.1),
+	src/filetransfer.h (1.1.1.1), src/game.c (1.1.1.1), src/game.h
+	(1.1.1.1), src/hexdump.c (1.1.1.1), src/hexdump.h (1.1.1.1),
+	src/list.c (1.1.1.1), src/list.h (1.1.1.1), src/main.c (1.1.1.1),
+	src/message.c (1.1.1.1), src/message.h (1.1.1.1), src/network.c
+	(1.1.1.1), src/network.h (1.1.1.1), src/packet.c (1.1.1.1),
+	src/packet.h (1.1.1.1), src/port.h (1.1.1.1), src/prefs.c
+	(1.1.1.1), src/prefs.h (1.1.1.1), src/proxy.c (1.1.1.1),
+	src/queue.c (1.1.1.1), src/queue.h (1.1.1.1), src/server.c
+	(1.1.1.1), src/server.h (1.1.1.1), src/timestamp.c (1.1.1.1),
+	src/timestamp.h (1.1.1.1), src/tracker.h (1.1.1.1), src/util.c
+	(1.1.1.1), src/util.h (1.1.1.1), src/version.h (1.1.1.1): Importing
+	historical release 0.4
+
+2001-04-26 16:24  hakan
+
+	* COPYING (1.1), Makefile (1.1), README (1.1), bnet_protocol.h
+	(1.1), bnetd.c (1.1), bnetd.h (1.1), channels.c (1.1), channels.h
+	(1.1), games.c (1.1), games.h (1.1), hexdump.c (1.1), hexdump.h
+	(1.1), main.c (1.1), network.c (1.1), network.h (1.1): Initial
+	revision
+
+2001-04-26 16:24  hakan
+
+	* COPYING (1.1.1.1), Makefile (1.1.1.1), README (1.1.1.1),
+	bnet_protocol.h (1.1.1.1), bnetd.c (1.1.1.1), bnetd.h (1.1.1.1),
+	channels.c (1.1.1.1), channels.h (1.1.1.1), games.c (1.1.1.1),
+	games.h (1.1.1.1), hexdump.c (1.1.1.1), hexdump.h (1.1.1.1), main.c
+	(1.1.1.1), network.c (1.1.1.1), network.h (1.1.1.1): Importing
+	historical release 0.3
+

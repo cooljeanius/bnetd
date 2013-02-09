@@ -1,0 +1,157 @@
+##############################################################################
+# autoupdate  -  Auto Update Configuration		                     #
+#----------------------------------------------------------------------------#
+#                                                                            #
+# This is a list of client tags and their equivalent autoupdate files and    #
+# version information.                                                       #
+#                                                                            #
+# This file will be ignored for certain clients if skip_versioncheck is      #
+# enabled in the bnetd.conf file.                                            #
+#                                                                            #
+# Only the first matching line is used.  If no lines match then no upgrade   #
+# will be attempted and the client will remain at its current version.       #
+#                                                                            #
+# Do not include "/" in any of the filenames.                                #
+#                                                                            #
+# The version numbers can be in two forms.  If it does not contain a period  #
+# then 123 is assumed to mean 1.2.3.0.  Otherwise it may contain up to three #
+# periods.  If fewer than four parts are present, the latter ones will be    #
+# assumed to be zero.  For example, 1.8 would be interpreted as 1.8.0.0.     #
+# Sections will overflow if they are greater than 255.                       #
+#                                                                            #
+# The min and max versions are optional, if they are not specified they      #
+# default to 0.0.0.0 and the new version respectively (new version means the #
+# version of the client after it has been upgraded).                         #
+#                                                                            #
+# Note: min version is inclusive (>=), max version is exclusive (<).         #
+#                                                                            #
+# The versiontag is used to identify a particular version as specified in    #
+# the versioncheck configuration file.                                       #
+#                                                                            #
+# The versioncheck file identifies a client by reported version number,      #
+# arch, checksum, clienttag, etc.  If the entry designates a versiontag,     #
+# then that string may be used in this file instead of the simple min max    #
+# version.  Actually the min version is still used but the max version is    #
+# ignored.  If versiontag is not specified in this file then the matching is #
+# performed normally.                                                        #
+#                                                                            #
+# artag clitag -----update file-----  new-ver-   min-ver-   max-ver- -vrtag- #
+
+##### Intel (IX86) ###########################################################
+
+# ========================= StarCraft (original) =========================== 
+# These entries use version tags; the version numbers are just for reference.
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.0.0   1.0.0.1  STAR_100
+#IX86    STAR            star109b.mpq  1.0.9.2    1.1.0.0   1.1.0.1  STAR_101
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.2.4   1.0.2.5  STAR_102
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.3.0   1.0.3.1  STAR_103
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.4.0   1.0.4.1  STAR_104
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.5.0   1.0.5.1  STAR_105
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.6.0   1.0.6.1  STAR_106
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.7.0   1.0.7.1  STAR_107
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.8.0   1.0.8.1  STAR_108
+#IX86    STAR            star109b.mpq  1.0.9.2    1.0.8.10  1.0.8.11 STAR_108b
+#IX86    STAR              sc9-9b.mpq  1.0.9.2    1.0.9.0   1.0.9.1  STAR_109
+# These lines are incremental updates which are still available from
+# Battle.net but are not very useful anymore since they aren't
+# close to the latest version.
+#IX86    STAR               sc4-5.mpq  1.0.5.0    1.0.4.0   1.0.4.1  STAR_104
+#IX86    STAR               sc5-6.mpq  1.0.6.0    1.0.5.0   1.0.5.1  STAR_105
+#IX86    STAR              sc6-7b.mpq  1.0.7.0    1.0.6.0   1.0.6.1  STAR_106
+#IX86    STAR             sc7b-8b.mpq  1.0.8.10   1.0.7.0   1.0.7.1  STAR_107
+#IX86    STAR              sc8-8b.mpq  1.0.8.10   1.0.8.0   1.0.8.1  STAR_108
+#IX86    STAR              sc8b-9.mpq  1.0.9.0    1.0.8.10  1.0.8.11 STAR_108b
+# The next one is a Starcraft wildcard entry.
+#IX86    STAR            star109b.mpq  1.0.9.2    0.0.0.0   0.0.0.0  STAR_1xx
+
+# ================ StarCraft Expansion (Brood War) =========================
+# These entries use version tags; the version numbers are just for reference.
+#IX86    SEXP           brood109b.mpq  1.0.9.3    1.0.4.1   1.0.4.2  SEXP_104
+#IX86    STAR           brood109b.mpq  1.0.9.3    1.0.4.1   1.0.4.2  SEXP_104_STAR
+#IX86    SEXP           brood109b.mpq  1.0.9.3    1.0.5.1   1.0.5.2  SEXP_105
+#IX86    STAR           brood109b.mpq  1.0.9.3    1.0.5.1   1.0.5.2  SEXP_105_STAR
+#IX86    SEXP           brood109b.mpq  1.0.9.3    1.0.6.1   1.0.6.2  SEXP_106
+#IX86    STAR           brood109b.mpq  1.0.9.3    1.0.6.1   1.0.6.2  SEXP_106_STAR
+#IX86    SEXP           brood109b.mpq  1.0.9.3    1.0.7.1   1.0.7.2  SEXP_107 
+#IX86    STAR           brood109b.mpq  1.0.9.3    1.0.7.1   1.0.7.2  SEXP_107_STAR
+#IX86    SEXP           brood109b.mpq  1.0.9.3    1.0.8.1   1.0.8.2  SEXP_108
+#IX86    STAR           brood109b.mpq  1.0.9.3    1.0.8.1   1.0.8.2  SEXP_108_STAR
+#IX86    SEXP           brood109b.mpq  1.0.9.3    1.0.8.11  1.0.8.12 SEXP_108b
+#IX86    STAR           brood109b.mpq  1.0.9.3    1.0.8.11  1.0.8.12 SEXP_108b_STAR
+#IX86    SEXP              bw9-9b.mpq  1.0.9.3    1.0.9.1   1.0.9.2  SEXP_109
+#IX86    STAR              bw9-9b.mpq  1.0.9.3    1.0.9.1   1.0.9.2  SEXP_109_STAR
+# These lines are incremental updates which are still available from
+# Battle.net but are not very useful anymore since they aren't
+# close to the latest version.
+#IX86    SEXP               bw4-5.mpq  1.0.5.1    1.0.4.1   1.0.4.2  SEXP_104
+#IX86    STAR               bw4-5.mpq  1.0.5.1    1.0.4.1   1.0.4.2  SEXP_104_STAR
+#IX86    SEXP               bw5-6.mpq  1.0.6.1    1.0.5.1   1.0.5.2  SEXP_105
+#IX86    STAR               bw5-6.mpq  1.0.6.1    1.0.5.1   1.0.5.2  SEXP_105_STAR
+#IX86    SEXP              bw6-7b.mpq  1.0.7.1    1.0.6.1   1.0.6.2  SEXP_106
+#IX86    STAR              bw6-7b.mpq  1.0.7.1    1.0.6.1   1.0.6.2  SEXP_106_STAR
+#IX86    SEXP             bw7b-8b.mpq  1.0.8.11   1.0.7.1   1.0.7.2  SEXP_107 
+#IX86    STAR             bw7b-8b.mpq  1.0.8.11   1.0.7.1   1.0.7.2  SEXP_107_STAR
+#IX86    SEXP              bw8-8b.mpq  1.0.8.11   1.0.8.1   1.0.8.2  SEXP_108
+#IX86    STAR              bw8-8b.mpq  1.0.8.11   1.0.8.1   1.0.8.2  SEXP_108_STAR
+#IX86    SEXP              bw8b-9.mpq  1.0.9.1    1.0.8.11  1.0.8.12 SEXP_108b
+#IX86    STAR              bw8b-9.mpq  1.0.9.1    1.0.8.11  1.0.8.12 SEXP_108b_STAR
+# The next one is a Brood War wildcard entry.
+#IX86    SEXP           brood109b.mpq  1.0.9.3    0.0.0.0   0.0.0.0  SEXP_1xx
+
+# ========================== Diablo II (DV) ================================
+# These entries use version tags; the version numbers are just for reference.
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.0.1   1.0.9.0  D2DV_100
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.0.1   1.0.9.0  D2DV_101
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.3.0   1.0.9.0  D2DV_103
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.4.1   1.0.9.0  D2DV_104b
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.4.2   1.0.9.0  D2DV_104c
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.5.0   1.0.9.0  D2DV_105
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.5.1   1.0.9.0  D2DV_105b
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.6.0   1.0.9.0  D2DV_106
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.6.0   1.0.9.0  D2DV_106b
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.8.0   1.0.9.0  D2DV_108
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.9.0   1.0.9.0  D2DV_109
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.9.0   1.0.9.0  D2DV_109b
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    1.0.9.0   1.0.9.0  D2DV_109d
+# The next one is a Diablo II wildcard entry.
+#IX86    D2DV  d2dv_ix86_1xx_109d.mpq  1.0.9.0    0.0.0.0   1.0.9.0  D2DV_1xx
+
+# ===================== Diablo II Expansion (LoD) ==========================
+# These entries use version tags; the version numbers are just for reference.
+# note: Blizzard has suppressed d2/lod versions 1.09c.
+#IX86    D2XP  d2xp_ix86_107_109d.mpq  1.0.9.0    1.0.7.0   1.0.8.0  D2XP_107
+#IX86    D2XP  d2xp_ix86_1xx_109d.mpq  1.0.9.0    1.0.8.0   1.0.9.0  D2XP_108
+#IX86    D2XP  d2xp_ix86_1xx_109d.mpq  1.0.9.0    1.0.9.0   1.0.9.0  D2XP_109
+#IX86    D2XP  d2xp_ix86_1xx_109d.mpq  1.0.9.0    1.0.9.0   1.0.9.0  D2XP_109b
+# The next one is a Diablo II LoD wildcard entry.
+#IX86    D2XP  d2xp_ix86_1xx_109d.mpq  1.0.9.0    0.0.0.0   1.0.9.0  D2XP_1xx
+
+# ========================= Diablo (original) ==============================
+# These entries use version tags; the version numbers are just for reference.
+# note: Blizzard doesn't update client from 109 to 109b.
+#IX86    DRTL            dr108109.mpq  1.0.9.0    1.0.8.1   1.0.9.0  DRTL_108
+# The next one is a Diablo wildcard entry.
+#IX86    DRTL            dr100109.mpq  1.0.9.0    0.0.0.0   1.0.9.0  DRTL_1xx
+
+# ========================= Warcraft II BNE ===============================
+# These entries use version tags; the version numbers are just for reference.
+#IX86    W2BN   w2bn_ix86_201_202.mpq  2.0.2.1    2.0.0.154 2.0.2.1  W2BN_201
+
+
+##### PowerPC Macintosh (PMAC) ###############################################
+# FIXME: We don't have any info for these.
+
+
+##### PowerPC Macintosh OSX (XMAC) ###########################################
+
+# ================ StarCraft Expansion (Brood War) =========================
+# These entries use version tags; the version numbers are just for reference.
+#XMAC    SEXP       xmacsexp109bx.mpq  1.0.9.3    1.0.8.3   1.0.8.4  SEXP_108b
+#XMAC    STAR       xmacsexp109bx.mpq  1.0.9.3    1.0.8.3   1.0.8.4  SEXP_108b_STAR
+#XMAC    SEXP       xmacsexp109bx.mpq  1.0.9.3    1.0.9.1   1.0.9.2  SEXP_109
+#XMAC    STAR       xmacsexp109bx.mpq  1.0.9.3    1.0.9.1   1.0.9.2  SEXP_109_STAR
+# The next one is a Brood War wildcard entry.
+#XMAC    SEXP       xmacsexp109bx.mpq  1.0.9.3    0.0.0.0   0.0.0.0  SEXP_1xx
+
+#                                                                            #
+##############################################################################

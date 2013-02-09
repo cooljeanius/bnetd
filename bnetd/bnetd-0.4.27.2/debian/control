@@ -1,0 +1,18 @@
+Source: bnetd
+Section: net
+Priority: optional
+Maintainer: Raphael Bossek <bossekr@debian.org>
+Standards-Version: 3.0.1
+
+Package: bnetd
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Battle.Net server for Unix-like systems
+ The server currently implements most of the same functionality as the
+ real Battle.Net servers.  You can chat, play games, use / commands,
+ and things like account passwords, user icons, ad banners, and
+ channel operators work too.  It is by no means complete, though.
+ .
+ More information can be found at the bnetd web site
+ http://www.bnetd.org/.
+

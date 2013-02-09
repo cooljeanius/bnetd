@@ -1,0 +1,26 @@
+#!/bin/sh
+
+case "$1" in
+    remove)
+        if [ -e /etc/init.d/bnetd ]; then
+        	/etc/init.d/bnetd stop
+        fi
+	# SDE - this looks like a race condition...
+        sleep 1
+        if [ -L /usr/share/bnetd/default.pcx ]; then
+        	rm -f /usr/share/bnetd/default.pcx
+        fi
+    ;;
+    upgrade|failed-upgrade|deconfigure)
+    ;;
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+if [ \( "$1" = "upgrade" -o "$1" = "remove" \) -a -L /usr/doc/bnetd ]; then
+	rm -f /usr/doc/bnetd
+fi
+
+exit 0

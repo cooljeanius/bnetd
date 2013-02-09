@@ -1,0 +1,215 @@
+
+        DataBase (MySQL) storage - patch
+        Version 0.5 (20030418)
+        by Joerg Ebeling <JEBs@shbe.net>
+        http://bnetd.shbe.net
+
+Overview
+========
+db_mysql stores BNetD's user account and
+character files into a MySQL DataBase.
+The structure of this patch is build in that way,
+that implementation to other DB's should be easy cause of
+universal named functions and the spliting of dependent and
+independed code in different sources.
+
+
+Status
+======
+This patch is the second phase of db implementation.
+It runs since some months on my own bnetd-server
+and has made approx. 100'000 logons.
+
+
+LICENSE
+=======
+See LICENSE (GPL)
+
+
+Requirements
+============
+First of all, you shall be familar with MySQL DataBases.
+
+I guess you need a MySQL server version "3.23" or higher.
+
+This patch is developed on (Debian 3.0) Linux.
+No windows testing was made up to now cause i don't have windows.
+To get this working under windows, simply try to compile it.
+If something fail, write me a short eMail or post your problems
+to the mailing list.
+
+You need the "MySQL client development header and libraries"
+(In Debian they are called "libmysqlclient10-dev")
+
+
+Configuration
+=============
+Configure your BNetD with "--with-storage-mysql".
+In case that you've installed the MySQL header/libraries to a
+non-standard places, you need to configure bnetd with your path settings.
+--with-libraries=/path/to/libmysqlclient... and
+--with-includes=/path/to/mysql-headerfiles
+
+
+Installation
+============
+After you build and installed your bnetd version,
+there are some extra configuration variables in the bnetd.conf file.
+Please look inside the config file, everything should be well commented.
+
+
+MySQL database & table(s)
+=========================
+For sure the database/table stuff must be made on the machine where the
+database shall run, which doesn't must be the bnetd server.
+1.) Create a database "bnetd" or whatever you named it in your config files.
+    "mysqladmin [-p] create bnetd"
+2.) Add a "bnetd" user, as configured in the config files,
+    to the MySQL grant tables.
+    You need to add at least one record to mysql/user and mysql/db.
+    In mysql/db the bnetd user needs "Select,Insert,Update,
+    Delete,Create,Index and Alter" privilegs cause the bnetd daemons
+    create and modifie tables in case of new installation
+    or update, by himself.
+    Don't use your MySQL "root" user as your bnetd user !!!
+3.) if you already have (FlatFile) bnetd accounts and characters in your
+	bnetd, they are migrated automatic in the first run.
+
+If anything went wrong when running,
+set your log levels at least to "info" and look if you get
+any usefull information.
+
+
+HISTORY
+=======
+JEBs20030418
+    - Changed bone headed WHERE clause
+JEBs20030330
+    - Fixed huge security whole with unescaped wildcard chars ("_" & "%")
+JEBs20030214
+    - Fixed two memory leaks in d2cs.
+JEBs20021230
+	- Placed automatic character-record-backup to status
+	  "anybody interested ?" and wrote a small technical
+	  info so that i can remember how i've planed it.
+	  (and already structured the table)
+JEBs20021026
+	- Included d2cs/d2dbs charcter storage support
+	- Heavy redraw and optimization
+JEBs20020902
+    - Removed some mistakes in comments
+    - Changed some comment from "//" to "/* ... */" style
+    - Modified (hopefull) all windows specific files.
+      (Compile and config relevant)
+    - Build patch version 0.2 against Yoss's
+      "bnetd.milc.com.pl" CVS version (20020902T193400)
+JEBs20020723
+    - Initial version 0.1 finished. Build patch against bnetd-0.4.26CVS
+
+
+TODO
+====
+    - = ToDo
+    w = currently working on
+    ? = don't know
+    + = works (well ... might work ;)
+    i = important
+    l = less important
+    ? = anybody is interested in this feature ?
+
++   = Account table version control
++   = Creation of tables in case of new installation
++   = Update from FlatFiles if no DB already exists
++   = Account user data
++   = Automatic update of "bnetd_default_user"
++   = Whats happen in a totally new installation ?
+      (When no DB nor FlatFiles exists ?)
+-   = Whats happen when compiled --with-acct-dyn-load ?
++   = Configure script adapation that MySQL
+      header and libraries are found automatic
++   = Character data
++	= Character data import from FlatFiles
++   = Character table version control
+-?  = Automatic regular character backup per record
+-?  = Mail data
+-?  = Channel log data
+-?  = Ladder data
+-?  = Programm execution log data
+
+
+Some specific internals:
+========================
+Short description how the automatic regular character backup on per record basis
+was planed/already defined in the table structur. (But not implemented yet !)
+
+Character table format:
++----------+----------------------+------+-----+---------+
+| Field    | Type                 | Null | Key | Default |
++----------+----------------------+------+-----+---------+
+| charname | varchar(16)          |      | MUL | 0       |
+| accname  | varchar(16)          |      | MUL |         |
+| realm    | varchar(32)          |      | MUL |         |
+| mtime    | timestamp(14)        | YES  |     |         | = last modification
+| ctime    | timestamp(14)        | YES  |     |         | = creation
+| btime    | timestamp(14)        | YES  |     |         | = last backup
+| recage   | smallint(5) unsigned | YES  | MUL | 0       | = record age in hours, where 0 is the actual/newest
+| charinfo | blob                 |      |     |         |
+| chardata | blob                 |      |     |         |
++----------+----------------------+------+-----+---------+
++-------------+------------+----------+--------------+-------------+-----------+
+| Table       | Non_unique | Key_name | Seq_in_index | Column_name | Collation |
++-------------+------------+----------+--------------+-------------+-----------+
+| d2character | 0          | RepKey   | 1            | charname    | A         |
+| d2character | 0          | RepKey   | 2            | realm       | A         |
+| d2character | 0          | RepKey   | 3            | recage      | A         |
+| d2character | 1          | accname  | 1            | accname     | A         |
+| d2character | 1          | charname | 1            | charname    | A         |
+| d2character | 1          | realm    | 1            | realm       | A         |
+| d2character | 1          | recage   | 1            | recage      | A         |
++-------------+------------+----------+--------------+-------------+-----------+
+
+Well, to get fast and easy access/updates to all records i build the unique key "RepKey".
+Beside "charname" and "realm" it contains the "recage" field which is neccessary for
+the future backup implementation.
+At the moment all records have an "recage" of 0.
+
+How it shall work:
+------------------
+Via an additional d2cs or d2dbs parameter, let me say i.e.:
+	"BackupInterval = 24,168,672,1344,2016,8064" (in hours)
+the interval could be configured, which means:
+Make a backup of an character record when it's older than 24h,
+1 week, 1 month, 2 months, 3 months AND 1 Year.
+Remember that if its configured in this way, and you've played an character
+continuous over one year, then you've 6 different backups of that character.
+
+By this it's quite easy for an DB-newbie to restore an character by simply
+deleting the actual (if it's still existant), which has an recage=0.
+And give that one which should be "restored" an recage of 0.
+
+Of course by this feature you multiple the number of records by the number of
+intervals you've entered, but believe me:
+	If you've 10'000 chars and 8 intervals = 80'000 records = nothing for i.e. MySQL
+	If you've something > 100'000 real chars then you might decide to use only 6 intervals :D
+
+How it shall be programmed:
+---------------------------
+Whenever a record is loaded the backup function must be called.
+(Yes, when it's loaded !! Because when it's loaded it's saved too,
+some minutes/seconds later, AND it's saved much more often than it's loaded.
+So we'll save some CPU time, and lot of MySQL queries.
+But there's one pitfall:
+If you've a gamer who's playing longer than the smallest backupinterval in ONE game,
+without exiting this, then the backup is skipped)
+
+for(actinterval = last backupinterval, .... backwards) {
+	REPLACE ... charname, realm, ..., recage = actinterval, btime=(if btime=NULL btime = NOW() else btime),
+	SELECT charname, realm, ... WHERE charname=... AND realmname=...
+		AND mtime-ctime (hours) >= actinterval and recage < actinterval
+
+That's it, easy yeah ?!
+
+
+LEGAL NOTES
+===========
+	All trademarks are property of their registered owners.

@@ -1,0 +1,116 @@
+bnetd (0.4.sgo.27.2) unstable; urgency=low
+
+  * New versioncheck file from another project via Owen Dunn.
+
+ -- Ian Jackson <ian@davenant.greenend.org.uk>  Tue, 27 Jul 2004 21:18:25 +0100
+
+bnetd (0.4.sgo.27.1) unstable; urgency=low
+
+  * Fix bnbot to no longer have an unitialised variable fd_stdin.
+
+ -- Ian Jackson <ian@davenant.greenend.org.uk>  Sat, 19 Jun 2004 17:50:32 +0100
+
+bnetd (0.4.sgo.27) unstable; urgency=low
+
+  * Put everything into cvs (CVS tag for 0.4.26-1 as in previous changelog
+    entry is from-owen-tarball-2004-06-19).
+  * Applied bnetd-0.4.24-bnbot-noscreen.diff (which makes bnbot not try to
+    do curses stuff).
+  * Version check file is /etc/bnetd/versioncheck by default.
+  * Mail directory is /var/lib/bnetd/bnmail/ by default.
+  * All the player data etc is in /var/lib/bnetd/ not /var/cache/bnetd/
+  * Logfiles and reports are in /var/log/bnetd/ not /var/cache/bnetd/
+  * Removed commented-out cruft re debian.pcx from Debian postinst.
+  * Make postinst script fail if /var/cache/bnetd/player contains files.
+  * Disable MySQL thing in default bnetd.conf.
+  * Add some .cvsignores.
+  * Increment version number to 0.4.sgo.27.
+
+ -- Ian Jackson <ian@davenant.greenend.org.uk>  Sat, 19 Jun 2004 17:15:11 +0100
+
+bnetd (0.4.26-1) unstable; urgency=low
+
+  * Hacked together from http://darkstryker.nordaki.net/FTP/Bnetd/OnGoingDevel/
+
+ -- Owen Dunn <owen@greenend.org.uk>  Wed, 24 Sep 2003 15:39:37 +0000
+
+bnetd (0.4.25-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Owen Dunn <owen@greenend.org.uk>  Sat, 23 Feb 2002 18:00:00 +0000
+
+bnetd (0.4.24-1) unstable; urgency=low
+
+  * New upstream version.
+  * Works with StarCraft patch 1.08.
+
+ -- Stephen Early <steve@debian.org>  Fri,  8 Jun 2001 22:07:27 +0100
+
+bnetd (0.4.19-1) unstable; urgency=low
+
+  * New upstream version.
+  * Works with latest SartCraft patch again.
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun, 24 Oct 1999 11:19:43 +0200
+
+bnetd (0.4.18-2) unstable; urgency=low
+
+  * Configuration file could not be found.
+  * FHS 2.0 compilent.
+
+ -- Raphael Bossek <bossekr@debian.org>  Sun,  3 Oct 1999 12:23:54 +0200
+
+bnetd (0.4.18-1) unstable; urgency=low
+
+  * New upstream version.
+  * Confirms with debian policy 3.0.1.
+
+ -- Raphael Bossek <bossekr@debian.org>  Sat, 28 Aug 1999 00:26:38 +0200
+
+bnetd (0.4.16-1) unstable; urgency=low
+
+  * New upstream version
+  * Changed syntax for closing bugs
+
+ -- Raphael Bossek <bossekr@debian.org>  Thu, 10 Aug 1999 20:41:41 +0200
+
+bnetd (0.4.9-2) unstable; urgency=low
+
+  * Missing -lm options caused compilation errors on m68k (closes: #40791)
+
+ -- Raphael Bossek <bossekr@debian.org>  Mon,  5 Jul 1999 16:15:01 +0200
+
+bnetd (0.4.9-1) unstable; urgency=low
+
+  * New upstream version
+  * Moved user database to /var/cache/bnetd/player (closes: #40461)
+
+ -- Raphael Bossek <bossekr@debian.org>  Fri,  2 Jul 1999 07:29:26 +0200
+
+bnetd (0.4.8-3) unstable; urgency=low
+
+  * Changed the supported architectures to "any" (closes: #39259)
+
+ -- Raphael Bossek <bossekr@debian.org>  Thu, 10 Jun 1999 12:06:56 +0200
+
+bnetd (0.4.8-2) unstable; urgency=low
+
+  * Typographic error(s) removed (closes: #39034)
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue,  6 Jun 1999 22:55:02 +0200
+
+bnetd (0.4.8-1) unstable; urgency=low
+
+  * Initial release (considered unstable, but seems pretty stable to me.)
+  * Created autoconf/automake build environment missing for the source package
+  * New man page added for the bnbot program.
+  * Windows Registry file added for simple Battle.Net client configuration.
+  * New Battle.Net logo for the Debian GNU/Linux distribution set as default.
+
+ -- Raphael Bossek <bossekr@debian.org>  Tue,  1 Jun 1999 18:20:36 +0200
+
+Local variables:
+mode: debian-changelog
+End:
+

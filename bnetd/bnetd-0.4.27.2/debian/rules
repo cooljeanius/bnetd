@@ -1,0 +1,132 @@
+#!/usr/bin/make -f
+
+build:
+	cd src;./configure --prefix=/usr --sysconfdir=/etc;make;cd ..
+	uudecode debian/debian.pcx.uu --o debian/debian.pcx
+	touch build
+
+clean:
+	if [ -f src/Makefile ]; then cd src;make distclean;cd ..; fi
+	rm -f build debian/debian.pcx
+	dh_clean
+
+# No binary independant packages from this.
+binary-indep:
+	@echo "No architecture-independent stuff"
+
+binary-arch: build
+# Initialize the building procedure
+	dh_testdir
+	dh_clean
+	dh_installdirs
+
+# Install the configuration files
+	install -p -o root -g root -m 644 conf/ad.list \
+			debian/tmp/etc/bnetd/ad.list
+	install -p -o root -g root -m 644 conf/autoupdate \
+			debian/tmp/etc/bnetd/autoupdate
+	install -p -o root -g root -m 640 conf/bnbitspasswd \
+			debian/tmp/etc/bnetd/bnbitspasswd
+	install -p -o root -g root -m 644 conf/bnban \
+			debian/tmp/etc/bnetd/bnban
+	install -p -o root -g root -m 644 conf/bnetd.conf.in \
+			debian/tmp/etc/bnetd/bnetd.conf
+	install -p -o root -g root -m 644 conf/bnetd_default_user \
+			debian/tmp/etc/bnetd/bnetd_default_user
+	install -p -o root -g root -m 644 conf/bnhelp \
+			debian/tmp/etc/bnetd/bnhelp
+	install -p -o root -g root -m 644 conf/bnissue.txt \
+			debian/tmp/etc/bnetd/bnissue.txt
+	install -p -o root -g root -m 644 conf/bnmotd.txt \
+			debian/tmp/etc/bnetd/bnmotd.txt
+	install -p -o root -g root -m 644 conf/bnwelcome.txt \
+                	debian/tmp/etc/bnetd/bnwelcome.txt
+	install -p -o root -g root -m 644 conf/channel.list \
+			debian/tmp/etc/bnetd/channel.list
+	install -p -o root -g root -m 644 conf/gametrans \
+			debian/tmp/etc/bnetd/gametrans
+	install -p -o root -g root -m 644 debian/changelog \
+			debian/tmp/etc/bnetd/news.txt
+	install -p -o root -g root -m 644 conf/realm.list \
+			debian/tmp/etc/bnetd/realm.list
+	install -p -o root -g root -m 644 conf/d2cs.conf.in \
+			debian/tmp/etc/bnetd/d2cs.conf
+	install -p -o root -g root -m 644 conf/d2dbs.conf.in \
+			debian/tmp/etc/bnetd/d2dbs.conf
+	install -p -o root -g root -m 644 conf/versioncheck \
+			debian/tmp/etc/bnetd/versioncheck
+#	install -p -o root -g root -m 644 debian/bnetd.reg \
+#			debian/tmp/etc/bnetd/bnetd.reg
+
+# Install the banner
+	install -p -o root -g root -m 644 files/ad000001.pcx \
+			debian/tmp/usr/share/bnetd/ad000001.pcx
+	install -p -o root -g root -m 644 debian/debian.pcx \
+			debian/tmp/usr/share/bnetd/ad000002.pcx
+
+# Install the files
+	install -p -o root -g root -m 644 files/icons.bni \
+			debian/tmp/usr/share/bnetd/icons.bni
+	install -p -o root -g root -m 644 files/tos.txt \
+			debian/tmp/usr/share/bnetd/tos.txt
+
+# Install the bnetd console applications
+	install -s -o root -g root -m 755 bin/bnbot \
+			debian/tmp/usr/bin/bnbot
+	install -s -o root -g root -m 755 bin/bnchat \
+			debian/tmp/usr/bin/bnchat
+	install -s -o root -g root -m 755 bin/bnftp \
+			debian/tmp/usr/bin/bnftp
+	install -s -o root -g root -m 755 bin/bni2tga \
+			debian/tmp/usr/bin/bni2tga
+	install -s -o root -g root -m 755 bin/bnibuild \
+			debian/tmp/usr/bin/bnibuild
+	install -s -o root -g root -m 755 bin/bniextract \
+			debian/tmp/usr/bin/bniextract
+	install -s -o root -g root -m 755 bin/bnilist \
+			debian/tmp/usr/bin/bnilist
+	install -s -o root -g root -m 755 bin/bnpass \
+			debian/tmp/usr/bin/bnpass
+	install -s -o root -g root -m 755 bin/bnstat \
+			debian/tmp/usr/bin/bnstat
+	install -s -o root -g root -m 755 bin/tgainfo \
+			debian/tmp/usr/bin/tgainfo
+
+# Install the bnetd daemon
+	install -s -o root -g root -m 755 sbin/bnetd \
+			debian/tmp/usr/sbin/bnetd
+	install -s -o root -g root -m 755 sbin/d2cs \
+			debian/tmp/usr/sbin/d2cs
+	install -s -o root -g root -m 755 sbin/d2dbs \
+			debian/tmp/usr/sbin/d2dbs
+#	install -s -o root -g root -m 755 sbin/bnproxy \
+#			debian/tmp/usr/sbin/bnproxy
+	install -s -o root -g root -m 755 sbin/bntrackd \
+			debian/tmp/usr/sbin/bntrackd
+
+# Install the other (Debian) stuff
+#	dh_testversion
+	dh_testroot
+	dh_installdocs docs
+	mv debian/tmp/usr/share/doc/bnetd/CHANGELOG debian/tmp/usr/share/doc/bnetd/changelog
+#	dh_installexamples
+#	dh_installmenu
+#	dh_installemacsen
+	dh_installinit
+#	dh_installcron
+	dh_installmanpages man
+#	dh_undocumented
+	dh_installchangelogs
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+#	dh_makeshlibs
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-arch binary-indep
+
+.PHONY: clean binary binary-arch binary-indep
