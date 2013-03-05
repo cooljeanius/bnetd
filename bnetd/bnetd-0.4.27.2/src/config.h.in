@@ -91,6 +91,9 @@
 /* Define to 1 if you have the <grp.h> header file. */
 #undef HAVE_GRP_H
 
+/* Define to 1 if you have the <i386/_types.h> header file. */
+#undef HAVE_I386__TYPES_H
+
 /* Define to 1 if you have the `index' function. */
 #undef HAVE_INDEX
 
@@ -121,7 +124,7 @@
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
-/* Define to 1 if the system has the type `long long int'. */
+/* Define to 1 if the system has the type 'long long int'. */
 #undef HAVE_LONG_LONG_INT
 
 /* Define to 1 if your system has a GNU libc compatible `malloc' function, and
@@ -240,20 +243,35 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
 
+/* Define to 1 if you have the <strcasecmp.h> header file. */
+#undef HAVE_STRCASECMP_H
+
 /* Define to 1 if you have the `strchr' function. */
 #undef HAVE_STRCHR
+
+/* Define to 1 if you have the <strchr.h> header file. */
+#undef HAVE_STRCHR_H
 
 /* Define to 1 if you have the `strdup' function. */
 #undef HAVE_STRDUP
 
+/* Define to 1 if you have the <strdup.h> header file. */
+#undef HAVE_STRDUP_H
+
 /* Define to 1 if you have the `strerror' function. */
 #undef HAVE_STRERROR
+
+/* Define to 1 if you have the <strerror.h> header file. */
+#undef HAVE_STRERROR_H
 
 /* Define to 1 if you have the `strftime' function. */
 #undef HAVE_STRFTIME
@@ -347,7 +365,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type `unsigned long long int'. */
+/* Define to 1 if the system has the type 'unsigned long long int'. */
 #undef HAVE_UNSIGNED_LONG_LONG_INT
 
 /* Define to 1 if you have the <varargs.h> header file. */

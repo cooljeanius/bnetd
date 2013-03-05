@@ -71,13 +71,13 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 subdir = .
-DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
-	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
-	$(srcdir)/config.h.in COPYING autoconf/compile \
-	autoconf/config.guess autoconf/config.sub autoconf/install-sh \
-	autoconf/missing autoconf/ltmain.sh \
-	$(top_srcdir)/autoconf/compile \
+	$(srcdir)/config.h.in $(srcdir)/Makefile.bak.in AUTHORS \
+	COPYING ChangeLog INSTALL NEWS README autoconf/ar-lib \
+	autoconf/compile autoconf/config.guess autoconf/config.sub \
+	autoconf/install-sh autoconf/missing autoconf/ltmain.sh \
+	$(top_srcdir)/autoconf/ar-lib $(top_srcdir)/autoconf/compile \
 	$(top_srcdir)/autoconf/config.guess \
 	$(top_srcdir)/autoconf/config.sub \
 	$(top_srcdir)/autoconf/install-sh \
@@ -98,7 +98,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = Makefile.bak
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -199,6 +199,9 @@ AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 CC = @CC@
+CCAS = @CCAS@
+CCASDEPMODE = @CCASDEPMODE@
+CCASFLAGS = @CCASFLAGS@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 COMPILEANSI1 = @COMPILEANSI1@
@@ -220,6 +223,7 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
+ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -232,6 +236,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INSTALLdir = @INSTALLdir@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -259,7 +264,8 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
-SED = sed
+RMDIR = @RMDIR@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -355,12 +361,9 @@ SRC_COMMONDIR = ${SRC_SRCDIR}/common
 SRC_COMPATDIR = ${SRC_SRCDIR}/compat
 SRC_DEBUGDIR = ${SRC_SRCDIR}/debug
 RMF = rm -f
-RMDIR = rmdir
-ECHO = echo
-INSTALLdir = @INSTALLdir@
 INSTALL_DIRS = @INSTALL@ -d -m 755
 COMPILE = @CC@ @CFLAGS@ ${CPPFLAGS} -c
-#PREPROCESS	= @CPP@ ${CPPFLAGS}
+PREPROCESS = @CPP@ ${CPPFLAGS}
 LINK = @CC@ @CFLAGS@ @LDFLAGS@
 LINK_LIBS = @LIBS@
 bnetd_SBIN = ${SRC_SBINDIR}/bnetd
@@ -772,15 +775,15 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
-	      echo ' cd $(srcdir) && $(AUTOMAKE) --gnu'; \
-	      $(am__cd) $(srcdir) && $(AUTOMAKE) --gnu \
+	      echo ' cd $(srcdir) && $(AUTOMAKE) --foreign'; \
+	      $(am__cd) $(srcdir) && $(AUTOMAKE) --foreign \
 		&& exit 0; \
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu Makefile
+	  $(AUTOMAKE) --foreign Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -815,6 +818,8 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+Makefile.bak: $(top_builddir)/config.status $(srcdir)/Makefile.bak.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo

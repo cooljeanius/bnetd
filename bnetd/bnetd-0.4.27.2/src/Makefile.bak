@@ -17,34 +17,31 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #
 
-ACLOCAL_AMFLAGS = -I m4
+prefix		= /usr/local
+exec_prefix	= ${prefix}
 
-install_sh      = @install_sh@
-prefix		= @prefix@
-exec_prefix	= @exec_prefix@
+bindir		= ${exec_prefix}/bin
+sbindir		= ${exec_prefix}/sbin
+mandir		= ${prefix}/share/man
+confdir		= ${prefix}/etc/bnetd
+sharedir	= ${prefix}/var
+filesdir	= ${prefix}/var/files
+usersdir	= ${prefix}/var/users
+reportsdir	= ${prefix}/var/reports
+chanlogsdir	= ${prefix}/var/chanlogs
+charinfodir     = ${prefix}/var/charinfo
+charsavedir     = ${prefix}/var/charsave
+ladderdir       = ${prefix}/var/ladders
+bak_charsavedir = ${prefix}/var/bak/charsave
+bak_charinfodir = ${prefix}/var/bak/charinfo
 
-bindir		= @bindir@
-sbindir		= @sbindir@
-mandir		= @mandir@
-confdir		= @sysconfdir@/bnetd
-sharedir	= @localstatedir@
-filesdir	= @localstatedir@/files
-usersdir	= @localstatedir@/users
-reportsdir	= @localstatedir@/reports
-chanlogsdir	= @localstatedir@/chanlogs
-charinfodir     = @localstatedir@/charinfo
-charsavedir     = @localstatedir@/charsave
-ladderdir       = @localstatedir@/ladders
-bak_charsavedir = @localstatedir@/bak/charsave
-bak_charinfodir = @localstatedir@/bak/charinfo
-
-SRC_SRCDIR	= @srcdir@
-SRC_BINDIR	= @srcdir@/../bin
-SRC_SBINDIR	= @srcdir@/../sbin
-SRC_MANDIR	= @srcdir@/../man
-SRC_CONFDIR	= @srcdir@/../conf
-SRC_SHAREDIR	= @srcdir@/../files
-SRC_SCRIPTDIR	= @srcdir@/../scripts
+SRC_SRCDIR	= .
+SRC_BINDIR	= ./../bin
+SRC_SBINDIR	= ./../sbin
+SRC_MANDIR	= ./../man
+SRC_CONFDIR	= ./../conf
+SRC_SHAREDIR	= ./../files
+SRC_SCRIPTDIR	= ./../scripts
 
 SRC_ACDIR	= ${SRC_SRCDIR}/autoconf
 SRC_BNETDDIR	= ${SRC_SRCDIR}/bnetd
@@ -61,26 +58,26 @@ SRC_DEBUGDIR	= ${SRC_SRCDIR}/debug
 
 RMF		= rm -f
 
-RMDIR		= @RMDIR@
+RMDIR		= rmdir
 
-ECHO		= @ECHO@
+ECHO		= echo
 
-SED		= @SED@
+SED		= sed
 
-INSTALL		= @INSTALL@
-INSTALL_PROGRAM	= @INSTALL_PROGRAM@
-INSTALLdir      = @INSTALLdir@
-INSTALL_DATA	= @INSTALL_DATA@
-INSTALL_SCRIPT	= @INSTALL_SCRIPT@
-INSTALL_DIRS	= @INSTALL@ -d -m 755
+INSTALL		= /opt/local/bin/ginstall -c
+INSTALL_PROGRAM	= ${INSTALL}
+INSTALLdir      = 
+INSTALL_DATA	= ${INSTALL} -m 644
+INSTALL_SCRIPT	= ${INSTALL}
+INSTALL_DIRS	= /opt/local/bin/ginstall -c -d -m 755
 
 # CC set by configure
 # CFLAGS set by configure
-CPPFLAGS	= @DEFS@ @DEFINES@ -DBNETD_DEFAULT_CONF_FILE=\"${confdir}/bnetd.conf\" -DD2CS_DEFAULT_CONF_FILE=\"${confdir}/d2cs.conf\" -DD2DBS_DEFAULT_CONF_FILE=\"${confdir}/d2dbs.conf\" @CPPFLAGS@ -I"${SRC_SRCDIR}"
-COMPILE		= @CC@ @CFLAGS@ ${CPPFLAGS} -c
-PREPROCESS	= @CPP@ ${CPPFLAGS}
-LINK		= @CC@ @CFLAGS@ @LDFLAGS@
-LINK_LIBS	= @LIBS@
+CPPFLAGS	= -DHAVE_CONFIG_H   -DBNETD_DEFAULT_CONF_FILE=\"${confdir}/bnetd.conf\" -DD2CS_DEFAULT_CONF_FILE=\"${confdir}/d2cs.conf\" -DD2DBS_DEFAULT_CONF_FILE=\"${confdir}/d2dbs.conf\"   -I"${SRC_SRCDIR}"
+COMPILE		= gcc -g -O2   ${CPPFLAGS} -c
+#PREPROCESS	= gcc -E ${CPPFLAGS}
+LINK		= gcc -g -O2    
+LINK_LIBS	= -lpcap   -lm -lresolv
 
 
 bnetd_SBIN	= ${SRC_SBINDIR}/bnetd
@@ -479,7 +476,7 @@ MAN1S		= bnetd.1 bnproxy.1 bntrackd.1 bnchat.1 bnpass.1 bnbot.1 bnftp.1 bnstat.1
 MAN5S		= bnetd.conf.5 bntext.5 bnmotd.txt.5 bnissue.txt.5 bnnews.txt.5
 CONFS		= ad.list bnetd.conf bnetd_default_user bnwelcome.txt bnmotd.txt bnbitsmotd.txt bnissue.txt channel.list news.txt bnban bnhelp bnbitspasswd gametrans autoupdate versioncheck realm.list d2cs.conf d2dbs.conf
 SHARES		= ad000001.pcx icons.bni tos.txt newbie.save IX86ver1.mpq bnserver.ini bnserver-D2DV.ini
-OTHERRM		= {bnproxy_SBIN} ${sbnetd_SBIN} ${timetest_BIN} ${listtest_BIN} ${hashtabletest_BIN} ${addrtest_BIN} ${hashtest_BIN} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o @ANSI2KNR_TMP@
+OTHERRM		= {bnproxy_SBIN} ${sbnetd_SBIN} ${timetest_BIN} ${listtest_BIN} ${hashtabletest_BIN} ${addrtest_BIN} ${hashtest_BIN} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o 
 DIRS		= ${SRC_BINDIR} ${SRC_SBINDIR}
 
 # common dependencies can't be expressed this way portably...
@@ -487,7 +484,7 @@ DIRS		= ${SRC_BINDIR} ${SRC_SBINDIR}
 
 
 .PHONY: all
-all: @ANSI2KNR_DEP@ config ${SBINS} ${BINS}
+all:  config ${SBINS} ${BINS}
 
 .PHONY: clean
 clean:
@@ -707,9 +704,9 @@ ${SRC_ACDIR}/ansi2knr.o: ${SRC_ACDIR}/ansi2knr.c
 
 .c.o:
 	@${RMF} $@
-	@COMPILEANSI1@
-	@COMPILEANSI2@
-	@COMPILEANSI3@
+	${COMPILE} $< -o $@
+	@:
+	@:
 
 ${bnetd_SBIN}: ${bnetd_OBJECTS}
 	@${INSTALL_DIRS} ${SRC_SBINDIR}

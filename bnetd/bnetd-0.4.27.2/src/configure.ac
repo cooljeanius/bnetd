@@ -30,18 +30,26 @@ builtin(include,autoconf/mkdir.m4)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE
+AC_USE_SYSTEM_EXTENSIONS
+AM_INIT_AUTOMAKE([1.13 foreign])
 AM_MAINTAINER_MODE
+AM_DEP_TRACK
 AM_SANITY_CHECK
 AM_MAKE_INCLUDE
+AM_SILENT_RULES([no])
 
 # Checks for programs.
+AM_PROG_AS
+AM_PROG_AR
 AC_PROG_AWK
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_INSTALL
+AM_PROG_INSTALL_SH
+AM_PROG_INSTALL_STRIP
 AC_PROG_LN_S
 AC_PROG_MAKE_SET
+AC_PROG_MKDIR_P
 AC_PROG_RANLIB
 AC_LIBTOOL_WIN32_DLL
 AC_PATH_PROG(XCODEBUILD, xcodebuild)
@@ -50,6 +58,11 @@ if test "x$XCODEBUILD" != "x"; then
       XCODEBUILD_VERSION=`xcodebuild -version`
       AC_MSG_RESULT([$XCODEBUILD_VERSION])
 fi
+AC_PATH_PROG([RMDIR],[rmdir])
+AC_PATH_PROG([ECHO],[echo])
+AC_PROG_SED
+AC_PROG_EGREP
+AC_PROG_FGREP
 
 # Checks compiler.
 AC_PROG_CPP
@@ -214,7 +227,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_TIME
 AC_HEADER_STAT
-AC_CHECK_HEADERS([arpa/inet.h dir.h direct.h fcntl.h grp.h libintl.h limits.h locale.h malloc.h memory.h netdb.h netinet/in.h poll.h pwd.h stdarg.h stddef.h stdint.h stdlib.h string.h strings.h sys/file.h sys/ioctl.h sys/param.h sys/poll.h sys/select.h sys/socket.h sys/stat.h sys/stropts.h sys/time.h sys/timeb.h sys/types.h sys/utsname.h sys/wait.h termios.h stropts.h unistd.h varargs.h])
+AC_CHECK_HEADERS([arpa/inet.h dir.h direct.h fcntl.h grp.h i386/_types.h libintl.h limits.h locale.h malloc.h memory.h netdb.h netinet/in.h poll.h pwd.h stdarg.h stddef.h stdint.h stdio.h stdlib.h string.h strcasecmp.h strchr.h strdup.h strerror.h strings.h sys/file.h sys/ioctl.h sys/param.h sys/poll.h sys/select.h sys/socket.h sys/stat.h sys/stropts.h sys/time.h sys/timeb.h sys/types.h sys/utsname.h sys/wait.h termios.h stropts.h unistd.h varargs.h])
 
 # Checks for typedefs and structures
 AC_C_BIGENDIAN
@@ -268,6 +281,10 @@ AC_SUBST(COMPILEANSI2)
 AC_SUBST(COMPILEANSI3)
 AC_SUBST(ANSI2KNR_TMP)
 AC_SUBST(ANSI2KNR_DEP)
+AC_SUBST(INSTALLdir)
+AC_SUBST(install_sh)
+AC_SUBST(RMDIR)
+AC_SUBST(ECHO)
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile Makefile.bak])
 AC_OUTPUT
