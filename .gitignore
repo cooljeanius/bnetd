@@ -28,3 +28,5 @@ bnetd/bnetd-0.4.25/src/libtool
 */*/*/config.h
 */*/*/*/config.h
 bnetd/bnetd-0.4.25/src/config.h
+confdefs.h
+
