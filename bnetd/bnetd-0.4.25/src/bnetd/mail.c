@@ -17,31 +17,47 @@
  */
 #define MAIL_INTERNAL_ACCESS
 #include "common/setup_before.h"
-#include <stdio.h>
+#ifdef HAVE_STDIO_H
+# include <stdio.h>
+#endif /* HAVE_STDIO_H */
 #ifdef HAVE_STDDEF_H
 # include <stddef.h>
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
-#ifdef STDC_HEADERS
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
+#if defined(STDC_HEADERS) || defined (HAVE_STDLIB_H)
 # include <stdlib.h>
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS || HAVE_STDLIB_H */
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
-#endif
+# endif /* HAVE_STRINGS_H */
+#endif /* HAVE_STRING_H */
 #include "compat/strcasecmp.h"
-#include <ctype.h>
-#include <errno.h>
+#ifdef HAVE_CTYPE_H
+# include <ctype.h>
+#endif /* HAVE_CTYPE_H */
+#ifdef HAVE_DIR_H
+# include <dir.h>
+#endif /* HAVE_DIR_H */
+#ifdef HAVE_DIRECT_H
+# include <direct.h>
+#endif /* HAVE_DIRECT_H */
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#endif /* HAVE_ERRNO_H */
 #include "compat/strerror.h"
 #ifdef TIME_WITH_SYS_TIME
 # include <sys/time.h>
@@ -50,18 +66,20 @@
 # ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
 # else
-#  include <time.h>
-# endif
-#endif
+#  ifdef HAVE_TIME_H
+#   include <time.h>
+#  endif /* HAVE_TIME_H */
+# endif /* HAVE_SYS_TIME_H */
+#endif /* TIME_WITH_SYS_TIME */
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
-#endif
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
-#endif
+#endif /* HAVE_SYS_STAT_H */
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif
+#endif /* HAVE_UNISTD_H */
 #include "compat/statmacros.h"
 #include "compat/mkdir.h"
 #include "compat/pdir.h"
@@ -70,8 +88,8 @@
 #else
 # ifdef HAVE_SYS_FILE_H
 #  include <sys/file.h>
-# endif
-#endif
+# endif /* HAVE_SYS_FILE_H */
+#endif /*HAVE_FCNTL_H */
 #include "message.h"
 #include "connection.h"
 #include "common/util.h"
@@ -80,7 +98,6 @@
 #include "prefs.h"
 #include "mail.h"
 #include "common/setup_after.h"
-
 
 static int identify_mail_function(const char *);
 static void mail_usage(t_connection*);
@@ -104,7 +121,6 @@ static void mailbox_close(t_mailbox *);
 
 static char * clean_str(char *);
 
-
 static t_mailbox * mailbox_open(t_account * user) {
    t_mailbox * rez=NULL;
    char * path=NULL;
@@ -115,7 +131,8 @@ static t_mailbox * mailbox_open(t_account * user) {
       return NULL;
    }
    maildir=prefs_get_maildir();
-   p_mkdir(maildir,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+	/* p_mkdir() is a wrapper around mkdir() from "compat/mkdir.h" */
+   p_mkdir(maildir,S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); /* error: too few arguments to function 'mkdir' */
    if ((path=malloc(strlen(maildir)+1+8+1))==NULL) {
       eventlog(eventlog_level_error,"mailbox_open","not enough memory");
       free(rez);
@@ -125,7 +142,7 @@ static t_mailbox * mailbox_open(t_account * user) {
       sprintf(path,"%s%06u",maildir,account_get_uid(user));
    else
       sprintf(path,"%s/%06u",maildir,account_get_uid(user));
-   p_mkdir(path,S_IRWXU | S_IXGRP | S_IRGRP | S_IROTH | S_IXOTH);
+   p_mkdir(path,S_IRWXU | S_IXGRP | S_IRGRP | S_IROTH | S_IXOTH); /* error: too few arguments to function 'mkdir' */
    if ((rez->maildir=p_opendir(path))==NULL) {
       eventlog(eventlog_level_error,"mailbox_open","error opening maildir");
       free(path);
@@ -140,7 +157,7 @@ static t_mailbox * mailbox_open(t_account * user) {
 static int mailbox_count(t_mailbox *mailbox) {
    char const * dentry;
    int count=0;
-   
+
    if (mailbox==NULL) {
       eventlog(eventlog_level_error,"mailbox_count","got NULL mailbox");
       return -1;
@@ -193,7 +210,7 @@ static t_mail * mailbox_read(t_mailbox * mailbox, unsigned int idx) {
    t_mail *     rez;
    FILE *       fd;
    char *       filename;
-   
+
    if (mailbox==NULL) {
       eventlog(eventlog_level_error,"mailbox_read","got NULL mailbox");
       return NULL;
@@ -271,7 +288,7 @@ static struct maillist_struct * mailbox_get_list(t_mailbox *mailbox) {
    FILE * fd;
    struct maillist_struct *rez=NULL, *p=NULL,*q;
    char *sender,*filename;
-   
+
    if (mailbox==NULL) {
       eventlog(eventlog_level_error,"mailbox_get_list","got NULL mailbox");
       return NULL;
@@ -324,7 +341,7 @@ static struct maillist_struct * mailbox_get_list(t_mailbox *mailbox) {
 
 static void mailbox_unget_list(struct maillist_struct * maill) {
    struct maillist_struct *p, *q;
-   
+
    for(p=maill;p!=NULL;p=q) {
       if (p->sender!=NULL) free(p->sender);
       q=p->next;
@@ -337,7 +354,7 @@ static int mailbox_delete(t_mailbox * mailbox, unsigned int idx) {
    char const * dentry;
    unsigned int i;
    int          rez;
-   
+
    if (mailbox==NULL) {
       eventlog(eventlog_level_error,"mailbox_delete","got NULL mailbox");
       return -1;
@@ -347,7 +364,7 @@ static int mailbox_delete(t_mailbox * mailbox, unsigned int idx) {
       return -1;
    }
    p_rewinddir(mailbox->maildir);
-   dentry = NULL; /* if idx < 1 we should not crash :) */
+   dentry = NULL; /* if idx < 1 we should not crash :-) */
    for(i=0;i<idx && (dentry=p_readdir(mailbox->maildir))!=NULL;i++)
      if (dentry[0]=='.') i--;
    if (dentry==NULL) {
@@ -371,7 +388,7 @@ static int mailbox_delete_all(t_mailbox * mailbox) {
    char *       filename;
    char const * dentry;
    int          count;
-   
+
    if (mailbox==NULL) {
       eventlog(eventlog_level_error,"mailbox_delete_all","got NULL mailbox");
       return -1;
@@ -411,7 +428,7 @@ static void mailbox_close(t_mailbox *mailbox) {
 
 static char * clean_str(char * str) {
    char *p;
-   
+
    for(p=str;p!='\0';p++)
      if (*p=='\n' || *p=='\r') {
 	*p='\0'; break;
@@ -423,19 +440,19 @@ extern int handle_mail_command(t_connection * c, char const * text)
 {
    unsigned int i,j;
    char         comm[MAX_FUNC_LEN];
-   
-   if (!prefs_get_mail_support()) { 
+
+   if (!prefs_get_mail_support()) {
       message_send_text(c,message_type_error,c,"This server has NO mail support.");
       return -1;
    }
-   
+
    for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip /mail command */
    for (; text[i]==' '; i++); /* skip any spaces after it */
-   
+
    for (j=0; text[i]!=' ' && text[i]!='\0' && j<sizeof(comm)-1; i++) /* get function */
      if (j<sizeof(comm)-1) comm[j++] = text[i];
    comm[j] = '\0';
-   
+
    switch (identify_mail_function(comm)) {
     case MAIL_FUNC_SEND:
       mail_func_send(c,text+i);
@@ -491,10 +508,10 @@ static int get_mail_quota(t_account * user) {
 static void mail_func_send(t_connection * c, const char * str) {
    int i;
    char *dest;
-   char const *p,*myname;   
+   char const *p,*myname;
    t_account * recv;
    t_mailbox * mailbox;
-   
+
    if (c==NULL) {
       eventlog(eventlog_level_error,"mail_func_send","got NULL connection");
       return;
@@ -540,7 +557,7 @@ static void mail_func_send(t_connection * c, const char * str) {
    myname=conn_get_username(c); /* who am i ? */
    if (mailbox_deliver(mailbox,myname,p+i+1)<0)
      message_send_text(c,message_type_error,c,"There was an error completing your request!");
-   else 
+   else
      message_send_text(c,message_type_info,c,"Your mail has been sent successfully.");
    conn_unget_username(c,myname);
    mailbox_close(mailbox);
@@ -552,7 +569,7 @@ static void mail_func_read(t_connection * c, const char * str) {
    const char *p;
    char tmp[256];
    int i;
-   
+
    if (c==NULL) {
       eventlog(eventlog_level_error,"mail_func_read","got NULL connection");
       return;
@@ -574,7 +591,7 @@ static void mail_func_read(t_connection * c, const char * str) {
    if (*p=='\0') { /* user wants to see the mail summary */
       struct maillist_struct *maill, *mp;
       int idx;
-      
+
       if (mailbox_count(mailbox)==0) {
 	 message_send_text(c,message_type_info,c,"You have no mail.");
 	 mailbox_close(mailbox);
@@ -600,7 +617,7 @@ static void mail_func_read(t_connection * c, const char * str) {
    else { /* user wants to read a message */
       int idx;
       t_mail * mail;
-      
+
       for(i=0;p[i]>='0' && p[i]<='9' && p[i]!='\0';i++);
       if (p[i]!='\0' && p[i]!=' ') {
 	 message_send_text(c,message_type_error,c,"Invalid index. Please use /mail read <index> where <index> is a number.");
@@ -632,7 +649,7 @@ static void mail_func_delete(t_connection * c, const char * str) {
    const char * p;
    char tmp[256]; /* that should be enough */
    int i;
-   
+
    if (c==NULL) {
       eventlog(eventlog_level_error,"mail_func_delete","got NULL connection");
       return;
@@ -657,7 +674,7 @@ static void mail_func_delete(t_connection * c, const char * str) {
    }
    if (strcmp(p,"all")==0) {
       int rez;
-      
+
       if ((rez=mailbox_delete_all(mailbox))<0) {
 	 message_send_text(c,message_type_error,c,"There was an error completing your request.");
 	 mailbox_close(mailbox);
@@ -668,7 +685,7 @@ static void mail_func_delete(t_connection * c, const char * str) {
    }
    else {
       int idx;
-      
+
       for(i=0;p[i]>='0' && p[i]<='9' && p[i]!='\0';i++);
       if (p[i]!='\0' && p[i]!=' ') {
 	 message_send_text(c,message_type_error,c,"Invalid index. Please use /mail delete {<index>|all} where <index> is a number.");

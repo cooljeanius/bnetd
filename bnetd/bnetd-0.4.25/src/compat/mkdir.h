@@ -22,13 +22,16 @@
 /* Windows and MacOS also typically take only one argument */
 #ifdef HAVE_DIR_H
 # include <dir.h>
-#endif
+#endif /* HAVE_DIR_H */
 #ifdef HAVE_DIRECT_H
 # include <direct.h>
-#endif
+#endif /* HAVE_DIRECT_H */
+#ifdef HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif /* HAVE_SYS_STAT_H */
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif
+#endif /* HAVE_UNISTD_H */
 
 #ifdef MKDIR_TAKES_ONE_ARG
 # ifdef HAVE_MKDIR
@@ -38,8 +41,8 @@
 #   define p_mkdir(A,B) _mkdir(A)
 #  else
 #   error "This program requires either mkdir() or _mkdir()"
-#  endif
-# endif
+#  endif /* HAVE__MKDIR */
+# endif /* HAVE_MKDIR */
 #else
 # ifdef HAVE_MKDIR
 #  define p_mkdir mkdir
@@ -48,8 +51,8 @@
 #   define p_mkdir _mkdir
 #  else
 #   error "This program requires either mkdir() or _mkdir()"
-#  endif
-# endif
-#endif
+#  endif /* HAVE__MKDIR */
+# endif /* HAVE_MKDIR */
+#endif /* MKDIR_TAKES_ONE_ARG */
 
-#endif
+#endif /* INCLUDED_MKDIR_PROTOS */

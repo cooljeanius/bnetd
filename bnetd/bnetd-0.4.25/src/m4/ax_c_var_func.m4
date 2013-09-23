@@ -1,6 +1,6 @@
-# ===========================================================================
+#==========================================================================
 #       http://www.gnu.org/software/autoconf-archive/ax_c_var_func.html
-# ===========================================================================
+#==========================================================================
 #
 # SYNOPSIS
 #
@@ -52,15 +52,18 @@
 
 #serial 5
 
-AU_ALIAS([AC_C_VAR_FUNC], [AX_C_VAR_FUNC])
+AU_ALIAS([AC_C_VAR_FUNC],[AX_C_VAR_FUNC])
 AC_DEFUN([AX_C_VAR_FUNC],
 [AC_REQUIRE([AC_PROG_CC])
-AC_CACHE_CHECK(whether $CC recognizes __func__, ac_cv_c_var_func,
-AC_TRY_COMPILE(,
-[int main() {
+AC_CACHE_CHECK([whether $CC recognizes __func__],[ax_cv_c_var_func],
+[AC_COMPILE_IFELSE([AC_LANG_SOURCE([[]],
+[[int main() {
 char *s = __func__;
-}],
-AC_DEFINE(HAVE_FUNC,,
-[Define if the C complier supports __func__]) ac_cv_c_var_func=yes,
-ac_cv_c_var_func=no) )
+}]])],
+[ax_cv_c_var_func=yes],
+[ax_cv_c_var_func=no])
+])
+if test "$ax_cv_c_var_func" = yes; then
+  AC_DEFINE([HAVE_FUNC],[1],[Define to 1 if the C complier supports __func__])
+fi
 ])dnl

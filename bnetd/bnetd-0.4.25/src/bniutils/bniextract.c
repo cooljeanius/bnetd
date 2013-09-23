@@ -22,42 +22,50 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
-#include <stdio.h>
-#ifdef STDC_HEADERS
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
+#ifdef HAVE_STDIO_H
+# include <stdio.h>
+#endif /* HAVE_STDIO_H */
+#if defined(STDC_HEADERS) || defined (HAVE_STDLIB_H)
 # include <stdlib.h>
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS || HAVE_STDLIB_H */
 #include "compat/exitstatus.h"
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
-#endif
-#include <errno.h>
+# endif /* HAVE_STRINGS_H */
+#endif /* HAVE_STRING_H */
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#endif /* HAVE_ERRNO_H */
 #include "compat/strerror.h"
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
-#endif
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
-#endif
+#endif /* HAVE_SYS_STAT_H */
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #else
 # ifdef HAVE_SYS_FILE_H
 #  include <sys/file.h>
-# endif
-#endif
+# endif /* HAVE_SYS_FILE_H */
+#endif /*HAVE_FCNTL_H */
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif
+#endif /* HAVE_UNISTD_H */
 #include "compat/statmacros.h"
 #include "compat/mkdir.h"
 #include "common/version.h"
@@ -80,10 +88,10 @@ static t_tgaimg * area2img(t_tgaimg *src, int x, int y, int width, int height, t
 	if ((y+height)>src->height) return NULL;
 	pixelsize = getpixelsize(src);
 	if (pixelsize == 0) return NULL;
-	
+
 	dst = new_tgaimg(width,height,src->bpp,type);
 	dst->data = malloc(width*height*pixelsize);
-	
+
 	datap = src->data;
 	datap += y*src->width*pixelsize;
 	destp = dst->data;
@@ -117,13 +125,13 @@ extern int main(int argc, char * argv[])
     int          a;
     int          forcefile=0;
     char         dash[]="-"; /* unique address used as flag */
-    
+
     if (argc<1 || !argv || !argv[0])
     {
 	fprintf(stderr,"bad arguments\n");
 	return STATUS_FAILURE;
     }
-    
+
     for (a=1; a<argc; a++)
         if (forcefile && !bnifile)
             bnifile = argv[a];
@@ -157,7 +165,7 @@ extern int main(int argc, char * argv[])
             fprintf(stderr,"%s: unknown option \"%s\"\n",argv[0],argv[a]);
             usage(argv[0]);
         }
-    
+
     if (!bnifile)
     {
 	fprintf(stderr,"%s: BNI file not specified\n",argv[0]);
@@ -168,7 +176,7 @@ extern int main(int argc, char * argv[])
 	fprintf(stderr,"%s: output directory not specified\n",argv[0]);
 	usage(argv[0]);
     }
-    
+
     if (bnifile==dash)
         fbni = stdin;
     else
@@ -177,7 +185,7 @@ extern int main(int argc, char * argv[])
 	    fprintf(stderr,"%s: could not open BNI file \"%s\" for reading (fopen: %s)\n",argv[0],bnifile,strerror(errno));
 	    return STATUS_FAILURE;
 	}
-    
+
     if (outdir==dash)
     {
 	fprintf(stderr,"%s: can not write directory to <stdout>\n",argv[0]);
@@ -188,6 +196,7 @@ extern int main(int argc, char * argv[])
     if (stat(outdir,&s)<0) {
 	if (errno == ENOENT) {
 	    fprintf(stderr,"Info: Creating directory \"%s\" ...\n",outdir);
+		/* p_mkdir() is a wrapper around mkdir() from "compat/mkdir.h" */
 	    if (p_mkdir(outdir,S_IRWXU+S_IRWXG+S_IRWXO)<0) {
 		fprintf(stderr,"%s: could not create output directory \"%s\" (mkdir: %s)",argv[0],outdir,strerror(errno));
 		if (bnifile!=dash && fclose(fbni)<0)
@@ -208,7 +217,7 @@ extern int main(int argc, char * argv[])
 		fprintf(stderr,"%s: could not close BNI file \"%s\" after reading (fclose: %s)\n",argv[0],bnifile,strerror(errno));
 	    return STATUS_FAILURE;
 	}
-    
+
     {
 	unsigned int i;
 	int          curry;
@@ -216,7 +225,7 @@ extern int main(int argc, char * argv[])
 	t_bnifile *  bni;
 	FILE *       indexfile;
 	char *       indexfilename;
-	
+
 	fprintf(stderr,"Info: Loading \"%s\" ...\n",bnifile);
 	bni = load_bni(fbni);
 	if (bni == NULL) return STATUS_FAILURE;
@@ -229,7 +238,7 @@ extern int main(int argc, char * argv[])
 	fprintf(stderr,"Info: Loading image ...\n");
 	iconimg = load_tga(fbni);
 	if (iconimg == NULL) return STATUS_FAILURE;
-	
+
 	fprintf(stderr,"Info: Extracting icons ...\n");
 	indexfilename = malloc(strlen(outdir)+14);
 	sprintf(indexfilename,"%s/bniindex.lst",outdir);
@@ -292,6 +301,6 @@ extern int main(int argc, char * argv[])
     }
     if (bnifile!=dash && fclose(fbni)<0)
 	fprintf(stderr,"%s: could not close BNI file \"%s\" after reading (fclose: %s)\n",argv[0],bnifile,strerror(errno));
-    
+
     return STATUS_SUCCESS;
 }

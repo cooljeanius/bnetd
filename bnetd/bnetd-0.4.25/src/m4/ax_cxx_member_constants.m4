@@ -1,6 +1,6 @@
-# ===========================================================================
-#  http://www.gnu.org/software/autoconf-archive/ax_cxx_member_constants.html
-# ===========================================================================
+#==========================================================================
+# http://www.gnu.org/software/autoconf-archive/ax_cxx_member_constants.html
+#==========================================================================
 #
 # SYNOPSIS
 #
@@ -22,18 +22,18 @@
 
 #serial 6
 
-AU_ALIAS([AC_CXX_MEMBER_CONSTANTS], [AX_CXX_MEMBER_CONSTANTS])
+AU_ALIAS([AC_CXX_MEMBER_CONSTANTS],[AX_CXX_MEMBER_CONSTANTS])
 AC_DEFUN([AX_CXX_MEMBER_CONSTANTS],
-[AC_CACHE_CHECK(whether the compiler supports member constants,
-ax_cv_cxx_member_constants,
-[AC_LANG_SAVE
- AC_LANG_CPLUSPLUS
- AC_TRY_COMPILE([class C {public: static const int i = 0;}; const int C::i;],
-[return C::i;],
- ax_cv_cxx_member_constants=yes, ax_cv_cxx_member_constants=no)
- AC_LANG_RESTORE
+[AC_REQUIRE([AC_PROG_CXX])
+AC_CACHE_CHECK([whether the compiler supports member constants],[ax_cv_cxx_member_constants],
+[AC_LANG_PUSH([C++])
+ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+class C {public: static const int i = 0;}; const int C::i;
+]],[[return C::i;]])],
+ [ax_cv_cxx_member_constants=yes],[ax_cv_cxx_member_constants=no])
+ AC_LANG_POP
 ])
 if test "$ax_cv_cxx_member_constants" = yes; then
-  AC_DEFINE(HAVE_MEMBER_CONSTANTS,,[define if the compiler supports member constants])
+  AC_DEFINE([HAVE_MEMBER_CONSTANTS],[1],[Define to 1 if the compiler supports member constants])
 fi
 ])

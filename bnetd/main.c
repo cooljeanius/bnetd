@@ -1,18 +1,18 @@
-//
-//  main.c
-//  bnetd
-//
-//  Created by System Administrator on 2/4/13.
-//  Copyright (c) 2013 George Washington University. All rights reserved.
-//
+/*
+ *  main.c
+ *  bnetd
+ *
+ *  Created by System Administrator on 2/4/13.
+ *
+ */
 
 #include <stdio.h>
 
 int main(int argc, const char * argv[])
 {
-    printf("argc = %i \n", argc);
+    printf("\n Message for security and/or debugging: \n This program's path is %s and it is running with %i argument(s). \n", argv[0], argc); // Statement for debugging
     // insert code here...
-    printf("This doesn't actually do anything. I just needed to throw this into an Xcode project somehow.\n");
+    printf("This does NOT actually do anything. I just needed to throw this into an Xcode project somehow.\n");
     return 0;
 }
 

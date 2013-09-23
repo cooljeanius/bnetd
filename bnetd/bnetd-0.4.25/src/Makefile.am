@@ -1,6 +1,6 @@
 #
 # Copyright (C) 1999  Rob Crittenden (rcrit@greyoak.com)
-# Copyright (C) 1999,2000  Ross Combs (rocombs@cs.nmsu.edu)
+# Copyright (C) 1999, 2000  Ross Combs (rocombs@cs.nmsu.edu)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -13,8 +13,10 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# along with this program; if not, write to:
+#  The Free Software Foundation, Inc.
+#  59 Temple Place - Suite 330
+#  Boston, MA 02111-1307, USA
 #
 
 ACLOCAL_AMFLAGS = -I m4
@@ -51,6 +53,7 @@ SRC_D2CSDIR     = ${SRC_SRCDIR}/d2cs
 SRC_D2DBSDIR    = ${SRC_SRCDIR}/d2dbs
 SRC_BNIUTILSDIR	= ${SRC_SRCDIR}/bniutils
 SRC_BNPASSDIR	= ${SRC_SRCDIR}/bnpass
+SRC_BNPCAPDIR   = ${SRC_SRCDIR}/bnpcap
 SRC_BNPROXYDIR	= ${SRC_SRCDIR}/bnproxy
 SRC_BNTRACKDDIR	= ${SRC_SRCDIR}/bntrackd
 SRC_CLIENTDIR	= ${SRC_SRCDIR}/client
@@ -58,13 +61,15 @@ SRC_COMMONDIR	= ${SRC_SRCDIR}/common
 SRC_COMPATDIR	= ${SRC_SRCDIR}/compat
 SRC_DEBUGDIR	= ${SRC_SRCDIR}/debug
 
+SUBDIRS         = bnetd bniutils bnpass bnpcap bnproxy bntrackd client d2cs d2dbs debug
+
 RMF		= rm -f
 
 RMDIR		= rmdir
 
 ECHO		= echo
 
-SED		= sed
+SED		= @SED@
 
 INSTALL		= @INSTALL@
 INSTALL_PROGRAM	= @INSTALL_PROGRAM@
@@ -77,10 +82,12 @@ INSTALL_DIRS	= @INSTALL@ -d -m 755
 # CFLAGS set by configure
 CPPFLAGS	= @DEFS@ @DEFINES@ -DBNETD_DEFAULT_CONF_FILE=\"${confdir}/bnetd.conf\" -DD2CS_DEFAULT_CONF_FILE=\"${confdir}/d2cs.conf\" -DD2DBS_DEFAULT_CONF_FILE=\"${confdir}/d2dbs.conf\" @CPPFLAGS@ -I"${SRC_SRCDIR}"
 COMPILE		= @CC@ @CFLAGS@ ${CPPFLAGS} -c
-#PREPROCESS	= @CPP@ ${CPPFLAGS}
+PREPROCESS	= @CPP@ ${CPPFLAGS}
 LINK		= @CC@ @CFLAGS@ @LDFLAGS@
 LINK_LIBS	= @LIBS@
 
+# This is a hack; these should not be treated as targets in the first place
+.PHONY: -c -m 644
 
 bnetd_SBIN	= ${SRC_SBINDIR}/bnetd
 bnetd_OBJECTS	= ${SRC_BNETDDIR}/main.o \
@@ -400,15 +407,15 @@ SHARES		= ad000001.pcx icons.bni tos.txt bnserver-D2DV.ini newbie.save IX86ver1.
 OTHERBINS	= ${sbnetd_OBJECTS} ${sbnetd_SBIN}
 DIRS		= ${SRC_BINDIR} ${SRC_SBINDIR}
 
-# common dependencies can't be expressed this way portably...
+# common dependencies cannot be expressed this way portably...
 #${OBJECTS}: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
 
 
 .PHONY: all
 all: @ANSI2KNR_DEP@ config ${SBINS} ${BINS}
 
-.PHONY: clean
-clean:
+.PHONY: clean-local
+clean-local:
 	-${RMF} core
 	-${RMF} ${OBJECTS}
 	-${RMF} ${SBINS}
@@ -416,8 +423,8 @@ clean:
 	-${RMF} ${OTHERBINS}
 	-${RMF} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o @ANSI2KNR_TMP@
 
-.PHONY: distclean
-distclean: clean
+.PHONY: distclean-local
+distclean-local: clean-local
 	-${RMF} ${SRC_CONFDIR}/bnetd.conf
 	-${RMF} ${SRC_CONFDIR}/d2cs.conf
 	-${RMF} ${SRC_CONFDIR}/d2dbs.conf
@@ -427,18 +434,18 @@ distclean: clean
 	-${RMDIR} ${DIRS}
 
 .PHONY: clean-compile
-clean-compile: clean all
+clean-compile: clean-local all
 
 .PHONY: config
 config: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 
-${SRC_SRCDIR}/configure: ${SRC_SRCDIR}/configure.in
+${SRC_SRCDIR}/configure: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The configure script is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoconf
 	@${ECHO} >> ${SRC_SRCDIR}/config.h.in
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/config.h.in: ${SRC_SRCDIR}/configure.in
+${SRC_SRCDIR}/config.h.in: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The config.h.in header is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoheader
 	@${ECHO} >> $@
@@ -467,8 +474,8 @@ ${SRC_BINDIR}:
 ${SRC_SBINDIR}:
 	${INSTALL_DIRS} $@
 
-.PHONY: install
-install: install-sbin install-bin install-man install-conf install-share
+.PHONY: install-everything
+install-everything: install-sbin install-bin install-manpages install-conf install-share
 
 .PHONY: install-sbin
 install-sbin: ${SBINS}
@@ -490,8 +497,8 @@ install-bin: ${BINS}
 	  else :; fi; \
 	done
 
-.PHONY: install-man
-install-man:
+.PHONY: install-manpages
+install-manpages:
 	${INSTALL_DIRS} ${mandir} ${mandir}/man1 ${mandir}/man5
 	@list='${MAN1S}'; for p in $$list; do \
 	  if test -f ${SRC_MANDIR}/$$p; then \
@@ -529,8 +536,8 @@ install-share:
 	done
 	-. ${SRC_SCRIPTDIR}/tos.sh ${filesdir}
 
-.PHONY: uninstall
-uninstall: uninstall-sbin uninstall-bin uninstall-man uninstall-conf uninstall-share
+.PHONY: uninstall-local
+uninstall-local: uninstall-sbin uninstall-bin uninstall-man uninstall-conf uninstall-share
 
 .PHONY: uninstall-sbin
 uninstall-sbin:
@@ -676,8 +683,3 @@ ${tgainfo_BIN}: ${tgainfo_OBJECTS}
 	@${INSTALL_DIRS} ${SRC_BINDIR}
 	@${RMF} $@
 	${LINK} ${tgainfo_OBJECTS} ${LINK_LIBS} -o $@
-
-
-# Tell versions (3.59,3.63) of GNU make to not export all variables.
-# Otherwise a system limit (for SysV at least) may be exceeded.
-.NOEXPORT:

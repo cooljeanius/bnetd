@@ -24,18 +24,21 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
+#ifdef HAVE_STDIO_H
+# include <stdio.h>
+#endif /* HAVE_STDIO_H */
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
+# endif /* HAVE_STRINGS_H */
 # ifdef HAVE_MEMORY_H
 #  include <memory.h>
-# endif
-#endif
+# endif /* HAVE_MEMORY_H */
+#endif /* HAVE_STRING_H */
 
 #include "prefs.h"
 #include "d2cs/conf.h"
@@ -56,10 +59,10 @@ static t_conf_table prefs_conf_table[]={
 	{ "laddersave_interval",offsetof(t_prefs,laddersave_interval),conf_type_int,3600		},
 	{ "ladderinit_time",offsetof(t_prefs,ladderinit_time),conf_type_int,0			},
 	{ "shutdown_delay",	offsetof(t_prefs,shutdown_delay),conf_type_int, DEFAULT_SHUTDOWN_DELAY  },
-	{ "shutdown_decr",	offsetof(t_prefs,shutdown_decr),conf_type_int,  DEFAULT_SHUTDOWN_DECR   },  
-	{ "idletime",		offsetof(t_prefs,idletime),	conf_type_int,  DEFAULT_IDLETIME	},  
-	{ "keepalive_interval",	offsetof(t_prefs,keepalive_interval),conf_type_int,  DEFAULT_KEEPALIVE_INTERVAL},  
-	{ "timeout_checkinterval",offsetof(t_prefs,timeout_checkinterval),conf_type_int, DEFAULT_TIMEOUT_CHECKINTERVAL},  
+	{ "shutdown_decr",	offsetof(t_prefs,shutdown_decr),conf_type_int,  DEFAULT_SHUTDOWN_DECR   },
+	{ "idletime",		offsetof(t_prefs,idletime),	conf_type_int,  DEFAULT_IDLETIME	},
+	{ "keepalive_interval",	offsetof(t_prefs,keepalive_interval),conf_type_int,  DEFAULT_KEEPALIVE_INTERVAL},
+	{ "timeout_checkinterval",offsetof(t_prefs,timeout_checkinterval),conf_type_int, DEFAULT_TIMEOUT_CHECKINTERVAL},
 	{ NULL,			0,				conf_type_none, 0			}
 };
 

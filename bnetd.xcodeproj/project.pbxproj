@@ -11,16 +11,6 @@
 		613D92C416BFB8C4008BA576 /* bnetd.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 613D92C316BFB8C4008BA576 /* bnetd.1 */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		613D930516BFB9CB008BA576 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 613D930116BFB8FC008BA576 /* src.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 613D92CF16BFB8FB008BA576;
-			remoteInfo = src;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		613D92BC16BFB8C4008BA576 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -38,7 +28,7 @@
 		613D92BE16BFB8C4008BA576 /* bnetd */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bnetd; sourceTree = BUILT_PRODUCTS_DIR; };
 		613D92C116BFB8C4008BA576 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		613D92C316BFB8C4008BA576 /* bnetd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bnetd.1; sourceTree = "<group>"; };
-		613D930116BFB8FC008BA576 /* src.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = src.xcodeproj; path = "../../../../../opt/local/var/macports/build/_opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_net_bnetd/bnetd/work/bnetd-0.4.25/src/src.xcodeproj"; sourceTree = "<group>"; };
+		613D930116BFB8FC008BA576 /* src.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = src.xcodeproj; path = "bnetd-0.4.25/src/src.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,7 +68,7 @@
 			path = bnetd;
 			sourceTree = "<group>";
 		};
-		613D930216BFB8FC008BA576 /* Products */ = {
+		A51C336D17F07EC100462D28 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -99,7 +89,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				613D930616BFB9CB008BA576 /* PBXTargetDependency */,
 			);
 			name = bnetd;
 			productName = bnetd;
@@ -127,7 +116,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 613D930216BFB8FC008BA576 /* Products */;
+					ProductGroup = A51C336D17F07EC100462D28 /* Products */;
 					ProjectRef = 613D930116BFB8FC008BA576 /* src.xcodeproj */;
 				},
 			);
@@ -149,20 +138,12 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		613D930616BFB9CB008BA576 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = src;
-			targetProxy = 613D930516BFB9CB008BA576 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		613D92C516BFB8C4008BA576 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -171,8 +152,11 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_EXCEPTIONS = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -181,12 +165,39 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_GLOBAL_CONSTRUCTORS = YES;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = YES;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_PROTOTYPE_CONVERSION = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
+				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				GENERATE_PKGINFO_FILE = YES;
+				GENERATE_PROFILING_CODE = YES;
+				LD_GENERATE_MAP_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+				SDKROOT = "";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Debug;
 		};
@@ -248,6 +259,7 @@
 				613D92C916BFB8C4008BA576 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -3,8 +3,29 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
+/* The normal alignment of `unsigned char', in bytes. */
+#undef ALIGNOF_UNSIGNED_CHAR
+
+/* The normal alignment of `unsigned int', in bytes. */
+#undef ALIGNOF_UNSIGNED_INT
+
+/* The normal alignment of `unsigned long', in bytes. */
+#undef ALIGNOF_UNSIGNED_LONG
+
+/* The normal alignment of `unsigned long int', in bytes. */
+#undef ALIGNOF_UNSIGNED_LONG_INT
+
+/* The normal alignment of `unsigned long long', in bytes. */
+#undef ALIGNOF_UNSIGNED_LONG_LONG
+
+/* The normal alignment of `unsigned short', in bytes. */
+#undef ALIGNOF_UNSIGNED_SHORT
+
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
+
+/* Define if TIOCGWINSZ requires sys/ioctl.h */
+#undef GWINSZ_IN_SYS_IOCTL
 
 /* Define to 1 if you have the `alarm' function. */
 #undef HAVE_ALARM
@@ -12,11 +33,25 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
+/* Define to 1 if you have the <Availability.h> header file. */
+#undef HAVE_AVAILABILITY_H
+
 /* Define to 1 if you have the `bcopy' function. */
 #undef HAVE_BCOPY
 
 /* Define to 1 if you have the `chdir' function. */
 #undef HAVE_CHDIR
+
+/* Define to 1 if you have the <ctype.h> header file. */
+#undef HAVE_CTYPE_H
+
+/* Define to 1 if you have the declaration of `mkdir', and to 0 if you don't.
+   */
+#undef HAVE_DECL_MKDIR
+
+/* Define to 1 if you have the declaration of `NULL', and to 0 if you don't.
+   */
+#undef HAVE_DECL_NULL
 
 /* Define to 1 if you have the `difftime' function. */
 #undef HAVE_DIFFTIME
@@ -40,16 +75,28 @@
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
 
+/* Define to 1 if you have the <errno.h> header file. */
+#undef HAVE_ERRNO_H
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
+/* Define to 1 if you have the `fprintf' function. */
+#undef HAVE_FPRINTF
+
+/* Define to 1 if you have the `fputs' function. */
+#undef HAVE_FPUTS
+
+/* Define to 1 if you have the `free' function. */
+#undef HAVE_FREE
+
 /* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME
 
-/* Define if the C complier supports __func__ */
+/* Define to 1 if the C complier supports __func__ */
 #undef HAVE_FUNC
 
 /* Define to 1 if you have the `getenv' function. */
@@ -118,6 +165,9 @@
 /* Define to 1 if you have the <locale.h> header file. */
 #undef HAVE_LOCALE_H
 
+/* Define to 1 if you support file names longer than 14 characters. */
+#undef HAVE_LONG_FILE_NAMES
+
 /* Define to 1 if the system has the type 'long long int'. */
 #undef HAVE_LONG_LONG_INT
 
@@ -128,7 +178,10 @@
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
 
-/* define if the compiler supports member constants */
+/* Define to 1 if you have the <malloc/malloc.h> header file. */
+#undef HAVE_MALLOC_MALLOC_H
+
+/* Define to 1 if the compiler supports member constants */
 #undef HAVE_MEMBER_CONSTANTS
 
 /* Define to 1 if you have the `memchr' function. */
@@ -219,20 +272,32 @@
 /* Define to 1 if you have the `sigaddset' function. */
 #undef HAVE_SIGADDSET
 
+/* Define to 1 if you have the <signal.h> header file. */
+#undef HAVE_SIGNAL_H
+
 /* Define to 1 if you have the `sigprocmask' function. */
 #undef HAVE_SIGPROCMASK
 
 /* Define to 1 if you have the `socket' function. */
 #undef HAVE_SOCKET
 
+/* Define to 1 if you have the `sprintf' function. */
+#undef HAVE_SPRINTF
+
 /* Define to 1 if you have the <stdarg.h> header file. */
 #undef HAVE_STDARG_H
+
+/* Define to 1 if stdbool.h conforms to C99. */
+#undef HAVE_STDBOOL_H
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #undef HAVE_STDDEF_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
@@ -261,8 +326,14 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the `strlen' function. */
+#undef HAVE_STRLEN
+
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
+
+/* Define to 1 if you have the `strncmp' function. */
+#undef HAVE_STRNCMP
 
 /* Define to 1 if you have the `strnicmp' function. */
 #undef HAVE_STRNICMP
@@ -281,6 +352,9 @@
 
 /* Define to 1 if you have the `strtoul' function. */
 #undef HAVE_STRTOUL
+
+/* Define to 1 if you have the <sys/cdefs.h> header file. */
+#undef HAVE_SYS_CDEFS_H
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
@@ -329,8 +403,17 @@
 /* Define to 1 if you have the <sys/wait.h> header file. */
 #undef HAVE_SYS_WAIT_H
 
+/* Define to 1 if you have the <sys/_structs.h> header file. */
+#undef HAVE_SYS__STRUCTS_H
+
+/* Define to 1 if you have the <sys/_types.h> header file. */
+#undef HAVE_SYS__TYPES_H
+
 /* Define to 1 if you have the <termios.h> header file. */
 #undef HAVE_TERMIOS_H
+
+/* Define to 1 if you have the <time.h> header file. */
+#undef HAVE_TIME_H
 
 /* Define to 1 if you have the `uname' function. */
 #undef HAVE_UNAME
@@ -338,7 +421,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if the system has the type 'unsigned long long int'. */
+/* Define to 1 if the system has the type `unsigned long long int'. */
 #undef HAVE_UNSIGNED_LONG_LONG_INT
 
 /* Define to 1 if you have the <varargs.h> header file. */
@@ -365,6 +448,9 @@
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
 
+/* Define to 1 if the system has the type `_Bool'. */
+#undef HAVE__BOOL
+
 /* Define to 1 if you have the `_mkdir' function. */
 #undef HAVE__MKDIR
 
@@ -375,11 +461,8 @@
    */
 #undef LT_OBJDIR
 
-/* Define if mkdir takes only one argument. */
+/* Define to 1 if mkdir takes only one argument. */
 #undef MKDIR_TAKES_ONE_ARG
-
-/* Define to 1 if your C compiler doesn't accept -c and -o together. */
-#undef NO_MINUS_C_MINUS_O
 
 /* Name of package */
 #undef PACKAGE
@@ -402,6 +485,9 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* Define to 1 if the C compiler supports function prototypes. */
+#undef PROTOTYPES
+
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE
 
@@ -416,6 +502,9 @@
 
 /* The size of `unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
+
+/* The size of `unsigned long int', as computed by sizeof. */
+#undef SIZEOF_UNSIGNED_LONG_INT
 
 /* The size of `unsigned long long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG_LONG
@@ -472,6 +561,17 @@
 # endif
 #endif
 
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#undef _FILE_OFFSET_BITS
+
+/* Define for large files, on AIX-style hosts. */
+#undef _LARGE_FILES
+
 /* Define to 1 if on MINIX. */
 #undef _MINIX
 
@@ -497,6 +597,9 @@
    #define below would cause a syntax error. */
 #undef _UINT8_T
 
+/* Define like PROTOTYPES; this can be used by system headers. */
+#undef __PROTOTYPES
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 
@@ -508,6 +611,9 @@
 
 /* Define to rpl_malloc if the replacement function should be used. */
 #undef malloc
+
+/* Define to `int' if <sys/types.h> does not define. */
+#undef mode_t
 
 /* Define to `long int' if <sys/types.h> does not define. */
 #undef off_t

@@ -20,21 +20,22 @@
 # program @code{ansi2knr}, which comes with Ghostscript.
 # @end defmac
 
+AN_MAKEVAR([CC_STDC],[AM_PROG_CC_STDC])
 AC_DEFUN([AM_PROG_CC_STDC],
 [AC_REQUIRE([AC_PROG_CC])
-AC_BEFORE([$0], [AC_C_INLINE])
-AC_BEFORE([$0], [AC_C_CONST])
-dnl Force this before AC_PROG_CPP.  Some cpp's, eg on HPUX, require
-dnl a magic option to avoid problems with ANSI preprocessor commands
-dnl like #elif.
-dnl FIXME: can't do this because then AC_AIX won't work due to a
-dnl circular dependency.
-dnl AC_BEFORE([$0], [AC_PROG_CPP])
-AC_MSG_CHECKING(for ${CC-cc} option to accept ANSI C)
-AC_CACHE_VAL(am_cv_prog_cc_stdc,
+AC_BEFORE([$0],[AC_C_INLINE])
+AC_BEFORE([$0],[AC_C_CONST])
+dnl# Force this before AC_PROG_CPP.  Some cpp-es, e.g. on HPUX, require
+dnl# a magic option to avoid problems with ANSI preprocessor commands
+dnl# like #elif.
+dnl# FIXME: cannot do this because then AC_AIX will not work due to a
+dnl# circular dependency:
+dnl# AC_BEFORE([$0],[AC_PROG_CPP])
+AC_MSG_CHECKING([for ${CC-cc} option to accept ANSI C])
+AC_CACHE_VAL([am_cv_prog_cc_stdc],
 [am_cv_prog_cc_stdc=no
 ac_save_CC="$CC"
-# Don't try gcc -ansi; that turns off useful extensions and
+# Do NOT try gcc -ansi; that turns off useful extensions and
 # breaks some systems' header files.
 # AIX			-qlanglvl=ansi
 # Ultrix and OSF/1	-std1
@@ -43,8 +44,8 @@ ac_save_CC="$CC"
 for ac_arg in "" -qlanglvl=ansi -std1 "-Aa -D_HPUX_SOURCE" "-Xc -D__EXTENSIONS__"
 do
   CC="$ac_save_CC $ac_arg"
-  AC_TRY_COMPILE(
-[#include <stdarg.h>
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+#include <stdarg.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -72,9 +73,9 @@ struct s2 {int (*f) (double a);};
 int pairnames (int, char **, FILE *(*)(struct buf *, struct stat *, int), int, int);
 int argc;
 char **argv;
-], [
+]],[[
 return f (e, argv, 0) != argv[0]  ||  f (e, argv, 1) != argv[1];
-],
+]])],
 [am_cv_prog_cc_stdc="$ac_arg"; break])
 done
 CC="$ac_save_CC"

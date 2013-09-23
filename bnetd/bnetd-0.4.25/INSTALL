@@ -6,7 +6,6 @@ INSTALL
 	docs/README.BORLAND.  If you use the MSVC++ compiler, the install
 	process has not been documented yet.
 
-
 STEPS
 
 	 1) All the source code is in the src directory.  First change to that

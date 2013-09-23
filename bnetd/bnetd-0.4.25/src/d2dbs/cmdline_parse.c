@@ -24,19 +24,21 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
-#include <stdio.h>
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
+#ifdef HAVE_STDIO_H
+# include <stdio.h>
+#endif /* HAVE_STDIO_H */
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
+# endif /* HAVE_STRINGS_H */
 # ifdef HAVE_MEMORY_H
 #  include <memory.h>
-# endif
-#endif
+# endif /* HAVE_MEMORY_H */
+#endif /* HAVE_STRING_H */
 
 #include "version.h"
 #include "cmdline_parse.h"
@@ -140,4 +142,4 @@ extern char const * cmdline_get_memlog_file(void)
 {
 	return cmdline_param.memlog_file;
 }
-#endif
+#endif /* USE_CHECK_ALLOC */

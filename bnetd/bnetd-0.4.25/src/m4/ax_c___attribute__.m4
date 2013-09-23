@@ -1,6 +1,6 @@
-# ===========================================================================
+#==========================================================================
 #    http://www.gnu.org/software/autoconf-archive/ax_c___attribute__.html
-# ===========================================================================
+#==========================================================================
 #
 # SYNOPSIS
 #
@@ -45,8 +45,9 @@
 
 #serial 8
 
-AC_DEFUN([AX_C___ATTRIBUTE__], [
-  AC_CACHE_CHECK([for __attribute__], [ax_cv___attribute__],
+AC_DEFUN([AX_C___ATTRIBUTE__],[
+  AC_REQUIRE([AC_PROG_CC])
+  AC_CACHE_CHECK([for __attribute__],[ax_cv___attribute__],
     [AC_COMPILE_IFELSE(
       [AC_LANG_PROGRAM(
 	[[#include <stdlib.h>
@@ -55,12 +56,12 @@ AC_DEFUN([AX_C___ATTRIBUTE__], [
 	  foo(void) {
 	      exit(1);
 	  }
-        ]], [])],
+        ]],[])],
       [ax_cv___attribute__=yes],
       [ax_cv___attribute__=no]
     )
   ])
   if test "$ax_cv___attribute__" = "yes"; then
-    AC_DEFINE([HAVE___ATTRIBUTE__], 1, [define if your compiler has __attribute__])
+    AC_DEFINE([HAVE___ATTRIBUTE__],[1],[define if your compiler has __attribute__])
   fi
 ])

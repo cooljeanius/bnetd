@@ -1,6 +1,6 @@
-# ===========================================================================
+#==========================================================================
 #    http://www.gnu.org/software/autoconf-archive/ax_compiler_vendor.html
-# ===========================================================================
+#==========================================================================
 #
 # SYNOPSIS
 #
@@ -48,7 +48,7 @@
 
 AC_DEFUN([AX_COMPILER_VENDOR],
 [AC_CACHE_CHECK([for _AC_LANG compiler vendor], ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor,
-  [# note: don't check for gcc first since some other compilers define __GNUC__
+  [# note: do NOT check for gcc first since some other compilers define __GNUC__
   vendors="intel:     __ICC,__ECC,__INTEL_COMPILER
            ibm:       __xlc__,__xlC__,__IBMC__,__IBMCPP__
            pathscale: __PATHCC__,__PATHSCALE__
@@ -77,7 +77,7 @@ AC_DEFUN([AX_COMPILER_VENDOR],
       #if !($vencpp)
         thisisanerror;
       #endif
-    ])], [break])
+    ])],[break])
   done
   ax_cv_[]_AC_LANG_ABBREV[]_compiler_vendor=`echo $vendor | cut -d: -f1`
  ])
