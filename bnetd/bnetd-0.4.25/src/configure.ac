@@ -28,7 +28,7 @@ AC_CONFIG_MACRO_DIR([m4])
 builtin([include],[autoconf/mkdir.m4])
 
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([foreign -Wall])
+AM_INIT_AUTOMAKE([gnits -Wall])
 AM_MAINTAINER_MODE
 AM_SANITY_CHECK
 
