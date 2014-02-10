@@ -1265,6 +1265,7 @@ AC_SUBST([am__untar])
 
 m4_include([m4/ax_c___attribute__.m4])
 m4_include([m4/ax_c_var_func.m4])
+m4_include([m4/ax_check_compile_flag.m4])
 m4_include([m4/ax_check_gnu_make.m4])
 m4_include([m4/ax_compiler_vendor.m4])
 m4_include([m4/ax_cxx_member_constants.m4])

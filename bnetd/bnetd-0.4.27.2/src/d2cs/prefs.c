@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2000,2001	Onlyer	(onlyer@263.net)
+/* prefs.c
+ * Copyright (C) 2000, 2001	Onlyer	(onlyer@263.net)
  * Some DB-Storage (MySQL) modifications:
  *      Copyright (C) 2002  Joerg Ebeling (jebs@shbe.net)
  *
@@ -25,18 +25,18 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
+# endif /* !NULL */
 #endif
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
+# endif /* HAVE_STRINGS_H */
 # ifdef HAVE_MEMORY_H
 #  include <memory.h>
-# endif
-#endif
+# endif /* HAVE_MEMORY_H */
+#endif /* HAVE_STRING_H */
 #include "compat/memset.h"
 
 #include "conf.h"
@@ -44,9 +44,9 @@
 #include "common/eventlog.h"
 #ifdef WITH_STORAGE_DB
 # ifdef WITH_MYSQL
-	#include <mysql.h>
-# endif
-#endif
+#  include <mysql.h>
+# endif /* WITH_MYSQL */
+#endif /* WITH_STORAGE_DB */
 #include "common/setup_after.h"
 
 
@@ -95,15 +95,15 @@ typedef struct
 	    char const 		* db_char_table;
 	    char const 		* db_user;
 	    char const 		* db_pw;
-	#endif
+	#endif /* WITH_STORAGE_DB */
 } t_prefs;
 
 static t_prefs prefs_conf;
 
 
-/* FIXME: arg... pointers can't always fit into ints nor are they guaranteed to be numeric */
+/* FIXME: arg... pointers cannot always fit into ints nor are they guaranteed to be numeric */
 static t_conf_table prefs_conf_table[]={
-    /* I commented stuff out here because it was causing compiler errors and I didn't know how to fix them */
+    /* I commented stuff out here because it was causing compiler errors and I did NOT know how to fix them */
     /*{ "logfile",                offsetof(t_prefs,logfile),                conf_type_str,    (const int)DEFAULT_LOG_FILE         },*/
     /*{ "loglevels",              offsetof(t_prefs,loglevels),              conf_type_str,    (const int)DEFAULT_LOG_LEVELS       },*/
     /*{ "servaddrs",              offsetof(t_prefs,servaddrs),              conf_type_str,    (const int)D2CS_SERVER_ADDRS        },*/
@@ -146,7 +146,7 @@ static t_conf_table prefs_conf_table[]={
     { "db_char_table",          offsetof(t_prefs,db_char_table),          conf_type_str,    (const int)DB_CHAR_TABLE            },
     { "db_user",                offsetof(t_prefs,db_user),                conf_type_str,    (const int)""                       },
     { "db_pw",                  offsetof(t_prefs,db_pw),                  conf_type_str,    (const int)""                       },
-#endif
+#endif /* WITH_STORAGE_DB */
     { "d2gs_restart_delay",		offsetof(t_prefs,d2gs_restart_delay),	  conf_type_int,    DEFAULT_D2GS_RESTART_DELAY	  },
     { NULL,                     0,                                        conf_type_none,   0                             }
 };
@@ -388,4 +388,6 @@ extern char const * prefs_get_db_pw(void)
 {
 	return prefs_conf.db_pw;
 }
-#endif
+#endif /* WITH_STORAGE_DB */
+
+/* EOF */

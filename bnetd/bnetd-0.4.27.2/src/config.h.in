@@ -33,6 +33,9 @@
 /* Define to 1 if you have the `atexit' function. */
 #undef HAVE_ATEXIT
 
+/* Define to 1 if you have the `atoi' function. */
+#undef HAVE_ATOI
+
 /* Define to 1 if you have the `bcopy' function. */
 #undef HAVE_BCOPY
 
@@ -44,6 +47,14 @@
 
 /* Define to 1 if you have the <ctype.h> header file. */
 #undef HAVE_CTYPE_H
+
+/* Define to 1 if you have the declaration of `mkdir', and to 0 if you don't.
+   */
+#undef HAVE_DECL_MKDIR
+
+/* Define to 1 if you have the declaration of `NULL', and to 0 if you don't.
+   */
+#undef HAVE_DECL_NULL
 
 /* Define to 1 if you have the `difftime' function. */
 #undef HAVE_DIFFTIME

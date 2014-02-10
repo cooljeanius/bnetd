@@ -42,13 +42,19 @@ AM_SILENT_RULES([no])
 # Checks for programs.
 AM_PROG_AS
 AM_PROG_AR
+if test "x${AWK}" = "x"; then
+    test -z "${AWK}"
+    AC_PROG_AWK
+else
+    test ! -z "${AWK}" && export AWK
+    AC_SUBST([AWK])
+fi
 AC_PROG_FGREP
 AC_PROG_INSTALL
 AM_PROG_INSTALL_SH
 AM_PROG_INSTALL_STRIP
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
-AC_PROG_RANLIB
 
 # Checks paths of programs.
 AC_PATH_PROG([XCODEBUILD],[xcodebuild])
@@ -76,11 +82,26 @@ AC_SYS_POSIX_TERMIOS
 LT_INIT([win32-dll])
 LT_LANG([C])
 LT_LANG([Windows Resource])
+if test "x${RANLIB}" = "x"; then
+	test -z "${RANLIB}"
+	AC_PROG_RANLIB
+else
+	test ! -z "${RANLIB}" && export RANLIB
+	AC_SUBST([RANLIB])
+fi
 
 # Custom checks.
 zwarnflags=""
-AC_ARG_WITH([warn],[AS_HELP_STRING([--with-warn],[enable compiler warnings])],[zwarnflags="-pedantic -Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses"])
-AC_ARG_WITH([warn-lite],[AS_HELP_STRING([--with-warn-lite],[enable few compiler warnings])],[zwarnflags="-pedantic -Wall -Wno-attributes -Wno-sign-compare -Wno-parentheses"])
+AC_ARG_WITH([warn],[AS_HELP_STRING([--with-warn],[enable a certain set of specific compiler warnings])],[
+for warning_flag in $(echo "-Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wno-sign-compare"); do
+	AX_CHECK_COMPILE_FLAG([${warning_flag}],[zwarnflags="${zwarnflags} ${warning_flag}"])
+done
+])
+AC_ARG_WITH([warn-lite],[AS_HELP_STRING([--with-warn-lite],[enable few compiler warnings])],[
+for lite_warning_flag in $(echo "-pedantic -Wall -Wno-attributes -Wno-sign-compare -Wno-parentheses"); do
+	AX_CHECK_COMPILE_FLAG([${lite_warning_flag}],[zwarnflags="${zwarnflags} ${lite_warning_flag}"])
+done
+])
 
 zlangflags=""
 AC_ARG_WITH([ansi],[AS_HELP_STRING([--with-ansi],[use ANSI C mode])], [zlangflags="-ansi -pedantic"])
@@ -304,6 +325,8 @@ AC_CHECK_FUNCS([atexit atoi bcopy chdir cfree difftime dup2 ftime \
                 strchr strdup strerror stricmp strncasecmp strnicmp \
                 strpbrk strrchr strsep strstr strtol strtoul strtoull \
                 uname wait waitpid])
+AC_CHECK_DECLS([NULL])
+AC_CHECK_DECLS([mkdir])
 
 if test X"${am_cv_prog_cc_stdc}" = X"no"; then
     COMPILEANSI1='${PREPROCESS} $< | sed '"'"'s/^# *\([0-9][0-9]*\)  *\([^ ]*[a-z][^ ]*\) *.*$$/#line \1 \2/'"'"' | ${SRC_ACDIR}/ansi2knr > ${SRC_SRCDIR}/.ansi2knr_tmp.c'
