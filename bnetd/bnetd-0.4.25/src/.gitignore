@@ -3,6 +3,7 @@ config.h
 *.DS_Store
 *.cache
 */stamp-h1
+stamp-*
 *.log
 *~
 *.status
@@ -14,3 +15,5 @@ config.h
 *.o
 *.swp
 */*.orig
+Makefile
+*/Makefile
