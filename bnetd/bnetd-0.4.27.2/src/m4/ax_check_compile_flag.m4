@@ -1,26 +1,26 @@
-# ===========================================================================
+#==========================================================================
 #   http://www.gnu.org/software/autoconf-archive/ax_check_compile_flag.html
-# ===========================================================================
+#==========================================================================
 #
 # SYNOPSIS
 #
-#   AX_CHECK_COMPILE_FLAG(FLAG, [ACTION-SUCCESS], [ACTION-FAILURE], [EXTRA-FLAGS])
+# AX_CHECK_COMPILE_FLAG([FLAG],[ACTION-SUCCESS],[ACTION-FAIL],[MORE-FLAGS])
 #
 # DESCRIPTION
 #
-#   Check whether the given FLAG works with the current language's compiler
-#   or gives an error.  (Warnings, however, are ignored)
+#  Check whether the given FLAG works with the current language's compiler
+#  or gives an error.  (Warnings, however, are ignored)
 #
-#   ACTION-SUCCESS/ACTION-FAILURE are shell commands to execute on
-#   success/failure.
+#  ACTION-SUCCESS/ACTION-FAILURE are shell commands to execute on
+#  success/failure.
 #
-#   If EXTRA-FLAGS is defined, it is added to the current language's default
-#   flags (e.g. CFLAGS) when the check is done.  The check is thus made with
-#   the flags: "CFLAGS EXTRA-FLAGS FLAG".  This can for example be used to
-#   force the compiler to issue an error when a bad flag is given.
+#  If EXTRA-FLAGS is defined, it is added to the current language's default
+#  flags (e.g. CFLAGS) when the check is done. The check is thus made with
+#  the flags: "CFLAGS EXTRA-FLAGS FLAG". This can for example be used to
+#  force the compiler to issue an error when a bad flag is given.
 #
-#   NOTE: Implementation based on AX_CFLAGS_GCC_OPTION. Please keep this
-#   macro in sync with AX_CHECK_{PREPROC,LINK}_FLAG.
+#  NOTE: Implementation based on AX_CFLAGS_GCC_OPTION. Please keep this
+#  macro in sync with AX_CHECK_{PREPROC,LINK}_FLAG.
 #
 # LICENSE
 #
@@ -34,8 +34,8 @@
 #
 #   This program is distributed in the hope that it will be useful, but
 #   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU GPL
+#   for more details.
 #
 #   You should have received a copy of the GNU General Public License along
 #   with this program. If not, see <http://www.gnu.org/licenses/>.
