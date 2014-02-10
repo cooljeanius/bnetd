@@ -511,7 +511,7 @@ distclean-local: clean-local
 	-${RMF} ${SRC_SRCDIR}/config.status
 	-${RMF} ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 	-${RMRF} ${SRC_SRCDIR}/autom4te.cache || ${RMDIR} autom4te.cache
-	-${RMDIR} ${DIRS}
+	-${RMRF} ${DIRS} || ${RMDIR} ${DIRS}
 
 DISTCLEANFILES = *~ autoscan.log
 

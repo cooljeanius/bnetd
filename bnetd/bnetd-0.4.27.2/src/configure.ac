@@ -19,7 +19,8 @@
 
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.69])
-AC_INIT([bnetd],[0.4.27.2],[owen@greenend.org.uk])
+AC_INIT([bnetd],[0.4.27],[owen@greenend.org.uk])
+dnl# removed ".2" from version number for gnits standard
 AC_CONFIG_SRCDIR([bnetd/handle_bnet.c])
 AC_CONFIG_HEADERS([config.h])
 AUTOCONF_CONFIG_DIR="autoconf"
@@ -29,7 +30,7 @@ builtin(include,autoconf/mkdir.m4)
 
 AC_CANONICAL_TARGET dnl# also calls the "_BUILD" and "_HOST" versions
 AC_USE_SYSTEM_EXTENSIONS
-AM_INIT_AUTOMAKE([1.13 foreign])
+AM_INIT_AUTOMAKE([1.13 gnits subdir-objects])
 AM_MAINTAINER_MODE
 AM_DEP_TRACK
 AM_SANITY_CHECK
@@ -78,8 +79,8 @@ LT_LANG([Windows Resource])
 
 # Custom checks.
 zwarnflags=""
-AC_ARG_WITH([warn],[AS_HELP_STRING([--with-warn],[enable compiler warnings])],[zwarnflags="-pedantic -Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wno-sign-compare -Wno-parentheses"])
-AC_ARG_WITH([warn-lite],[AS_HELP_STRING([--with-warn-lite],[enable few compiler warnings])],[zwarnflags="-pedantic -Wall"])
+AC_ARG_WITH([warn],[AS_HELP_STRING([--with-warn],[enable compiler warnings])],[zwarnflags="-pedantic -Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses"])
+AC_ARG_WITH([warn-lite],[AS_HELP_STRING([--with-warn-lite],[enable few compiler warnings])],[zwarnflags="-pedantic -Wall -Wno-attributes -Wno-sign-compare -Wno-parentheses"])
 
 zlangflags=""
 AC_ARG_WITH([ansi],[AS_HELP_STRING([--with-ansi],[use ANSI C mode])], [zlangflags="-ansi -pedantic"])
