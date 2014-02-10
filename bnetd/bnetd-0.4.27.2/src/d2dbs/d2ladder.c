@@ -1,4 +1,4 @@
-/*
+/* d2ladder.c
  * Copyright (C) 2001		sousou	(liupeng.cs@263.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -23,35 +23,53 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #ifdef STDC_HEADERS
-# include <stdlib.h>
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning d2ladder.c expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  else
+#   warning d2ladder.c expects a malloc-related header to be included.
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS */
 #include <stdio.h>
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
+# else
+#  warning d2ladder.c expects a string-related header to be included.
+# endif /* HAVE_STRINGS_H */
 # ifdef HAVE_MEMORY_H
 #  include <memory.h>
-# endif
-#endif
+# else
+#  warning d2ladder.c expects <memory.h> to be included in the absence of <string.h>
+# endif /* HAVE_MEMORY_H */
+#endif /* HAVE_STRING_H */
 #include <errno.h>
 #include "compat/strerror.h"
 #include <dirent.h>
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h>
-#endif
+#else
+# warning d2ladder.c expects <sys/types.h> to be included.
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
-#endif
+#else
+# warning d2ladder.c expects <sys/stat.h> to be included.
+#endif /* HAVE_SYS_STAT_H */
 #ifdef HAVE_SYS_FILE_H
 # include <sys/file.h>
 #endif
@@ -60,11 +78,15 @@
 #else
 # ifdef HAVE_SYS_FILE_H
 #  include <sys/file.h>
-# endif
-#endif
+# else
+#  warning d2ladder.c expects a file-control-related header to be included.
+# endif /* HAVE_SYS_FILE_H */
+#endif /* HAVE_FCNTL_H */
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
-#endif
+#else
+# warning d2ladder.c expects <unistd.h> to be included.
+#endif /* HAVE_UNISTD_H */
 
 #include "d2ladder.h"
 #include "prefs.h"
@@ -203,7 +225,7 @@ static int d2ladder_find_pos(t_d2ladder * d2ladder, t_d2ladder_info * info)
 	int i;
 
 	if (!d2ladder || !info) return -1;
-	// only allow if the experience threshold is reached
+	/* only allow if the experience threshold is reached */
 	if (info->experience <  prefs_get_ladderupdate_threshold())return -1;
 	i=d2ladder->len;
 	while (i--) {
@@ -722,7 +744,7 @@ extern int d2ladder_print(FILE * ladderstrm)
 			overalltype=4;
 			classtype=11;
 		}
-		
+
 		fprintf(ladderstrm,"ladder type %u  %s %s\n",type,laddermode[overalltype],charclass[classtype]);
 		fprintf(ladderstrm,"************************************************************************\n");
 		fprintf(ladderstrm,"No    character name    level      exp       status   title   class     \n");
@@ -864,3 +886,5 @@ static int d2ladder_checksum_check(void)
 	eventlog(eventlog_level_info,  __FUNCTION__, "ladder file check pass (checksum=0x%X)",checksum_calc);
 	return 1;
 }
+
+/* EOF */

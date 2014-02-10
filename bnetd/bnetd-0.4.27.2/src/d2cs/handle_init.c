@@ -1,4 +1,4 @@
-/*
+/* handle_init.c
  * Copyright (C) 2000,2001	Onlyer	(onlyer@263.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -19,12 +19,22 @@
 #include "setup.h"
 
 #ifdef STDC_HEADERS
-# include <stdlib.h>
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning handle_init.c expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  else
+#   warning handle_init.c expects a malloc-related header to be included.
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS */
 
 #include "connection.h"
 #include "handle_init.h"
@@ -71,12 +81,12 @@ static int on_d2gs_initconn(t_connection * c)
 
 	eventlog(eventlog_level_info, __FUNCTION__, "[%d] client initiated d2gs connection",conn_get_socket(c));
 	if (!(gs=d2gslist_find_gs_by_ip(conn_get_addr(c)))) {
-		// reload list and see if any dns addy's has changed
+		/* reload list and see if any dns addy's has changed */
 		if (d2gslist_reload(prefs_get_d2gs_list())<0) {
 			eventlog(eventlog_level_error, __FUNCTION__, "error reloading game server list,exitting");
 			return -1;
 		}
-		//recheck
+		/* recheck */
 		if (!(gs=d2gslist_find_gs_by_ip(conn_get_addr(c)))) {
 			eventlog(eventlog_level_error, __FUNCTION__, "d2gs connection from invalid ip address %s",addr_num_to_ip_str(conn_get_addr(c)));
 			return -1;
@@ -99,3 +109,5 @@ static int on_d2cs_initconn(t_connection * c)
 	conn_set_state(c,conn_state_connected);
 	return 0;
 }
+
+/* EOF */

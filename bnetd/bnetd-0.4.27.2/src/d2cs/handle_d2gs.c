@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2000,2001	Onlyer	(onlyer@263.net)
+/* handle_d2gs.c
+ * Copyright (C) 2000, 2001	Onlyer	(onlyer@263.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,26 +19,48 @@
 #include "setup.h"
 
 #ifdef STDC_HEADERS
-# include <stdlib.h>
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning handle_d2gs.c expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  else
+#   warning handle_d2gs.c expects a malloc-related header to be included.
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS */
 #ifdef HAVE_SYS_TYPES_H
 # include <sys/types.h> /* needed to include netinet/in.h */
-#endif
+#else
+# ifdef HAVE_NETINET_IN_H
+#  warning handle_d2gs.c needs to include <sys/types.h> in order to include <netinet/in.h>
+# else
+#  warning handle_d2gs.c expects <sys/types.h> to be included.
+# endif /* HAVE_NETINET_IN_H */
+#endif /* HAVE_SYS_TYPES_H */
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
-#endif
+#else
+# warning handle_d2gs.c expects <sys/socket.h> to be included.
+#endif /* HAVE_SYS_SOCKET_H */
 #include "compat/socket.h"
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
-#endif
+#else
+# warning handle_d2gs.c expects <netinet/in.h> to be included.
+#endif /* HAVE_NETINET_IN_H */
 #include "compat/netinet_in.h"
 #ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h> /* FIXME: probably not needed... do some systems put types in here or something? */
-#endif
+# include <arpa/inet.h> /* FIXME: probably not needed. Do some systems put types in here or something? */
+#else
+# define ARPA_INET_H_NOT_INCLUDED 1 /* not a warning, see the FIXME above */
+#endif /* HAVE_ARPA_INET_H */
 #include "compat/psock.h"
 
 #include "d2gs.h"
@@ -81,7 +103,7 @@ static t_packet_handle_table d2gs_packet_handle_table[]={
 /* 0x0e */ { 0,                                  conn_state_none,       NULL                    },
 /* 0x0f */ { 0,                                  conn_state_none,       NULL                    },
 /* 0x10 */ { 0,                                  conn_state_none,       NULL                    },
-/* FIXME: shouldn't these three be at 0x10-0x12? (But I'm pretty sure I preserved the padding) */
+/* FIXME: should these 3 not be at 0x10-0x12? (But I am pretty sure I preserved the padding) */
 /* 0x11 */ { sizeof(t_d2gs_d2cs_authreply),      conn_state_connected,  on_d2gs_authreply       },
 /* 0x12 */ { sizeof(t_d2gs_d2cs_setgsinfo),      conn_state_authed,     on_d2gs_setgsinfo       },
 /* 0x13 */ { sizeof(t_d2gs_d2cs_echoreply),      conn_state_any,        on_d2gs_echoreply       },
@@ -137,8 +159,8 @@ static int on_d2gs_authreply(t_connection * c, t_packet * packet)
 		d2gs_active(gs,c);
 	} else {
 		eventlog(eventlog_level_error, __FUNCTION__, "game server %s failed to auth",addr_num_to_ip_str(conn_get_addr(c)));
-		/* 
-		conn_set_state(c,conn_state_destroy); 
+		/*
+		conn_set_state(c,conn_state_destroy);
 		*/
 	}
 	if ((rpacket=packet_create(packet_class_d2gs))) {
@@ -149,7 +171,7 @@ static int on_d2gs_authreply(t_connection * c, t_packet * packet)
 		packet_del_ref(rpacket);
 	}
 
-	// set d2gs version
+	/* set d2gs version */
 	gs->d2gs_version = version;
 
  	return 0;
@@ -189,7 +211,7 @@ static int on_d2gs_setgsinfo(t_connection * c, t_packet * packet)
 	for (i=prev_maxgame; i<maxgame; i++) gqlist_check_creategame();
 	/* ...while the next was placed instead of the one before
 	gqlist_check_creategame(); */
-	
+
 	return 0;
 }
 
@@ -383,7 +405,7 @@ extern int handle_d2gs_packet(t_connection * c, t_packet * packet)
 
 	type=packet_get_type(packet);
 
-	// ugly d2gs hack, used in backward campability...
+	/* ugly d2gs hack, used in backward campability... */
 	if(type == D2GS_D2CS_SETGSINFO)
 	{
 		gs=d2gslist_find_gs(conn_get_d2gs_id(c));
@@ -410,3 +432,5 @@ extern int handle_d2gs_init(t_connection * c)
 	eventlog(eventlog_level_info, __FUNCTION__, "sent init packet to d2gs %d (sessionnum=%d)",conn_get_d2gs_id(c),conn_get_sessionnum(c));
 	return 0;
 }
+
+/* EOF */
