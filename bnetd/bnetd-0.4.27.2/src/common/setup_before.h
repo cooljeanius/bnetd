@@ -20,14 +20,14 @@
  */
 #ifdef INCLUDED_SETUP_AFTER_H
 # error "This file must be included before all other header files"
-#endif
+#endif /* INCLUDED_SETUP_AFTER_H */
 #ifndef INCLUDED_SETUP_BEFORE_H
 #define INCLUDED_SETUP_BEFORE_H
 
 /* get autoconf defines */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
-#endif
+#endif /* HAVE_CONFIG_H */
 
 /* This file contains compile-time configuration parameters including
  * debugging options, default configuration values, and format strings.
@@ -80,9 +80,9 @@
 
 /* the format for account numbers */
 #ifndef ACCT_DYN_LOAD
-#define UID_FORMAT "#%08u"
-#define UID_MAXLEN 8
-#endif
+# define UID_FORMAT "#%08u"
+# define UID_MAXLEN 8
+#endif /* ACCT_DYN_LOAD */
 
 /* the format for game ids */
 #define GAMEID_FORMAT "#%06u"
@@ -128,7 +128,7 @@
 /* default path configuration values */
 #ifndef BNETD_DEFAULT_CONF_FILE
 # define BNETD_DEFAULT_CONF_FILE "conf/bnetd.conf"
-#endif
+#endif /* !BNETD_DEFAULT_CONF_FILE */
 #define BNETD_FILE_DIR          "files"
 #define BNETD_USER_DIR          "users"
 #define BNETD_REPORT_DIR        "reports"
@@ -211,7 +211,7 @@
     #define DB_NAME			"bnetd"
 	#define DB_ACC_TABLE	"account"
 	#define DB_CHAR_TABLE	"d2character"
-#endif
+#endif /* WITH_STORAGE_DB */
 
 /***************************************************************/
 /* default values for the tracking server */
@@ -231,15 +231,15 @@
 
 #if defined(HAVE_SIGACTION) && defined(HAVE_SIGPROCMASK) && defined(HAVE_SIGADDSET)
 # define DO_POSIXSIG
-#endif
+#endif /* HAVE_SIGACTION && HAVE_SIGPROCMASK && HAVE_SIGADDSET */
 
 #if defined(HAVE_FORK) && defined(HAVE_PIPE)
 # define DO_SUBPROC
-#endif
+#endif /* HAVE_FORK && HAVE_PIPE */
 
 #if defined(HAVE_FORK) && defined(HAVE_CHDIR) && (defined(HAVE_SETPGID) || defined(HAVE_SETPGRP))
 # define DO_DAEMONIZE
-#endif
+#endif /* HAVE_FORK && HAVE_CHDIR && (HAVE_SETPGID || HAVE_SETPGRP) */
 
 
 /* GCC attributes */
@@ -250,18 +250,18 @@
 /* namespace clean versions were available starting in 2.6.4 */
 #  define __format__ format
 #  define __printf__ printf
-# endif
+# endif /* GCC 2.5-2.7 */
 # define PRINTF_ATTR(FMTARG,VARG) __attribute__((__format__(printf,FMTARG,VARG)))
 #else
 # define PRINTF_ATTR(FMTARG,VARG)
-#endif
+#endif /* GCC 2.5+ */
 
 /* returns a pointer which can not alias any other object */
 #if defined(__GNUC__) && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 96) || __GNUC__ > 2)
 # define MALLOC_ATTR() __attribute__((__malloc__))
 #else
 # define MALLOC_ATTR()
-#endif
+#endif /* GCC 2.96+ */
 
 /* must only read arguments and non-volatile global variables and change nothing
    except for local variables and its own return value (and must eventually return) */
@@ -269,7 +269,7 @@
 # define PURE_ATTR() __attribute__((__pure__))
 #else
 # define PURE_ATTR()
-#endif
+#endif /* GCC 2.96+ */
 
 /* must only read direct arguments (no following pointers) and change nothing except
    for local variables and its own return value (and it must have a non-void return
@@ -278,14 +278,14 @@
 # define CONST_ATTR() __attribute__((__const__))
 #else
 # define CONST_ATTR()
-#endif
+#endif /* GCC 2.5+ */
 
 /* must never return and have void return type */
 #if defined(__GNUC__) && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 5) || __GNUC__ > 2)
 # define NORETURN_ATTR() __attribute__((__noreturn__))
 #else
 # define NORETURN_ATTR()
-#endif
+#endif /* GCC 2.5+ */
 
 /* type attributes */
 
@@ -295,14 +295,14 @@
 # define HAVE_MODE_ATTR
 #else
 # define MODE_ATTR(M)
-#endif
+#endif /* GCC 2.7+ */
 
 /* avoid using padding */
-#if defined(__GNUC__) /* FIXME: which gcc versions? */
+#if defined(__GNUC__) && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 7) || __GNUC__ > 2) && !defined(__APPLE__)
 # define PACKED_ATTR() __attribute__((__packed__))
 #else
 # define PACKED_ATTR()
-#endif
+#endif /* GCC 2.7+ */
 
 #define BNETD_MAX_SOCKETS 4096
 
@@ -312,9 +312,13 @@
  * parameters are used i tried to fix it.
  */
 #ifdef STDC_HEADERS
-# include <stdlib.h>
-#endif
- 
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning setup_before.h expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
+#endif /* STDC_HEADERS */
+
 /*
  * select() hackery... works most places, need to add autoconf checks
  * because some systems may redefine FD_SETSIZE, have it as a variable,
@@ -324,6 +328,8 @@
 /* FIXME: how big can this be before things break? */
 #ifndef FD_SETSIZE
 # define FD_SETSIZE BNETD_MAX_SOCKETS
-#endif
+#endif /* !FD_SETSIZE */
 
-#endif
+#endif /* !INCLUDED_SETUP_BEFORE_H */
+
+/* EOF */
