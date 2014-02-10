@@ -1,6 +1,6 @@
 #
-# Copyright (C) 1999  Rob Crittenden (rcrit@greyoak.com)
-# Copyright (C) 1999,2000,2002  Ross Combs (rocombs@cs.nmsu.edu)
+# Copyright (C) 1999 Rob Crittenden (rcrit@greyoak.com)
+# Copyright (C) 1999, 2000, 2002 Ross Combs (rocombs@cs.nmsu.edu)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,10 +14,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# Foundation, Inc., 59 Temple Place: Suite 330, Boston, MA 02111-1307, USA.
 #
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 --install
 
 install_sh      = @install_sh@
 prefix		= @prefix@
@@ -60,6 +60,7 @@ SRC_COMPATDIR	= ${SRC_SRCDIR}/compat
 SRC_DEBUGDIR	= ${SRC_SRCDIR}/debug
 
 RMF		= rm -f
+RMRF		= rm -rf
 
 RMDIR		= @RMDIR@
 
@@ -479,64 +480,76 @@ MAN1S		= bnetd.1 bnproxy.1 bntrackd.1 bnchat.1 bnpass.1 bnbot.1 bnftp.1 bnstat.1
 MAN5S		= bnetd.conf.5 bntext.5 bnmotd.txt.5 bnissue.txt.5 bnnews.txt.5
 CONFS		= ad.list bnetd.conf bnetd_default_user bnwelcome.txt bnmotd.txt bnbitsmotd.txt bnissue.txt channel.list news.txt bnban bnhelp bnbitspasswd gametrans autoupdate versioncheck realm.list d2cs.conf d2dbs.conf
 SHARES		= ad000001.pcx icons.bni tos.txt newbie.save IX86ver1.mpq bnserver.ini bnserver-D2DV.ini
-OTHERRM		= {bnproxy_SBIN} ${sbnetd_SBIN} ${timetest_BIN} ${listtest_BIN} ${hashtabletest_BIN} ${addrtest_BIN} ${hashtest_BIN} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o @ANSI2KNR_TMP@
+OTHERRM		= ${bnproxy_SBIN} ${sbnetd_SBIN} ${timetest_BIN} ${listtest_BIN} ${hashtabletest_BIN} ${addrtest_BIN} ${hashtest_BIN} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o @ANSI2KNR_TMP@
 DIRS		= ${SRC_BINDIR} ${SRC_SBINDIR}
 
-# common dependencies can't be expressed this way portably...
-#${OBJECTS}: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
-
+# common dependencies for ${OBJECTS} cannot be expressed this way
+# portably, unfortunately...
+common_dependencies_for_objects: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
+.PHONY: common_dependencies_for_objects
 
 .PHONY: all
 all: @ANSI2KNR_DEP@ config ${SBINS} ${BINS}
 
-.PHONY: clean
-clean:
+# Hack: these should not be treated as targets in the first place:
+.PHONY: -c -m 644
+
+.PHONY: clean-local
+clean-local:
 	-${RMF} core
 	-${RMF} ${OBJECTS}
 	-${RMF} ${SBINS}
 	-${RMF} ${BINS}
 	-${RMF} ${OTHERRM}
 
-.PHONY: distclean
-distclean: clean
+.PHONY: distclean-local
+distclean-local: clean-local
 	-${RMF} ${SRC_CONFDIR}/bnetd.conf
 	-${RMF} ${SRC_CONFDIR}/d2cs.conf
 	-${RMF} ${SRC_CONFDIR}/d2dbs.conf
 	-${RMF} ${SRC_SRCDIR}/config.cache ${SRC_SRCDIR}/config.log
 	-${RMF} ${SRC_SRCDIR}/config.status
 	-${RMF} ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
+	-${RMRF} ${SRC_SRCDIR}/autom4te.cache || ${RMDIR} autom4te.cache
 	-${RMDIR} ${DIRS}
 
+DISTCLEANFILES = *~ autoscan.log
+
 .PHONY: clean-compile
-clean-compile: clean all
+clean-compile: clean-local all
 
 .PHONY: config
 config: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 
-${SRC_SRCDIR}/configure: ${SRC_SRCDIR}/configure.in
+.PHONY: rebuild_configure
+rebuild_configure: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The configure script is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoconf
 	@${ECHO} >> ${SRC_SRCDIR}/config.h.in
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/config.h.in: ${SRC_SRCDIR}/configure.in
+.PHONY: rebuild_config.h.in
+rebuild_config.h.in: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The config.h.in header is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoheader
 	@${ECHO} >> $@
 	@${ECHO} >> ${SRC_SRCDIR}/configure
 
-${SRC_SRCDIR}/config.status: ${SRC_SRCDIR}/configure
+.PHONY: rebuild_config.status
+rebuild_config.status: ${SRC_SRCDIR}/configure
 	@${ECHO} "The config.status script is out of date; rechecking..."
 	${SRC_SRCDIR}/config.status --recheck
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/config.h: ${SRC_SRCDIR}/config.h.in ${SRC_SRCDIR}/config.status
+.PHONY: rebuild_config.h
+rebuild_config.h: ${SRC_SRCDIR}/config.h.in ${SRC_SRCDIR}/config.status
 	@${ECHO} "The config.h header is out of date; rewriting..."
 	${SRC_SRCDIR}/config.status
 	@${ECHO} >> ${SRC_SRCDIR}/Makefile
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/Makefile: ${SRC_SRCDIR}/Makefile.in ${SRC_SRCDIR}/config.status
+.PHONY: rebuild_Makefile
+rebuild_Makefile: ${SRC_SRCDIR}/Makefile.in ${SRC_SRCDIR}/config.status
 	@${ECHO} "The Makefile is out of date; rewriting..."
 	${SRC_SRCDIR}/config.status
 	@${ECHO} >> ${SRC_SRCDIR}/config.h
@@ -548,8 +561,8 @@ ${SRC_BINDIR}:
 ${SRC_SBINDIR}:
 	${INSTALL_DIRS} $@
 
-.PHONY: install
-install: install-sbin install-bin install-man install-conf install-share
+.PHONY: install-all-bnetd-things
+install-all-bnetd-things: install-sbin install-bin install-man install-conf install-share
 
 .PHONY: install-server
 install-server: install-sbin install-conf install-share
@@ -604,8 +617,8 @@ install-bin: ${BINS}
 	  else :; fi; \
 	done
 
-.PHONY: install-man
-install-man:
+.PHONY: install-man-bnetd
+install-man-bnetd:
 	${INSTALL_DIRS} ${mandir} ${mandir}/man1 ${mandir}/man5
 	@list='${MAN1S}'; for p in $$list; do \
 	  if test -f ${SRC_MANDIR}/$$p; then \
@@ -643,8 +656,8 @@ install-share:
 	done
 	-. ${SRC_SCRIPTDIR}/tos.sh ${filesdir}
 
-.PHONY: uninstall
-uninstall: uninstall-sbin uninstall-bin uninstall-man uninstall-conf uninstall-share
+.PHONY: uninstall-all-bnetd-things
+uninstall-all-bnetd-things: uninstall-sbin uninstall-bin uninstall-man uninstall-conf uninstall-share
 
 .PHONY: uninstall-sbin
 uninstall-sbin:
@@ -815,7 +828,3 @@ ${hashtest_BIN}: ${hashtest_OBJECTS}
 	@${INSTALL_DIRS} ${SRC_BINDIR}
 	@${RMF} $@
 	${LINK} ${hashtest_OBJECTS} ${LINK_LIBS} -o $@
-
-# Tell versions (3.59,3.63) of GNU make to not export all variables.
-# Otherwise a system limit (for SysV at least) may be exceeded.
-.NOEXPORT:

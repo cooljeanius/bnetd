@@ -1,6 +1,6 @@
-# ===========================================================================
+#==========================================================================
 #    http://www.gnu.org/software/autoconf-archive/ax_c___attribute__.html
-# ===========================================================================
+#==========================================================================
 #
 # SYNOPSIS
 #
@@ -24,8 +24,8 @@
 #
 #   This program is distributed in the hope that it will be useful, but
 #   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU GPL
+#   for more details.
 #
 #   You should have received a copy of the GNU General Public License along
 #   with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -45,8 +45,9 @@
 
 #serial 8
 
-AC_DEFUN([AX_C___ATTRIBUTE__], [
-  AC_CACHE_CHECK([for __attribute__], [ax_cv___attribute__],
+AC_DEFUN([AX_C___ATTRIBUTE__],[
+  AC_REQUIRE([AC_HEADER_STDC])
+  AC_CACHE_CHECK([for __attribute__],[ax_cv___attribute__],
     [AC_COMPILE_IFELSE(
       [AC_LANG_PROGRAM(
 	[[#include <stdlib.h>
@@ -55,12 +56,12 @@ AC_DEFUN([AX_C___ATTRIBUTE__], [
 	  foo(void) {
 	      exit(1);
 	  }
-        ]], [])],
+        ]],[[]])],
       [ax_cv___attribute__=yes],
-      [ax_cv___attribute__=no]
-    )
+      [ax_cv___attribute__=no])
   ])
-  if test "$ax_cv___attribute__" = "yes"; then
-    AC_DEFINE([HAVE___ATTRIBUTE__], 1, [define if your compiler has __attribute__])
+  if test "x${ax_cv___attribute__}" = "xyes"; then
+    AC_DEFINE([HAVE___ATTRIBUTE__],[1],
+              [Define to 1 if your compiler has support for __attribute__])
   fi
 ])

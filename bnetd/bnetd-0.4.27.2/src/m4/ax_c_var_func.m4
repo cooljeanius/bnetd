@@ -1,6 +1,6 @@
-# ===========================================================================
+#==========================================================================
 #       http://www.gnu.org/software/autoconf-archive/ax_c_var_func.html
-# ===========================================================================
+#==========================================================================
 #
 # SYNOPSIS
 #
@@ -13,7 +13,7 @@
 #
 #   The new C9X standard for the C language stipulates that the identifier
 #   __func__ shall be implictly declared by the compiler as if, immediately
-#   following the opening brace of each function definition, the declaration
+#   following the opening brace of each function definition, the decl
 #
 #     static const char __func__[] = "function-name";
 #
@@ -31,8 +31,8 @@
 #
 #   This program is distributed in the hope that it will be useful, but
 #   WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
-#   Public License for more details.
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU GPL
+#   for more details.
 #
 #   You should have received a copy of the GNU General Public License along
 #   with this program. If not, see <http://www.gnu.org/licenses/>.
@@ -52,15 +52,24 @@
 
 #serial 5
 
-AU_ALIAS([AC_C_VAR_FUNC], [AX_C_VAR_FUNC])
+AU_ALIAS([AC_C_VAR_FUNC],[AX_C_VAR_FUNC])
 AC_DEFUN([AX_C_VAR_FUNC],
 [AC_REQUIRE([AC_PROG_CC])
-AC_CACHE_CHECK(whether $CC recognizes __func__, ac_cv_c_var_func,
-AC_TRY_COMPILE(,
-[int main() {
+ AC_CACHE_CHECK([whether ${CC} recognizes __func__],[ac_cv_c_var_func],[
+   AC_COMPILE_IFELSE([
+     AC_LANG_SOURCE([[
+     ]],[[
+int main() {
 char *s = __func__;
-}],
-AC_DEFINE(HAVE_FUNC,,
-[Define if the C complier supports __func__]) ac_cv_c_var_func=yes,
-ac_cv_c_var_func=no) )
+}
+     ]])],[
+   ac_cv_c_var_func=yes
+   ],[
+   ac_cv_c_var_func=no
+   ])
+ ])
+ if test "x${ac_cv_c_var_func}" = "xyes"; then
+      AC_DEFINE([HAVE_FUNC],[1],
+                [Define to 1 if the C complier supports __func__])
+ fi
 ])dnl

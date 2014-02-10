@@ -1,0 +1,2 @@
+bnetd 382
+variants universal portdir net/bnetd description {daemon that emulates Blizzards Battle.net service} homepage http://www.chiark.greenend.org.uk/~owend/free/bnetd.html epoch 0 platforms darwin name bnetd long_description {{daemon that emulates Blizzards Battle.net service.} Currently broken.} license GPL-2+ maintainers nomaintainer categories {net games} version 0.4.25 revision 1

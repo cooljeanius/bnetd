@@ -17,8 +17,6 @@ AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lpcap':
-AC_CHECK_LIB([pcap], [main])
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h libintl.h limits.h locale.h malloc.h memory.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h strings.h sys/file.h sys/ioctl.h sys/param.h sys/socket.h sys/time.h sys/timeb.h termios.h unistd.h])
@@ -39,15 +37,5 @@ AC_FUNC_MKTIME
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([atexit dup2 ftime gethostbyname gethostname gettimeofday inet_ntoa isascii memchr memmove memset mkdir pow strcasecmp strchr strdup strerror strncasecmp strrchr strstr strtoul uname])
 
-AC_CONFIG_FILES([Makefile
-                 bnetd/Makefile
-                 bniutils/Makefile
-                 bnpass/Makefile
-                 bnpcap/Makefile
-                 bnproxy/Makefile
-                 bntrackd/Makefile
-                 client/Makefile
-                 d2cs/Makefile
-                 d2dbs/Makefile
-                 debug/Makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

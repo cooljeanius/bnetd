@@ -1,6 +1,6 @@
 #
-# Copyright (C) 1999  Rob Crittenden (rcrit@greyoak.com)
-# Copyright (C) 1999,2000,2002  Ross Combs (rocombs@cs.nmsu.edu)
+# Copyright (C) 1999 Rob Crittenden (rcrit@greyoak.com)
+# Copyright (C) 1999, 2000, 2002 Ross Combs (rocombs@cs.nmsu.edu)
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -9,12 +9,12 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# Foundation, Inc., 59 Temple Place: Suite 330, Boston, MA 02111-1307, USA.
 #
 
 prefix		= @prefix@
@@ -24,6 +24,7 @@ bindir		= @bindir@
 sbindir		= @sbindir@
 mandir		= @mandir@
 confdir		= @sysconfdir@/bnetd
+datarootdir	= @datarootdir@
 sharedir	= @localstatedir@
 filesdir	= @localstatedir@/files
 usersdir	= @localstatedir@/users
@@ -75,7 +76,7 @@ INSTALL_DIRS	= @INSTALL@ -d -m 755
 # CFLAGS set by configure
 CPPFLAGS	= @DEFS@ @DEFINES@ -DBNETD_DEFAULT_CONF_FILE=\"${confdir}/bnetd.conf\" -DD2CS_DEFAULT_CONF_FILE=\"${confdir}/d2cs.conf\" -DD2DBS_DEFAULT_CONF_FILE=\"${confdir}/d2dbs.conf\" @CPPFLAGS@ -I"${SRC_SRCDIR}"
 COMPILE		= @CC@ @CFLAGS@ ${CPPFLAGS} -c
-#PREPROCESS	= @CPP@ ${CPPFLAGS}
+PREPROCESS_COMMENTED_OUT = @CPP@ ${CPPFLAGS}
 LINK		= @CC@ @CFLAGS@ @LDFLAGS@
 LINK_LIBS	= @LIBS@
 
@@ -479,8 +480,10 @@ SHARES		= ad000001.pcx icons.bni tos.txt newbie.save IX86ver1.mpq bnserver.ini b
 OTHERRM		= {bnproxy_SBIN} ${sbnetd_SBIN} ${timetest_BIN} ${listtest_BIN} ${hashtabletest_BIN} ${addrtest_BIN} ${hashtest_BIN} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o @ANSI2KNR_TMP@
 DIRS		= ${SRC_BINDIR} ${SRC_SBINDIR}
 
-# common dependencies can't be expressed this way portably...
-#${OBJECTS}: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
+# common dependencies for ${OBJECTS} cannot be expressed this way
+# portably, unfortunately...
+common_dependencies_for_objects: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
+.PHONY: common_dependencies_for_objects
 
 
 .PHONY: all
@@ -510,13 +513,13 @@ clean-compile: clean all
 .PHONY: config
 config: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 
-${SRC_SRCDIR}/configure: ${SRC_SRCDIR}/configure.in
+${SRC_SRCDIR}/configure: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The configure script is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoconf
 	@${ECHO} >> ${SRC_SRCDIR}/config.h.in
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/config.h.in: ${SRC_SRCDIR}/configure.in
+${SRC_SRCDIR}/config.h.in: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The config.h.in header is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoheader
 	@${ECHO} >> $@

@@ -1,4 +1,4 @@
-/*
+/* mail.h
  * Copyright (C) 2001            Dizzy (dizzy@roedu.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -42,12 +42,18 @@
 #  ifdef HAVE_SYS_TIME_H
 #   include <sys/time.h>
 #  else
-#   include <time.h>
-#  endif
-# endif
+#   ifdef HAVE_TIME_H
+#    include <time.h>
+#   else
+#    warning mail.h expects a time-related header to be included.
+#   endif /* HAVE_TIME_H */
+#  endif /* HAVE_SYS_TIME_H */
+# endif /* TIME_WITH_SYS_TIME */
 # ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
-# endif
+# else
+#  warning mail.h expects <sys/types.h> to be included.
+# endif /* HAVE_SYS_TYPES_H */
 # include "compat/pdir.h"
 #else
 # define JUST_NEED_TYPES
@@ -58,15 +64,21 @@
 #  ifdef HAVE_SYS_TIME_H
 #   include <sys/time.h>
 #  else
-#   include <time.h>
-#  endif
-# endif
+#   ifdef HAVE_TIME_H
+#    include <time.h>
+#   else
+#    warning mail.h expects a time-related header to be included.
+#   endif /* HAVE_TIME_H */
+#  endif /* HAVE_SYS_TIME_H */
+# endif /* TIME_WITH_SYS_TIME */
 # ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
-# endif
+# else
+#  warning mail.h expects <sys/types.h> to be included.
+# endif /* HAVE_SYS_TYPES_H */
 # include "compat/pdir.h"
 # undef JUST_NEED_TYPES
-#endif
+#endif /* JUST_NEED_TYPES */
 
 typedef struct mailbox_struct {
     t_pdir *     maildir;
@@ -86,9 +98,9 @@ typedef struct maillist_struct {
     struct maillist_struct * next;
 } t_maillist;
 
-#endif
+#endif /* MAIL_INTERNAL_ACCESS */
 
-#endif
+#endif /* !INCLUDED_MAIL_TYPES */
 
 #ifndef JUST_NEED_TYPES
 #ifndef INCLUDED_MAIL_PROTOS
@@ -102,5 +114,7 @@ extern int handle_mail_command(t_connection * c, char const * text);
 extern int mail_number_of_new(t_account * user);
 extern int mail_save_number(t_connection * c);
 
-#endif
-#endif
+#endif /* !INCLUDED_MAIL_PROTOS */
+#endif /* !JUST_NEED_TYPES */
+
+/* EOF */

@@ -4,7 +4,7 @@
 PortSystem           1.0
 PortGroup            github 1.0
 
-github.setup         cooljeanius bnetd 0.4.27.2 v
+github.setup         cooljeanius bnetd 0.4.27.2_1 v
 name                 bnetd
 version              0.4.27.2
 categories           net games
@@ -14,15 +14,15 @@ license              GPL-2+
 description          Daemon that emulates Blizzards Battle.net service
 long_description     ${description}. Currently broken.
 
-homepage             http://www.chiark.greenend.org.uk/~owend/free/bnetd.html
+homepage             http://www.chiark.greenend.org.uk/~owend/free/${name}.html
 master_sites         http://www.chiark.greenend.org.uk/~owend/free/
 checksums            md5 8a27ad997fabfb6d1dc514bb14c01bed
 
 fetch.type 	     git
-git.url              git://github.com/cooljeanius/bnetd.git
+git.url              git://github.com/cooljeanius/${name}.git
 
 post-extract {
-    worksrcdir       ${worksrcdir}/bnetd/bnetd-${version}/src
+    worksrcdir       ${worksrcdir}/${name}/${name}-${version}/src
 }
 
 depends_build-append port:autoconf-archive
@@ -30,11 +30,14 @@ depends_lib-append   port:libpcap \
                      port:rpl
 
 use_autoreconf       yes
+autoreconf.args      -fvi
 
 configure.args       --mandir=${prefix}/share/man/ \
-                     --sysconfdir=${prefix}/etc/bnetd/ \
-                     --localstatedir=${prefix}/var/bnetd/ \
-                     --with-warn
+                     --sysconfdir=${prefix}/etc \
+                     --localstatedir=${prefix}/var/${name}
+
+build.cmd            "make -f Makefile.bak"
+use_parallel_build   no
 
 platform darwin powerpc {
     configure.args-append --build=powerpc-apple-freebsd
@@ -43,22 +46,24 @@ platform darwin i386 {
     configure.args-append --build=i386-apple-darwin${os.version}
 }
 
+destroot.destdir    prefix=${destroot}${prefix}
+destroot.cmd        "make -f Makefile.bak install"
+
 pre-destroot    {
     reinplace "s|${prefix}|\${prefix}|g" ${worksrcpath}/Makefile
+    reinplace "s|${prefix}|${destroot}${prefix}|g" ${worksrcpath}/Makefile.bak
 }
 
-destroot.destdir    prefix=${destroot}${prefix}
-
 post-destroot    {
-    set vardir ${destroot}${prefix}/var/bnetd
+    set vardir ${destroot}${prefix}/var/${name}
     foreach file {users reports chanlogs charinfo charsave ladders bak/charsave bak/charinfo} {
         xinstall -m 755 -d ${vardir}/${file}
         destroot.keepdirs-append ${vardir}/${file}
     }
     reinplace "s|${destroot}${prefix}|${prefix}|g" \
-        ${destroot}${prefix}/etc/bnetd/bnetd.conf \
-        ${destroot}${prefix}/etc/bnetd/d2cs.conf \
-        ${destroot}${prefix}/etc/bnetd/d2dbs.conf
+        ${destroot}${prefix}/etc/${name}/${name}.conf \
+        ${destroot}${prefix}/etc/${name}/d2cs.conf \
+        ${destroot}${prefix}/etc/${name}/d2dbs.conf
 }
 
 variant efence conflicts universal description {Adds support for Electric Fence for finding memory problems} {
