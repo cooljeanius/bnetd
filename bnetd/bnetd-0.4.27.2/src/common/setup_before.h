@@ -1,4 +1,4 @@
-/*
+/* setup_before.h
  * Copyright (C) 1998,1999,2000  Ross Combs (rocombs@cs.nmsu.edu)
  * Copyright (C) 1999  Rob Crittenden (rcrit@greyoak.com)
  * Some DB-Storage (MySQL) modifications:
@@ -27,6 +27,8 @@
 /* get autoconf defines */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
+#else
+# define NOT_USING_AUTOTOOLS 1
 #endif /* HAVE_CONFIG_H */
 
 /* This file contains compile-time configuration parameters including

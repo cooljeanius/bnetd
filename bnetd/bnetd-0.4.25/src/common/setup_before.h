@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 1998,1999,2000  Ross Combs (rocombs@cs.nmsu.edu)
+/* setup_before.h
+ * Copyright (C) 1998, 1999, 2000  Ross Combs (rocombs@cs.nmsu.edu)
  * Copyright (C) 1999  Rob Crittenden (rcrit@greyoak.com)
  *
  * This program is free software; you can redistribute it and/or
@@ -18,14 +18,16 @@
  */
 #ifdef INCLUDED_SETUP_AFTER_H
 # error "This file must be included before all other header files"
-#endif
+#endif /* INCLUDED_SETUP_AFTER_H */
 #ifndef INCLUDED_SETUP_BEFORE_H
 #define INCLUDED_SETUP_BEFORE_H
 
 /* get autoconf defines */
 #ifdef HAVE_CONFIG_H
 # include "config.h"
-#endif
+#else
+# define NOT_USING_AUTOTOOLS 1
+#endif /* HAVE_CONFIG_H */
 
 /* This file contains compile-time configuration parameters including
  * debugging options, default configuration values, and format strings.
@@ -52,12 +54,12 @@
    eventlog() are correct. */
 #undef DEBUGMODSTRINGS
 /*
-   After you compile, use this script:
-   strings bnetd |
-   egrep '@\([^@]*@@[a-z_]*\)@' |
-   sed -e 's/@(\([^:]*\):\([a-z_]*\)@@\([a-z_]*\))@/\1 \2 \3/g' |
-   awk '{ if ( $2 != $3 ) printf("%s: %s->%s\n",$1,$2,$3); }'
-*/
+ *  After you compile, use this script:
+ *  strings bnetd |
+ *  egrep '@\([^@]*@@[a-z_]*\)@' |
+ *  sed -e 's/@(\([^:]*\):\([a-z_]*\)@@\([a-z_]*\))@/\1 \2 \3/g' |
+ *  awk '{ if ( $2 != $3 ) printf("%s: %s->%s\n",$1,$2,$3); }'
+ */
 
 /* this will test get/unget memory management in account.c */
 #undef TESTUNGET
@@ -109,7 +111,7 @@
 /* adjustable constants */
 #define BNETD_LADDER_DEFAULT_TIME "19764578 0" /* 0:00 1 Jan 1970 GMT */
 
-/* for clients if ioctl(TIOCGWINSZ) fails and $LINES and $COLUMNS aren't set */
+/* for clients if ioctl(TIOCGWINSZ) fails and $LINES and $COLUMNS are NOT set */
 #define DEF_SCREEN_WIDTH  80
 #define DEF_SCREEN_HEIGHT 24
 
@@ -122,7 +124,7 @@
 /* default path configuration values */
 #ifndef BNETD_DEFAULT_CONF_FILE
 # define BNETD_DEFAULT_CONF_FILE "conf/bnetd.conf"
-#endif
+#endif /* !BNETD_DEFAULT_CONF_FILE */
 #define BNETD_FILE_DIR          "files"
 #define BNETD_USER_DIR          "users"
 #define BNETD_REPORT_DIR        "reports"
@@ -214,15 +216,15 @@
 
 #if defined(HAVE_SIGACTION) && defined(HAVE_SIGPROCMASK) && defined(HAVE_SIGADDSET)
 # define DO_POSIXSIG
-#endif
+#endif /* HAVE_SIGACTION && HAVE_SIGPROCMASK && HAVE_SIGADDSET */
 
 #if defined(HAVE_FORK) && defined(HAVE_PIPE)
 # define DO_SUBPROC
-#endif
+#endif /* HAVE_FORK && HAVE_PIPE */
 
 #if defined(HAVE_FORK) && defined(HAVE_CHDIR) && (defined(HAVE_SETPGID) || defined(HAVE_SETPGRP))
 # define DO_DAEMONIZE
-#endif
+#endif /* HAVE_FORK && HAVE_CHDIR && (HAVE_SETPGID || HAVE_SETPGRP) */
 
 
 /* GCC attributes */
@@ -233,18 +235,18 @@
 /* namespace clean versions were available starting in 2.6.4 */
 #  define __format__ format
 #  define __printf__ printf
-# endif
+# endif /* GCC 2.5-2.7 */
 # define PRINTF_ATTR(FMTARG,VARG) __attribute__((__format__(printf,FMTARG,VARG)))
 #else
 # define PRINTF_ATTR(FMTARG,VARG)
-#endif
+#endif /* GCC 2.5+ */
 
 /* returns a pointer which can not alias any other object */
 #if defined(__GNUC__) && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 96) || __GNUC__ > 2)
 # define MALLOC_ATTR() __attribute__((__malloc__))
 #else
 # define MALLOC_ATTR()
-#endif
+#endif /* GCC 2.96+ */
 
 /* must only read arguments and non-volatile global variables and change nothing
    except for local variables and its own return value (and must eventually return) */
@@ -252,7 +254,7 @@
 # define PURE_ATTR() __attribute__((__pure__))
 #else
 # define PURE_ATTR()
-#endif
+#endif /* GCC 2.96+ */
 
 /* must only read direct arguments (no following pointers) and change nothing except
    for local variables and its own return value (and it must have a non-void return
@@ -268,7 +270,7 @@
 # define NORETURN_ATTR() __attribute__((__noreturn__))
 #else
 # define NORETURN_ATTR()
-#endif
+#endif /* GCC 2.5+ */
 
 /* type attributes */
 
@@ -278,14 +280,14 @@
 # define HAVE_MODE_ATTR
 #else
 # define MODE_ATTR(M)
-#endif
+#endif /* GCC 2.7+ */
 
 /* avoid using padding */
-#if defined(__GNUC__) /* FIXME: which gcc versions? */
+#if defined(__GNUC__) && ((__GNUC__ == 2 && __GNUC_MINOR__ >= 7) || __GNUC__ > 2) && !defined(__APPLE__)
 # define PACKED_ATTR() __attribute__((__packed__))
 #else
 # define PACKED_ATTR()
-#endif
+#endif /* GCC 2.7+ */
 
 #define BNETD_MAX_SOCKETS 4096
 
@@ -298,6 +300,8 @@
 /* FIXME: how big can this be before things break? */
 #ifndef FD_SETSIZE
 # define FD_SETSIZE BNETD_MAX_SOCKETS
-#endif
+#endif /* !FD_SETSIZE */
 
-#endif
+#endif /* !INCLUDED_SETUP_BEFORE_H */
+
+/* EOF */
