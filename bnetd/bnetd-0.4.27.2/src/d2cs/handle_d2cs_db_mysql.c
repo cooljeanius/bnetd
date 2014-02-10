@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2002,2003  JEBs@shbe.net)
+/* handle_d2cs_db_mysql.c
+ * Copyright (C) 2002, 2003  JEBs@shbe.net
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,8 +33,8 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #ifdef STDC_HEADERS
 # include <stdlib.h>
 #else
@@ -47,7 +47,7 @@
 #include "common/db_mysql.h"
 #include "common/setup_after.h"
 
-static int db_server_connect_done = 0;		/* Info logging & table update checking */
+static int db_server_connect_done = 0; /* Info logging & table update checking */
 
 
 static unsigned int db_connect(MYSQL *mysql)
@@ -109,5 +109,8 @@ extern char const * db_d2char_accchargetnext(t_db_result * myresult)
 	return myresult->row[0];
 }
 
+#else
+typedef int handle_d2cs_db_mysql_c_filenotempty; /* make ISO standard happy */
 #endif  /* WITH_MYSQL */
 
+/* EOF */

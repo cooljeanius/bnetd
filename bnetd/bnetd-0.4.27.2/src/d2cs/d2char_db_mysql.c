@@ -1,4 +1,4 @@
-/*
+/* d2char_db_mysql.c
  * Copyright (C) 2002,2003 JEBs@shbe.net
  *
  * This program is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@
  * JE20030214 - Fixed 2 tiny memory leaks
  * JE20021024 - Initial version 0.1
  */
- 
+
 #ifdef WITH_MYSQL                       /* Whole file */
 #include "common/setup_before.h"
 #include "setup.h"
@@ -39,8 +39,8 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #ifdef STDC_HEADERS
 # include <stdlib.h>
 #else
@@ -489,6 +489,8 @@ extern unsigned int db_d2char_create(char const * db_table,char const * account,
 	return 1;
 }
 
-
+#else
+typedef int d2char_db_mysql_c_filenotempty; /* make ISO standard happy */
 #endif  /* WITH_MYSQL */
 
+/* EOF */

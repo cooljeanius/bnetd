@@ -1,4 +1,4 @@
-/*
+/* db_mysql.c
  * Copyright (C) 2002  Joerg Ebeling (jebs@shbe.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -65,5 +65,8 @@ extern void db_close(MYSQL *mysql)
 	mysql_close(mysql);
 }
 
+#else
+typedef int db_mysql_c_filenotempty; /* make ISO standard happy */
 #endif  /* WITH_MYSQL */
 
+/* EOF */

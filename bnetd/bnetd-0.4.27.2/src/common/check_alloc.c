@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2000,2001  Ross Combs (rocombs@cs.nmsu.edu)
+/* check_alloc.c
+ * Copyright (C) 2000, 2001  Ross Combs (rocombs@cs.nmsu.edu)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,23 +23,35 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #include <stdio.h>
 #ifdef STDC_HEADERS
-# include <stdlib.h>
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning check_alloc.c expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  else
+#   warning check_alloc.c expects a malloc-related header to be included.
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS */
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
-#endif
+# else
+#  warning check_alloc.c expects a string-related header to be included.
+# endif /* HAVE_STRINGS_H */
+#endif /* HAVE_STRING_H */
 #include "common/check_alloc.h"
 #include "common/setup_after.h"
 
@@ -58,7 +70,7 @@ static int add_item(char const * func, void * ptr, unsigned int size, char const
     t_alist * new;
     t_alist * curr;
     t_alist * * change;
-    
+
     change = &head;
     for (curr=head; curr; curr=curr->next)
     {
@@ -75,7 +87,7 @@ static int add_item(char const * func, void * ptr, unsigned int size, char const
 	}
 	change = &curr->next;
     }
-    
+
     if (!(new = malloc(sizeof(t_alist))))
     {
 	if (logfp)
@@ -88,9 +100,9 @@ static int add_item(char const * func, void * ptr, unsigned int size, char const
     new->file_name = file_name;
     new->line_number = line_number;
     new->next = NULL;
-    
+
     *change = new;
-    
+
     return 0;
 }
 
@@ -99,7 +111,7 @@ static int del_item(char const * func, void * ptr, unsigned int size, char const
 {
     t_alist * curr;
     t_alist * * change;
-    
+
     change = &head;
     for (curr=head; curr; curr=curr->next)
     {
@@ -107,17 +119,17 @@ static int del_item(char const * func, void * ptr, unsigned int size, char const
 	    break;
 	change = &curr->next;
     }
-    
+
     if (!curr)
     {
 	if (logfp)
 	    fprintf(logfp,"Extra %s(%p) of object in %s:%d\n",func,ptr,file_name,line_number);
 	return -1;
     }
-    
+
     *change = curr->next;
     free(curr);
-    
+
     return 0;
 }
 
@@ -125,11 +137,11 @@ static int del_item(char const * func, void * ptr, unsigned int size, char const
 static unsigned int get_size(void const * ptr)
 {
     t_alist * curr;
-    
+
     for (curr=head; curr; curr=curr->next)
 	if (curr->ptr==ptr)
 	    return curr->size;
-    
+
     return 0;
 }
 
@@ -145,10 +157,10 @@ extern int check_report_usage(void)
     t_alist *     curr;
     unsigned long countmem;
     unsigned int  countobj;
-    
+
     if (!logfp)
 	return -1;
-    
+
     countmem = 0;
     countobj = 0;
     for (curr=head; curr; curr=curr->next)
@@ -158,7 +170,7 @@ extern int check_report_usage(void)
         countobj++;
     }
     fprintf(logfp,"Total allocated memory is %lu bytes in %u objects.\n",countmem,countobj);
-    
+
     return 0;
 }
 
@@ -169,7 +181,7 @@ extern void check_cleanup(void)
     t_alist *     next;
     unsigned long countmem;
     unsigned int  countobj;
-    
+
     countmem = 0;
     countobj = 0;
     for (curr=head; curr; curr=next)
@@ -188,13 +200,13 @@ extern void check_cleanup(void)
 extern void * check_malloc_real(unsigned int size, char const * file_name, int line_number)
 {
     void * ptr;
-    
+
     ptr = malloc(size);
     if (ptr)
 	memset(ptr,'D',size); /* 0x44 */
-    
+
     add_item("malloc",ptr,size,file_name,line_number);
-    
+
     return ptr;
 }
 
@@ -202,11 +214,11 @@ extern void * check_malloc_real(unsigned int size, char const * file_name, int l
 extern void * check_calloc_real(unsigned int nelem, unsigned int size, char const * file_name, int line_number)
 {
     void * ptr;
-    
+
     ptr = calloc(nelem,size);
-    
+
     add_item("calloc",ptr,size*nelem,file_name,line_number);
-    
+
     return ptr;
 }
 
@@ -215,7 +227,7 @@ extern void * check_realloc_real(void * in_ptr, unsigned int size, char const * 
 {
     unsigned int oldsize;
     void *       out_ptr;
-    
+
     if (size)
     {
 	out_ptr = malloc(size);
@@ -225,20 +237,20 @@ extern void * check_realloc_real(void * in_ptr, unsigned int size, char const * 
     }
     else
 	out_ptr = NULL;
-    
+
     if (in_ptr)
     {
 	oldsize = get_size(in_ptr);
-	
+
 	if (out_ptr)
 	    memcpy(out_ptr,in_ptr,oldsize<size?oldsize:size);
-	
+
 	memset(in_ptr,'U',oldsize); /* 0x55 */
 	free(in_ptr);
-	
+
 	del_item("realloc",in_ptr,oldsize,file_name,line_number);
     }
-    
+
     return out_ptr;
 }
 
@@ -246,45 +258,51 @@ extern void * check_realloc_real(void * in_ptr, unsigned int size, char const * 
 extern void check_free_real(void * ptr, char const * file_name, int line_number)
 {
     unsigned int oldsize;
-    
+
     oldsize = get_size(ptr);
     memset(ptr,'U',oldsize); /* 0x55 */
     free(ptr);
-    
+
     del_item("free",ptr,oldsize,file_name,line_number);
 }
 
-
+#ifdef HAVE_CFREE
 extern void check_cfree_real(void * ptr, char const * file_name, int line_number)
 {
     unsigned int oldsize;
-    
+
     oldsize = get_size(ptr);
     memset(ptr,'U',oldsize); /* 0x55 */
     cfree(ptr);
-    
+
     del_item("cfree",ptr,oldsize,file_name,line_number);
 }
+#else
+# warning cfree is not present (probably because it is obsolete); using free instead
+# define check_cfree_real check_free_real
+#endif /* HAVE_CFREE */
 
 
 extern void * check_strdup_real(char const * str, char const * file_name, int line_number)
 {
     void * ptr;
-    
+
     if (!str)
     {
 	if (logfp)
 	    fprintf(logfp,"Got NULL string to duplicate in %s:%d\n",file_name,line_number);
 	return NULL;
     }
-    
+
     ptr = strdup(str);
-    
+
     add_item("strdup",ptr,strlen(str)+1,file_name,line_number);
-    
+
     return ptr;
 }
 
 #else
-typedef int filenotempty; /* make ISO standard happy */
-#endif
+typedef int check_alloc_c_filenotempty; /* make ISO standard happy */
+#endif /* USE_CHECK_ALLOC */
+
+/* EOF */

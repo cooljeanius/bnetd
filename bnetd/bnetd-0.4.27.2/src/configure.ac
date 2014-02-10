@@ -265,10 +265,11 @@ AC_TYPE_MODE_T
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
+AC_TYPE_UID_T
+AC_TYPE_UINT8_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
-AC_TYPE_UINT8_T
 AC_CHECK_TYPES([ptrdiff_t])
 AC_CHECK_SIZEOF([unsigned char],[1])
 AC_CHECK_ALIGNOF([unsigned char])
@@ -293,9 +294,9 @@ AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
 AC_CHECK_FUNCS_ONCE([fork _mkdir])
-AC_CHECK_FUNCS([atexit bcopy chdir difftime dup2 ftime getenv getgid \
-                getgrnam gethostbyname gethostname getlogin getpid \
-                getpwnam getservbyname gettimeofday getuid \
+AC_CHECK_FUNCS([atexit atoi bcopy chdir cfree difftime dup2 ftime \
+                getenv getgid getgrnam gethostbyname gethostname getlogin \
+                getpid getpwnam getservbyname gettimeofday getuid \
                 index inet_aton inet_ntoa ioctl isascii memchr memcpy \
                 memset memmove mkdir mktime pipe poll pow recv recvfrom \
                 rindex select send sendto setgid setpgid setpgrp setsid \

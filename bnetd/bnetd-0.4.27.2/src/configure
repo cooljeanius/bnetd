@@ -19493,6 +19493,50 @@ _ACEOF
 
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for uid_t in sys/types.h" >&5
+$as_echo_n "checking for uid_t in sys/types.h... " >&6; }
+if ${ac_cv_type_uid_t+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "uid_t" >/dev/null 2>&1; then :
+  ac_cv_type_uid_t=yes
+else
+  ac_cv_type_uid_t=no
+fi
+rm -f conftest*
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_type_uid_t" >&5
+$as_echo "$ac_cv_type_uid_t" >&6; }
+if test $ac_cv_type_uid_t = no; then
+
+$as_echo "#define uid_t int" >>confdefs.h
+
+
+$as_echo "#define gid_t int" >>confdefs.h
+
+fi
+
+ac_fn_c_find_uintX_t "$LINENO" "8" "ac_cv_c_uint8_t"
+case $ac_cv_c_uint8_t in #(
+  no|yes) ;; #(
+  *)
+
+$as_echo "#define _UINT8_T 1" >>confdefs.h
+
+
+cat >>confdefs.h <<_ACEOF
+#define uint8_t $ac_cv_c_uint8_t
+_ACEOF
+;;
+  esac
+
 ac_fn_c_find_uintX_t "$LINENO" "16" "ac_cv_c_uint16_t"
 case $ac_cv_c_uint16_t in #(
   no|yes) ;; #(
@@ -19529,20 +19573,6 @@ $as_echo "#define _UINT64_T 1" >>confdefs.h
 
 cat >>confdefs.h <<_ACEOF
 #define uint64_t $ac_cv_c_uint64_t
-_ACEOF
-;;
-  esac
-
-ac_fn_c_find_uintX_t "$LINENO" "8" "ac_cv_c_uint8_t"
-case $ac_cv_c_uint8_t in #(
-  no|yes) ;; #(
-  *)
-
-$as_echo "#define _UINT8_T 1" >>confdefs.h
-
-
-cat >>confdefs.h <<_ACEOF
-#define uint8_t $ac_cv_c_uint8_t
 _ACEOF
 ;;
   esac
@@ -20812,9 +20842,9 @@ done
 
 
 
-for ac_func in atexit bcopy chdir difftime dup2 ftime getenv getgid \
-                getgrnam gethostbyname gethostname getlogin getpid \
-                getpwnam getservbyname gettimeofday getuid \
+for ac_func in atexit bcopy chdir cfree difftime dup2 ftime \
+                getenv getgid getgrnam gethostbyname gethostname getlogin \
+                getpid getpwnam getservbyname gettimeofday getuid \
                 index inet_aton inet_ntoa ioctl isascii memchr memcpy \
                 memset memmove mkdir mktime pipe poll pow recv recvfrom \
                 rindex select send sendto setgid setpgid setpgrp setsid \

@@ -1,4 +1,4 @@
-/*
+/* cmdline_parse.c
  * Copyright (C) 2000,2001	Onlyer	(onlyer@263.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -23,19 +23,19 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #include <stdio.h>
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
+# endif /* HAVE_STRINGS_H */
 # ifdef HAVE_MEMORY_H
 #  include <memory.h>
-# endif
-#endif
+# endif /* HAVE_MEMORY_H */
+#endif /* HAVE_STRING_H */
 #include "compat/memset.h"
 
 #include "conf.h"
@@ -46,8 +46,10 @@
 
 static t_conf_table param_conf_table[]={
 #ifdef USE_CHECK_ALLOC
+# if 0
     { "-m",			offsetof(t_param,memlog_file),  conf_type_str,  (const int)DEFAULT_MEMLOG_FILE     }, /* FIXME */
-#endif
+# endif /* 0 */
+#endif /* USE_CHECK_ALLOC */
     /*{ "-c",			offsetof(t_param,prefs_file),   conf_type_str,	(const int)D2CS_DEFAULT_CONF_FILE  },*/
     { "-l",			offsetof(t_param,logfile),      conf_type_str,  (const int)NULL                    },
     { "-h",			offsetof(t_param,help),         conf_type_bool, 0                            },
@@ -140,4 +142,6 @@ extern char const * cmdline_get_memlog_file(void)
 {
 	return cmdline_param.memlog_file;
 }
-#endif
+#endif /* USE_CHECK_ALLOC */
+
+/* EOF */

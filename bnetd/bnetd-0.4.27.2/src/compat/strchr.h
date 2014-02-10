@@ -1,4 +1,4 @@
-/*
+/* strchr.h
  * Copyright (C) 2000  Ross Combs (rocombs@cs.nmsu.edu)
  *
  * This program is free software; you can redistribute it and/or
@@ -16,8 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 #ifdef HAVE_CONFIG_H
-#include "../config.h"
-#endif
+# include "../config.h"
+#endif /* HAVE_CONFIG_H */
 #ifndef INCLUDED_STRCHR_PROTOS
 #define INCLUDED_STRCHR_PROTOS
 
@@ -26,9 +26,11 @@
 #ifdef HAVE_INDEX
 # define strchr index
 #else
-#warning "This program requires either strchr() or index()"
-#endif
+# warning "This program requires either strchr() or index()"
+#endif /* HAVE_INDEX */
 
-#endif
+#endif /* !HAVE_STRCHR */
 
-#endif
+#endif /* !INCLUDED_STRCHR_PROTOS */
+
+/* EOF */

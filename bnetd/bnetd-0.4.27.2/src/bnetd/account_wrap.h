@@ -1,4 +1,4 @@
-/*
+/* account_wrap.h
  * Copyright (C) 1998,1999  Ross Combs (rocombs@cs.nmsu.edu)
  *
  * This program is free software; you can redistribute it and/or
@@ -19,46 +19,46 @@
 
 /*****/
 #ifndef JUST_NEED_TYPES
-#ifndef INCLUDED_ACCOUNT_WRAP_PROTOS
-#define INCLUDED_ACCOUNT_WRAP_PROTOS
+# ifndef INCLUDED_ACCOUNT_WRAP_PROTOS
+#  define INCLUDED_ACCOUNT_WRAP_PROTOS
 
-#define JUST_NEED_TYPES
-#include "account.h"
-#include "character.h"
-#include "common/bnettime.h"
-#include "ladder.h"
-#undef JUST_NEED_TYPES
+#  define JUST_NEED_TYPES
+#  include "account.h"
+#  include "character.h"
+#  include "common/bnettime.h"
+#  include "ladder.h"
+#  undef JUST_NEED_TYPES
 
 /* convenience functions */
-#ifdef DEBUG_ACCOUNT
+#  ifdef DEBUG_ACCOUNT
 extern unsigned int account_get_numattr_real(t_account * account, char const * key, char const * fn, unsigned int ln);
-#define account_get_numattr(A,K) account_get_numattr_real(A,K,__FILE__,__LINE__)
-#else
+#   define account_get_numattr(A,K) account_get_numattr_real(A,K,__FILE__,__LINE__)
+#  else
 extern unsigned int account_get_numattr(t_account * account, char const * key);
-#endif
+#  endif /* DEBUG_ACCOUNT */
 extern int account_set_numattr(t_account * account, char const * key, unsigned int val);
 
-#ifdef DEBUG_ACCOUNT
+#  ifdef DEBUG_ACCOUNT
 extern int account_get_boolattr_real(t_account * account, char const * key, char const * fn, unsigned int ln);
-#define account_get_boolattr(A,K) account_get_boolattr_real(A,K,__FILE__,__LINE__)
-#else
+#   define account_get_boolattr(A,K) account_get_boolattr_real(A,K,__FILE__,__LINE__)
+#  else
 extern int account_get_boolattr(t_account * account, char const * key);
-#endif
+#  endif /* DEBUG_ACCOUNT */
 extern int account_set_boolattr(t_account * account, char const * key, int val);
 
 /* names and passwords */
-#ifdef DEBUG_ACCOUNT
+#  ifdef DEBUG_ACCOUNT
 extern char const * account_get_name_real(t_account * account, char const * fn, unsigned int ln);
-# define account_get_name(A) account_get_name_real(A,__FILE__,__LINE__)
-#else
+#   define account_get_name(A) account_get_name_real(A,__FILE__,__LINE__)
+#  else
 extern char const * account_get_name(t_account * account);
-#endif
-#ifdef DEBUG_ACCOUNT
+#  endif /* DEBUG_ACCOUNT */
+#  ifdef DEBUG_ACCOUNT
 extern int account_unget_name_real(char const * name, char const * fn, unsigned int ln);
-# define account_unget_name(N) account_unget_name_real(N,__FILE__,__LINE__)
-#else
+#   define account_unget_name(N) account_unget_name_real(N,__FILE__,__LINE__)
+#  else
 extern int account_unget_name(char const * name);
-#endif
+#  endif /* DEBUG_ACCOUNT */
 extern char const * account_get_pass(t_account * account);
 extern int account_unget_pass(char const * pass);
 extern int account_set_pass(t_account * account, char const * passhash1);
@@ -229,5 +229,7 @@ extern int account_add_closed_character(t_account * account, char const * client
 
 extern int account_check_closed_character(t_account * account, char const * clienttag, char const * realmname, char const * charname);
 
-#endif
-#endif
+# endif /* !INCLUDED_ACCOUNT_WRAP_PROTOS */
+#endif /* !JUST_NEED_TYPES */
+
+/* EOF */

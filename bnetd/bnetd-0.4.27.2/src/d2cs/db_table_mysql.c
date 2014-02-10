@@ -1,4 +1,4 @@
-/*
+/* db_table_mysql.c
  * Copyright (C) 2002  Joerg Ebeling (jebs@shbe.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
  * JE20021026 - Complete redraw and valgrind testing
  * JE20021026 - Initial version 0.1
  */
- 
+
 #ifdef WITH_MYSQL                       /* Whole file */
 #include "common/setup_before.h"
 #include "setup.h"
@@ -31,8 +31,8 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #ifdef STDC_HEADERS
 # include <stdlib.h>
 #else
@@ -172,7 +172,7 @@ static unsigned int db_table_import(char const * db_table)
 				eventlog(eventlog_level_error, __FUNCTION__, "charinfo check of file %s failed ! skipping ...",file);
 				continue;
 			}
-			
+
          	/* Read related chardata */
 			str_to_lower(charinfo.header.charname);
 			if(d2char_check_charname(charinfo.header.charname)<0) {
@@ -201,13 +201,13 @@ static unsigned int db_table_import(char const * db_table)
 			}
 
 			/* Use the realmname from d2cs instead of the one used in the charinfo cause it could be happen,
-				that someone wasn't in since the last realmname change */
+				that someone was NOT in since the last realmname change */
 		    sprintf(charinfo.header.realmname,"%s",prefs_get_realmname());
 			if(!db_d2char_create(prefs_get_db_char_table(),charinfo.header.account,charinfo.header.charname,&charinfo,chardata,size))
-				continue;			
-		
+				continue;
+
          	eventlog(eventlog_level_debug,__FUNCTION__,"imported \"%s(*%s)@%s\"",charinfo.header.charname,charinfo.header.account,charinfo.header.realmname);
-			countchars++;			
+			countchars++;
 		}
 	    if (p_closedir(chardir)<0)
 		    eventlog(eventlog_level_error,__FUNCTION__,"unable to close character directory \"%s\" (p_closedir: %s)",path,strerror(errno));
@@ -222,5 +222,8 @@ static unsigned int db_table_import(char const * db_table)
     return 1;
 }
 
+#else
+typedef int db_table_mysql_c_filenotempty; /* make ISO standard happy */
 #endif  /* WITH_MYSQL */
 
+/* EOF */

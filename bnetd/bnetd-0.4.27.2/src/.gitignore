@@ -1,4 +1,5 @@
 libtool
+libtoolT
 config.h
 *.DS_Store
 *.cache
@@ -33,3 +34,5 @@ tags
 cscope*.out
 cscope.files
 config*.lineno
+conf*/*.awk
+*.tmp
