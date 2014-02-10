@@ -1,4 +1,4 @@
-/*
+/* prefs.c
  * Copyright (C) 2000,2001	Onlyer	(onlyer@263.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -23,18 +23,18 @@
 #else
 # ifndef NULL
 #  define NULL ((void *)0)
-# endif
-#endif
+# endif /* !NULL */
+#endif /* HAVE_STDDEF_H */
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
+# endif /* HAVE_STRINGS_H */
 # ifdef HAVE_MEMORY_H
 #  include <memory.h>
-# endif
-#endif
+# endif /* HAVE_MEMORY_H */
+#endif /* HAVE_STRING_H */
 
 #include "conf.h"
 #include "prefs.h"
@@ -282,3 +282,5 @@ extern unsigned int prefs_get_max_game_idletime(void)
 {
 	return prefs_conf.max_game_idletime;
 }
+
+/* EOF */

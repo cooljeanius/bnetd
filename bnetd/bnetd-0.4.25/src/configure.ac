@@ -1,4 +1,4 @@
-#
+#                                               -*- Autoconf -*-
 # Copyright (C) 1999  Rob Crittenden (rcrit@greyoak.com)
 # Copyright (C) 1999, 2000  Ross Combs (rocombs@cs.nmsu.edu)
 #
@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# Foundation, Inc., 59 Temple Place: Suite 330, Boston, MA 02111-1307, USA.
 #
 
 # Process this file with autoconf to produce a configure script.
@@ -33,11 +33,11 @@ AM_MAINTAINER_MODE
 AM_SANITY_CHECK
 
 # Checks for programs.
-if test "x$AWK" = "x"; then
-    test -z "$AWK"
+if test "x${AWK}" = "x"; then
+    test -z "${AWK}"
     AC_PROG_AWK
 else
-    test ! -z "$AWK" && export AWK
+    test ! -z "${AWK}" && export AWK
     AC_SUBST([AWK])
 fi
 AC_PROG_INSTALL
@@ -46,10 +46,10 @@ AC_PROG_LN_S
 AC_PROG_MKDIR_P
 
 AC_PATH_PROG([XCODEBUILD],[xcodebuild])
-if test "x$XCODEBUILD" != "x"; then
+if test "x${XCODEBUILD}" != "x"; then
       AC_MSG_CHECKING([for Xcode version])
       XCODEBUILD_VERSION=`xcodebuild -version`
-      AC_MSG_RESULT([$XCODEBUILD_VERSION])
+      AC_MSG_RESULT([${XCODEBUILD_VERSION}])
 fi
 
 # Checks compiler.
@@ -65,11 +65,11 @@ AC_SYS_LARGEFILE
 AC_SYS_LONG_FILE_NAMES
 LT_INIT([win32-dll])
 LT_LANG([C])
-if test "x$RANLIB" = "x"; then
-	test -z "$RANLIB"
+if test "x${RANLIB}" = "x"; then
+	test -z "${RANLIB}"
 	AC_PROG_RANLIB
 else
-	test ! -z "$RANLIB" && export RANLIB
+	test ! -z "${RANLIB}" && export RANLIB
 	AC_SUBST([RANLIB])
 fi
 
@@ -87,7 +87,7 @@ AC_ARG_WITH([ansi],[AS_HELP_STRING([--with-ansi],[force ANSI C mode (deprecated)
 
 extra_include=""
 AC_ARG_WITH([includes],[AS_HELP_STRING([--with-includes=DIR],[search include DIR for header files])],[
-case "x$withval" in
+case "x${withval}" in
 x/*|x.*)
   AC_MSG_NOTICE([adding ${withval} to include search path])
   if test ! -d ${withval}; then
@@ -123,15 +123,15 @@ AC_ARG_WITH([bits],[AS_HELP_STRING([--with-bits],[include BITS patch. (EXPERIMEN
 
 dnl# Enable poll()
 AC_ARG_ENABLE([poll],
-[AS_HELP_STRING([--enable-poll],[Enable poll() instead of select(). Normally poll is preferred over select, but configure knows poll is broken on some platforms. If you think you are smarter than the configure script, you may enable poll with this option.])],
+[AS_HELP_STRING([--enable-poll],[Enable poll() instead of select(). Normally bnetd prefers poll over select, but configure knows that poll is broken on some platforms. If you think that you are smarter than the configure script, you may enable poll with this option.])],
 [
-  case "$enableval" in
+  case "${enableval}" in
   yes)
-    echo "Forcing poll() to be enabled"
+    AC_MSG_NOTICE([Forcing usage of poll() to be enabled])
     ac_cv_func_poll='yes'
     ;;
   no)
-    echo "Forcing poll() to be disabled"
+    AC_MSG_NOTICE([Forcing usage of poll() to be disabled])
     ac_cv_func_poll='no'
     ;;
   esac
@@ -142,44 +142,44 @@ dnl# Shamesly stolen from squid 2.3 configure.in
 dnl# This has to be before AC_CHECK_FUNCS
 # Disable poll() on certain platforms. Override by setting ac_cv_func_poll
 # when running configure.
-if test -z "$ac_cv_func_poll"; then
-        case "$host" in
-		[alpha-dec-osf3.*])
-			# John Kay (jkay@nlanr.net) 19970818
-			echo "disabling poll for $host..."
-			ac_cv_func_poll='no'
-			;;
-		[*-hp-hpux*.*])
-			# Duane Wessels
-			echo "disabling poll for $host..."
-			ac_cv_func_poll='no'
-			;;
-		[*-linux-*])
-			# Henrik Nordstrom (hno@hem.passagen.se) 19980817
-			# poll is problematic on Linux.  We disable it
-			# by default until Linux gets it right.
-			rev=`uname -r | awk -F. '{printf "%03d%03d",$1,$2}'`
-			if test $rev -lt 002002; then
-			    echo "disabling poll for $host < 2.2..."
-			    ac_cv_func_poll='no'
-			fi
-			;;
-		[powerpc-ibm-aix4.1.*])
-			# Mike Laster (mlaster@metavillage.com) 19981021
-			echo "disabling poll for $host..."
-			ac_cv_func_poll='no'
-			;;
-		[*-pc-sco3.2*])
-			# Robert Side <rside@aiinc.bc.ca>
-			# Mon, 18 Jan 1999 17:48:00 GMT
-			echo "disabling poll for $host..."
-			ac_cv_func_poll='no'
-			;;
-		[darwin*])
-			echo "disabling poll for $host..."
-			ac_cv_func_poll='no'
-			;;
-	esac
+if test -z "${ac_cv_func_poll}"; then
+    case "${host}" in
+        [alpha-dec-osf3.*])
+            # John Kay (jkay@nlanr.net) 19970818
+            AC_MSG_NOTICE([disabling usage of poll for ${host}...])
+            ac_cv_func_poll='no'
+            ;;
+        [*-hp-hpux*.*])
+            # Duane Wessels
+            AC_MSG_NOTICE([disabling usage of poll for ${host}...])
+            ac_cv_func_poll='no'
+            ;;
+        [*-linux-*])
+            # Henrik Nordstrom (hno@hem.passagen.se) 19980817
+            # poll is problematic on Linux. We disable it
+            # by default until Linux gets it right.
+            rev=`uname -r | awk -F. '{printf "%03d%03d",$1,$2}'`
+            if test ${rev} -lt 002002; then
+                AC_MSG_NOTICE([disabling poll for ${host} < 2.2...])
+                ac_cv_func_poll='no'
+            fi
+            ;;
+        [powerpc-ibm-aix4.1.*])
+            # Mike Laster (mlaster@metavillage.com) 19981021
+            AC_MSG_NOTICE([disabling usage of poll for ${host}...])
+            ac_cv_func_poll='no'
+            ;;
+        [*-pc-sco3.2*])
+            # Robert Side <rside@aiinc.bc.ca>
+            # Mon, 18 Jan 1999 17:48:00 GMT
+            AC_MSG_NOTICE([disabling usage of poll for ${host}...])
+            ac_cv_func_poll='no'
+            ;;
+        [darwin*])
+            echo "disabling poll for ${host}..."
+            ac_cv_func_poll='no'
+            ;;
+    esac
 fi
 
 LDFLAGS="${LDFLAGS} ${extra_lib_dir}"
@@ -199,17 +199,18 @@ AM_SET_LEADING_DOT
 AC_EXEEXT
 AC_OBJEXT
 AC_TYPE_LONG_LONG_INT
-# AX_* macros require the autoconf-archive package
+dnl# AX_* macros require the autoconf-archive package
 AX_CXX_MEMBER_CONSTANTS
 AX_C___ATTRIBUTE__
 AX_C_VAR_FUNC
 AX_COMPILER_VENDOR
 
 # Checks for libraries.
-AC_CHECK_LIB([m],[pow],[LIBS="$LIBS -lm"])
-AC_CHECK_LIB([nsl],[gethostbyname],[LIBS="$LIBS -lnsl"])
-AC_CHECK_LIB([socket],[socket],[LIBS="$LIBS -lsocket"])
-AC_CHECK_LIB([resolv],[inet_aton],[LIBS="$LIBS -lresolv"])
+LT_LIB_M
+AC_CHECK_LIB([m],[pow],[LIBS="${LIBS} -lm"])
+AC_CHECK_LIB([nsl],[gethostbyname],[LIBS="${LIBS} -lnsl"])
+AC_CHECK_LIB([socket],[socket],[LIBS="${LIBS} -lsocket"])
+AC_CHECK_LIB([resolv],[inet_aton],[LIBS="${LIBS} -lresolv"])
 # FIXME: Replace `main' with a function in `-lpcap':
 AC_CHECK_LIB([pcap],[main])
 
@@ -219,13 +220,14 @@ AC_HEADER_DIRENT
 AC_HEADER_STDBOOL
 AC_HEADER_TIME
 AC_HEADER_STAT
-AC_CHECK_HEADERS([Availability.h arpa/inet.h ctype.h dir.h direct.h errno.h fcntl.h \
-                  grp.h libintl.h limits.h locale.h malloc.h malloc/malloc.h netdb.h \
-                  netinet/in.h poll.h pwd.h signal.h stdarg.h stddef.h stdio.h \
-                  sys/_structs.h sys/_types.h sys/cdefs.h sys/file.h sys/ioctl.h \
-                  sys/param.h sys/poll.h sys/select.h sys/socket.h sys/stropts.h \
-                  sys/time.h sys/timeb.h sys/utsname.h sys/wait.h termios.h \
-                  stropts.h time.h varargs.h])
+AC_CHECK_HEADERS([Availability.h arpa/inet.h ctype.h dir.h direct.h \
+                  errno.h fcntl.h grp.h libintl.h limits.h locale.h \
+                  malloc.h malloc/malloc.h netdb.h netinet/in.h poll.h \
+                  pwd.h signal.h stdarg.h stddef.h stdio.h stropts.h \
+                  sys/_structs.h sys/_types.h sys/cdefs.h sys/file.h \
+                  sys/ioctl.h sys/param.h sys/poll.h sys/select.h \
+                  sys/socket.h sys/stropts.h sys/time.h sys/timeb.h \
+                  sys/utsname.h sys/wait.h termios.h time.h varargs.h])
 
 # Checks for typedefs and structures
 AC_C_BIGENDIAN
@@ -235,17 +237,16 @@ AC_C_PROTOTYPES
 AC_C_RESTRICT
 AC_C_VOLATILE
 AC_STRUCT_TM
-AC_DIAGNOSE([obsolete],[your code may safely assume C89 semantics that RETSIGTYPE is void.
-Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
-AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
-[AC_LANG_PROGRAM([#include <sys/types.h>
+dnl# begin what used to be AC\_TYPE\_SIGNAL
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <sys/types.h>
 #include <signal.h>
-],
-		 [return *(signal (0, 0)) (0) == 1;])],
+]],[[return *(signal (0, 0)) (0) == 1;]])],
 		   [ac_cv_type_signal=int],
 		   [ac_cv_type_signal=void])])
-AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
-		    (`int' or `void').])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[${ac_cv_type_signal}],
+         [Define as the return type of signal handlers (`int' or `void').])
+dnl# end what used to be AC\_TYPE\_SIGNAL
 AC_TYPE_MODE_T
 AC_TYPE_OFF_T
 AC_TYPE_PID_T
@@ -277,14 +278,16 @@ AC_FUNC_REALLOC
 AC_FUNC_SETPGRP
 AC_FUNC_STRFTIME
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([bcopy chdir difftime dup2 fprintf fputs free ftime getenv getgid \
-                getgrnam gethostbyname gethostname getlogin getpid getpwnam \
-                getservbyname gettimeofday getuid index inet_aton inet_ntoa \
-                ioctl isascii memchr memcpy memmove memset mktime pipe poll pow \
-                recv recvfrom rindex select send sendto setgid setpgid setpgrp \
-                setsid setuid sigaction sigaddset sigprocmask socket sprintf \
-                strcasecmp strchr strdup strerror stricmp strlen strncasecmp \
-                strncmp strnicmp strpbrk strrchr strstr strtoul uname wait waitpid])
+AC_CHECK_FUNCS([bcopy chdir difftime dup2 fprintf fputs free ftime \
+                getenv getgid getgrnam gethostbyname gethostname getlogin \
+                getpid getpwnam getservbyname gettimeofday getuid index \
+                inet_aton inet_ntoa ioctl isascii memchr memcpy memmove \
+                memset mktime pipe poll pow recv recvfrom rindex select \
+                send sendto setgid setpgid setpgrp setsid setuid \
+                sigaction sigaddset sigprocmask socket sprintf strcasecmp \
+                strchr strdup strerror stricmp strlen strncasecmp strncmp \
+                strnicmp strpbrk strrchr strstr strtoul uname \
+                wait waitpid])
 AC_CHECK_DECLS([NULL])
 AC_CHECK_DECLS([mkdir])
 

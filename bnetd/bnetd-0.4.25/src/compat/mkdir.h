@@ -1,4 +1,4 @@
-/*
+/* mkdir.h
  * Copyright (C) 2000,2001  Ross Combs (rocombs@cs.nmsu.edu)
  *
  * This program is free software; you can redistribute it and/or
@@ -33,6 +33,11 @@
 # include <unistd.h>
 #endif /* HAVE_UNISTD_H */
 
+/* Somehow the configure script can get this wrong, so fix it here: */
+#ifdef __APPLE__
+# undef MKDIR_TAKES_ONE_ARG
+#endif /* __APPLE__ */
+
 #ifdef MKDIR_TAKES_ONE_ARG
 # ifdef HAVE_MKDIR
 #  define p_mkdir(A,B) mkdir(A)
@@ -56,3 +61,5 @@
 #endif /* MKDIR_TAKES_ONE_ARG */
 
 #endif /* INCLUDED_MKDIR_PROTOS */
+
+/* EOF */

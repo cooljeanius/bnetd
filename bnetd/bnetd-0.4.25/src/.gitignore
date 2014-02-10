@@ -13,4 +13,4 @@ config.h
 *.xcuserdatad
 *.o
 *.swp
-bnetd/*.orig
+*/*.orig

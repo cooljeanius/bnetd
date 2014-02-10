@@ -19,7 +19,7 @@
 #  Boston, MA 02111-1307, USA
 #
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 --install
 
 prefix		= @prefix@
 exec_prefix	= @exec_prefix@
@@ -64,6 +64,7 @@ SRC_DEBUGDIR	= ${SRC_SRCDIR}/debug
 SUBDIRS         = bnetd bniutils bnpass bnpcap bnproxy bntrackd client d2cs d2dbs debug
 
 RMF		= rm -f
+RMRF		= rm -rf
 
 RMDIR		= rmdir
 
@@ -407,9 +408,10 @@ SHARES		= ad000001.pcx icons.bni tos.txt bnserver-D2DV.ini newbie.save IX86ver1.
 OTHERBINS	= ${sbnetd_OBJECTS} ${sbnetd_SBIN}
 DIRS		= ${SRC_BINDIR} ${SRC_SBINDIR}
 
-# common dependencies cannot be expressed this way portably...
-#${OBJECTS}: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
-
+# common dependencies for ${OBJECTS} cannot be expressed this way
+# portably, unfortunately...
+common_dependencies_for_objects: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h ${SRC_COMMONDIR}/version.h ${SRC_COMMONDIR}/setup_before.h ${SRC_COMMONDIR}/setup_after.h ${SRC_ACDIR}/ansi2knr
+.PHONY: common_dependencies_for_objects
 
 .PHONY: all
 all: @ANSI2KNR_DEP@ config ${SBINS} ${BINS}
@@ -431,7 +433,10 @@ distclean-local: clean-local
 	-${RMF} ${SRC_SRCDIR}/config.cache ${SRC_SRCDIR}/config.log
 	-${RMF} ${SRC_SRCDIR}/config.status
 	-${RMF} ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
-	-${RMDIR} ${DIRS}
+	-${RMRF} ${SRC_SRCDIR}/autom4te.cache || ${RMDIR} autom4te.cache
+	-${RMRF} ${DIRS} || ${RMDIR} ${DIRS}
+
+DISTCLEANFILES = *~ autoscan.log
 
 .PHONY: clean-compile
 clean-compile: clean-local all
@@ -439,30 +444,35 @@ clean-compile: clean-local all
 .PHONY: config
 config: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 
-${SRC_SRCDIR}/configure: ${SRC_SRCDIR}/configure.ac
+.PHONY: rebuild_configure
+rebuild_configure: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The configure script is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoconf
 	@${ECHO} >> ${SRC_SRCDIR}/config.h.in
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/config.h.in: ${SRC_SRCDIR}/configure.ac
+.PHONY: rebuild_config.h.in
+rebuild_config.h.in: ${SRC_SRCDIR}/configure.ac
 	@${ECHO} "The config.h.in header is out of date; rebuilding..."
 	cd ${SRC_SRCDIR} && autoheader
 	@${ECHO} >> $@
 	@${ECHO} >> ${SRC_SRCDIR}/configure
 
-${SRC_SRCDIR}/config.status: ${SRC_SRCDIR}/configure
+.PHONY: rebuild_config.status
+rebuild_config.status: ${SRC_SRCDIR}/configure
 	@${ECHO} "The config.status script is out of date; rechecking..."
 	${SRC_SRCDIR}/config.status --recheck
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/config.h: ${SRC_SRCDIR}/config.h.in ${SRC_SRCDIR}/config.status
+.PHONY: rebuild_config.h
+rebuild_config.h: ${SRC_SRCDIR}/config.h.in ${SRC_SRCDIR}/config.status
 	@${ECHO} "The config.h header is out of date; rewriting..."
 	${SRC_SRCDIR}/config.status
 	@${ECHO} >> ${SRC_SRCDIR}/Makefile
 	@${ECHO} >> $@
 
-${SRC_SRCDIR}/Makefile: ${SRC_SRCDIR}/Makefile.in ${SRC_SRCDIR}/config.status
+.PHONY: rebuild_Makefile
+rebuild_Makefile: ${SRC_SRCDIR}/Makefile.in ${SRC_SRCDIR}/config.status
 	@${ECHO} "The Makefile is out of date; rewriting..."
 	${SRC_SRCDIR}/config.status
 	@${ECHO} >> ${SRC_SRCDIR}/config.h

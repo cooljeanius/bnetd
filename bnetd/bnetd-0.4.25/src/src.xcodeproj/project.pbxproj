@@ -98,7 +98,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "/opt/local/var/macports/build/_opt_local_var_macports_sources_rsync.macports.org_release_tarballs_ports_net_bnetd/bnetd/work/bnetd-0.4.25/src";
+			buildWorkingDirectory = "$(SRCROOT)";
 			dependencies = (
 			);
 			name = src;
@@ -169,7 +169,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = bnetd;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};

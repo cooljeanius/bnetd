@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2000,2001	Onlyer	(onlyer@263.net)
+/* prefs.h
+ * Copyright (C) 2000, 2001	Onlyer	(onlyer@263.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -98,4 +98,6 @@ extern unsigned int prefs_get_s2s_keepalive_interval(void);
 extern unsigned int prefs_get_timeout_checkinterval(void);
 extern unsigned int prefs_get_max_game_idletime(void);
 
-#endif
+#endif /* !INCLUDED_PREFS_H */
+
+/* EOF */
