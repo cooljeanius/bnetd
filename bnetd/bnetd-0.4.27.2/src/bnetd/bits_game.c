@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2000,2001  Marco Ziech (mmz@gmx.net)
+/* bits_game.c
+ * Copyright (C) 2000, 2001  Marco Ziech (mmz@gmx.net)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,19 +19,31 @@
 #ifdef WITH_BITS
 #define GAME_INTERNAL_ACCESS
 #ifdef STDC_HEADERS
-# include <stdlib.h>
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning bits_game.c expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  else
+#   warning bits_game.c expects a malloc-related header to be included.
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS */
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
-#endif
+# else
+#  warning bits_game.c expects a string-related header to be included.
+# endif /* HAVE_STRINGS_H */
+#endif /* HAVE_STRING_H */
 #include <errno.h>
 #include "account.h"
 #include "account_wrap.h"
@@ -55,6 +67,7 @@
 #include "bits_query.h"
 #include "common/bits_protocol.h"
 #include "bits_login.h"
+#include "handle_bits.h" /* for handle_bits_packet() */
 #include "common/setup_after.h"
 
 
@@ -103,7 +116,7 @@ extern int send_bits_gamelist_add_bits(t_connection * c, t_bits_game const * gam
 		/* append the strings */
 	packet_append_string(p,game->name);
 	packet_append_string(p,game->password);
-	packet_append_string(p,game->info);		
+	packet_append_string(p,game->info);
 	/***/
 	if (c) {
 		/* send the packet on the connection */
@@ -154,23 +167,23 @@ extern int send_bits_gamelist_del(t_connection * c, t_game const * game)
 extern int bits_game_sendlist(t_connection * c)
 {
 	t_elem const * curr;
-		
+
 	if (!bits_uplink_connection) { /* bits master server */
 		t_game       * game;
-		
+
 		LIST_TRAVERSE_CONST(gamelist(),curr) {
 			game = elem_get_data(curr);
 			send_bits_gamelist_add(c,game);
 		}
 	} else { /* bits client */
 		t_bits_game       * game;
-		
+
 		LIST_TRAVERSE_CONST(bits_gamelist(),curr) {
 			game = elem_get_data(curr);
 			send_bits_gamelist_add_bits(c,game);
 		}
 	}
-		
+
 	return 0;
 }
 
@@ -356,7 +369,7 @@ extern int bits_game_handle_client_gamelistreq(t_connection * conn, t_game_type 
 	    unsigned int                addr;
 	    unsigned short              port;
 	    t_packet 		      * rpacket;
-	
+
 	    rpacket = packet_create(packet_class_bnet);
 	    if (!rpacket) {
 		eventlog(eventlog_level_error,"bits_game_handle_client_gamelistreq","could not create packet");
@@ -397,7 +410,7 @@ extern int bits_game_handle_client_gamelistreq(t_connection * conn, t_game_type 
 		    bn_int_set(&glgame.status,0);
 		}
 		bn_int_set(&glgame.unknown6,SERVER_GAMELISTREPLY_GAME_UNKNOWN6);
-		    
+
 		packet_append_data(rpacket,&glgame,sizeof(glgame));
 		packet_append_string(rpacket,bits_game_get_name(game));
 		packet_append_string(rpacket,bits_game_get_pass(game));
@@ -445,13 +458,13 @@ extern void bits_game_handle_startgame1(t_connection * c, char const * gamename,
         if (status!=CLIENT_STARTGAME1_STATUS_DONE)
         {
 	    t_game_type gtype;
-			
+
 	    gtype = bngtype_to_gtype(conn_get_clienttag(c),bngtype);
 	    if ((gtype==game_type_ladder && account_get_auth_createladdergame(conn_get_account(c))==0) || /* default to true */
 	        (gtype!=game_type_ladder && account_get_auth_createnormalgame(conn_get_account(c))==0)) /* default to true */
 	    {
 	        char const * tname;
-			    
+
 	        eventlog(eventlog_level_info,"bits_game_handle_startgame1","[%d] game start for \"%s\" refused (no authority)",conn_get_socket(c),(tname = conn_get_username(c)));
 	        conn_unget_username(c,tname);
 	    }
@@ -491,13 +504,13 @@ extern void bits_game_handle_startgame3(t_connection * c, char const * gamename,
 	if (status!=CLIENT_STARTGAME3_STATUS_DONE)
 	{
 	    t_game_type gtype;
-			
+
 	    gtype = bngtype_to_gtype(conn_get_clienttag(c),bngtype);
 	    if ((gtype==game_type_ladder && account_get_auth_createladdergame(conn_get_account(c))==0) ||
 	        (gtype!=game_type_ladder && account_get_auth_createnormalgame(conn_get_account(c))==0))
 	    {
 		char const * tname;
-			    
+
 		eventlog(eventlog_level_info,"bits_game_handle_startgame3","[%d] game start for \"%s\" refused (no authority)",conn_get_socket(c),(tname = conn_get_username(c)));
 		conn_unget_username(c,tname);
 	    }
@@ -542,13 +555,13 @@ extern void bits_game_handle_startgame4(t_connection * c, char const * gamename,
 	    status!=CLIENT_STARTGAME4_STATUS_DONE2)
 	{
 	    t_game_type gtype;
-			
+
 	    gtype = bngtype_to_gtype(conn_get_clienttag(c),bngtype);
 	    if ((gtype==game_type_ladder && account_get_auth_createladdergame(conn_get_account(c))==0) ||
 	        (gtype!=game_type_ladder && account_get_auth_createnormalgame(conn_get_account(c))==0))
 	    {
 		char const * tname;
-				
+
 		eventlog(eventlog_level_info,"bits_game_handle_startgame4","[%d] game start for \"%s\" refused (no authority)",conn_get_socket(c),(tname = conn_get_username(c)));
 		conn_unget_username(c,tname);
 	    }
@@ -649,7 +662,7 @@ extern int send_bits_game_report(t_connection * c, t_packet const * packet)
     bn_int_set(&p->u.bits_game_report.len,packet_get_size(packet));
     packet_append_data(p,packet_get_data_const(packet,0,packet_get_size(packet)),packet_get_size(packet));
     /* FIXME: maybe we should compress it to save network traffic */
-    
+
     send_bits_packet(p);
     packet_del_ref(p);
     return 0;
@@ -684,7 +697,7 @@ extern t_game * bits_game_create_temp(unsigned int gameid)
     g->clienttag = malloc(5); /* avoid warning */
     if (!g->clienttag) {
 	eventlog(eventlog_level_error,"bits_game_create_temp","malloc for clienttag failed: %s",strerror(errno));
-	return NULL;	
+	return NULL;
     }
     memset((void *)g->clienttag,0,5); /* avoid warning */
     memcpy((void *)g->clienttag,&bg->clienttag,4); /* avoid warning */
@@ -698,8 +711,8 @@ extern t_game * bits_game_create_temp(unsigned int gameid)
     	g->addr = 0;
     	g->port = 0;
     }
-    game_parse_info(g,bg->info); 
-    return g;   
+    game_parse_info(g,bg->info);
+    return g;
 }
 
 extern int bits_game_destroy_temp(t_game * game)
@@ -740,7 +753,7 @@ extern int bits_game_set_status(t_bits_game * game, t_game_status status)
     }
     game->status = status;
     bits_game_update_status(bits_game_get_id(game),status);
-    return 0;	
+    return 0;
 }
 
 extern char const * bits_game_get_name(t_bits_game const * game)
@@ -888,7 +901,7 @@ extern t_bits_game * bits_gamelist_find_game(char const * name, t_game_type type
 {
     t_elem const * curr;
     t_bits_game *       game;
-    
+
     if (bits_gamelist_head)
 	LIST_TRAVERSE_CONST(bits_gamelist_head,curr)
 	{
@@ -896,7 +909,7 @@ extern t_bits_game * bits_gamelist_find_game(char const * name, t_game_type type
 	    if ((type==game_type_all || game->type==type) && strcasecmp(name,game->name)==0)
 		return game;
 	}
-    
+
     return NULL;
 }
 
@@ -904,7 +917,7 @@ extern t_bits_game * bits_gamelist_find_game_byid(unsigned int id)
 {
     t_elem const * curr;
     t_bits_game *       game;
-    
+
     if (bits_gamelist_head)
 	LIST_TRAVERSE_CONST(bits_gamelist_head,curr)
 	{
@@ -912,8 +925,8 @@ extern t_bits_game * bits_gamelist_find_game_byid(unsigned int id)
 	    if (game->id == id)
 		return game;
 	}
-    
-    return NULL;	
+
+    return NULL;
 }
 
 
@@ -923,5 +936,7 @@ extern t_list * bits_gamelist(void)
 }
 
 #else
-typedef int filenotempty; /* make ISO standard happy */
-#endif
+typedef int bits_game_cfilenotempty; /* make ISO standard happy */
+#endif /* WITH_BITS */
+
+/* EOF */

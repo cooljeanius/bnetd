@@ -51,12 +51,12 @@ typedef struct account_struct
 {
     t_attribute *   attrs;
     unsigned int    namehash; /* cached from attrs */
-#  ifndef ACCT_DYN_LOAD
+#  ifndef ACCT_DYN_LOAD /* is this ifdef needed? */
     unsigned int    uid;      /* cached from attrs */
 #  endif /* !ACCT_DYN_LOAD */
     unsigned int    age;      /* number of times it has not been accessed */
     t_account_flags flags;
-    char const *    filename; /* for BITS: NULL means it's a "virtual" account */
+    char const *    filename; /* for BITS: NULL means it is a "virtual" account */
 #  ifdef ACCT_DYN_UNLOAD
     unsigned int    ref;
 #  endif /* ACCT_DYN_UNLOAD */

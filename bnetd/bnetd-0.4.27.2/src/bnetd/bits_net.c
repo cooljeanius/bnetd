@@ -24,6 +24,7 @@
 #include "bits_packet.h"
 #include "common/bits_protocol.h"
 #include "bits_net.h"
+#include "common/bn_type.h" /* for bn_int_set() */
 #include "common/setup_after.h"
 
 extern int bits_net_send_discover(void) {
@@ -74,5 +75,7 @@ extern int send_bits_net_ping(t_uint16 dest, t_uint32 qid)
 }
 
 #else
-typedef int filenotempty; /* make ISO standard happy */
+typedef int bits_net_c_filenotempty; /* make ISO standard happy */
 #endif /* WITH_BITS */
+
+/* EOF */

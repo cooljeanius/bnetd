@@ -22,20 +22,32 @@
 #include "common/setup_before.h"
 #ifdef WITH_BITS
 #ifdef STDC_HEADERS
-# include <stdlib.h>
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# else
+#  warning bits_packet.c expects <stdlib.h> to be included.
+# endif /* HAVE_STDLIB_H */
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
-# endif
-#endif
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  else
+#   warning bits_packet.c expects a malloc-related header to be included.
+#  endif /* HAVE_MALLOC_MALLOC_H */
+# endif /* HAVE_MALLOC_H */
+#endif /* STDC_HEADERS */
 #include <errno.h>
 #ifdef HAVE_STRING_H
 # include <string.h>
 #else
 # ifdef HAVE_STRINGS_H
 #  include <strings.h>
-# endif
-#endif
+# else
+#  warning bits_packet.c expects a string-related header to be included.
+# endif /* HAVE_STRINGS_H */
+#endif /* HAVE_STRING_H */
 #include "compat/strerror.h"
 #include "common/bn_type.h"
 #include "common/packet.h"
@@ -46,6 +58,7 @@
 #include "bits.h"
 #include "bits_ext.h"
 #include "bits_packet.h"
+#include "handle_bits.h" /* for handle_bits_packet() */
 #include "common/setup_after.h"
 
 
@@ -140,7 +153,7 @@ extern int bits_packet_generic(t_packet *packet, t_uint16 dest)
 	bn_short_set(&packet->u.bits.h.src_addr,bits_get_myaddr());
 	bn_short_set(&packet->u.bits.h.dst_addr,dest);
 	bn_byte_set(&packet->u.bits.h.ttl,BITS_DEFAULT_TTL);
-	return 0;	
+	return 0;
 }
 
 extern t_uint16 bits_packet_get_src(const t_packet *p)
@@ -187,12 +200,12 @@ extern int send_bits_packet(t_packet * p) {
 		{
 			c = elem_get_data(curr);
 			if (conn_get_class(c) == conn_class_bits) {
-				if (bits_debug) eventlog(eventlog_level_debug,"send_bits_packet","DEBUG: sending packet on [%d].",conn_get_socket(c));	
+				if (bits_debug) eventlog(eventlog_level_debug,"send_bits_packet","DEBUG: sending packet on [%d].",conn_get_socket(c));
 				queue_push_packet(conn_get_out_queue(c),p);
 			}
 		}
 	} else {
-		if (bits_debug) eventlog(eventlog_level_debug,"send_bits_packet","DEBUG: sending packet on [%d].",conn_get_socket(conn));	
+		if (bits_debug) eventlog(eventlog_level_debug,"send_bits_packet","DEBUG: sending packet on [%d].",conn_get_socket(conn));
 		queue_push_packet(conn_get_out_queue(conn),p);
 	}
 	return 0;
@@ -211,7 +224,7 @@ extern int send_bits_packet_up(t_packet * p) {
 		eventlog(eventlog_level_error,"send_bits_packet_up","bits_uplink_connection is NULL");
 	}
 	if (bits_debug) eventlog(eventlog_level_debug,"send_bits_packet_up","DEBUG: sending packet on [%d].",conn_get_socket(bits_uplink_connection));
-	queue_push_packet(conn_get_out_queue(bits_uplink_connection),p);		
+	queue_push_packet(conn_get_out_queue(bits_uplink_connection),p);
 	return 0;
 }
 
@@ -231,19 +244,19 @@ extern int send_bits_packet_on(t_packet * p, t_connection * c) {
 		return -1;
 	}
 	if (bits_debug) eventlog(eventlog_level_debug,"send_bits_packet_on","DEBUG: sending packet on [%d].",conn_get_socket(c));
-	queue_push_packet(conn_get_out_queue(c),p);		
+	queue_push_packet(conn_get_out_queue(c),p);
 	return 0;
 }
 
 extern int bits_packet_forward_bcast(t_connection * conn, t_packet * packet) {
 	t_connection *c;
 	t_elem const * curr;
-	
+
 	if (!packet) {
 		eventlog(eventlog_level_error,"bits_packet_forward_bcast","got NULL packet");
 		return -1;
 	}
-	
+
 	LIST_TRAVERSE_CONST(connlist(),curr)
 	{
 		c = elem_get_data(curr);
@@ -262,7 +275,7 @@ extern int send_bits_packet_for_account(t_packet * packet, int uid, t_connection
 	/* from may be NULL */
 	t_connection *c;
 	t_elem const * curr;
-	
+
 	if (!packet) {
 		eventlog(eventlog_level_error,"send_bits_packet_for_account","got NULL packet");
 		return -1;
@@ -277,14 +290,14 @@ extern int send_bits_packet_for_account(t_packet * packet, int uid, t_connection
 				send_bits_packet_on(packet,c);
 		}
 	}
-	return 0;	
+	return 0;
 }
 
 extern int send_bits_packet_for_channel(t_packet * packet, int channelid, t_connection * from) {
 	/* from may be NULL */
 	t_connection *c;
 	t_elem const * curr;
-	
+
 	if (!packet) {
 		eventlog(eventlog_level_error,"send_bits_packet_for_channel","got NULL packet");
 		return -1;
@@ -297,7 +310,7 @@ extern int send_bits_packet_for_channel(t_packet * packet, int channelid, t_conn
 				send_bits_packet_on(packet,c);
 		}
 	}
-	return 0;	
+	return 0;
 }
 
 extern int bits_packet_get_ttl(const t_packet * p)
@@ -307,7 +320,7 @@ extern int bits_packet_get_ttl(const t_packet * p)
 		return -1;
 	}
 	return bn_byte_get(p->u.bits.h.ttl);
-} 
+}
 
 extern int bits_packet_set_ttl(t_packet * p, unsigned int ttl)
 {
@@ -322,8 +335,10 @@ extern int bits_packet_set_ttl(t_packet * p, unsigned int ttl)
 		bn_byte_set(&p->u.bits.h.ttl,ttl);
 	}
 	return 0;
-} 
+}
 
 #else
-typedef int filenotempty; /* make ISO standard happy */
+typedef int bits_packet_c_filenotempty; /* make ISO standard happy */
 #endif
+
+/* EOF */

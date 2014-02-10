@@ -512,8 +512,9 @@ extern int account_save(t_account * account, unsigned int delta)
 
     if (!TEST_FLAG(account,account_flag_dirty))
     {
-		if (account->age>=prefs_get_user_flush_timer())
+		if (account->age>=prefs_get_user_flush_timer()) {
 			account_unload_attrs(account);
+		}
 		return 0;
     }
 
@@ -706,17 +707,18 @@ extern char const * account_get_strattr(t_account * account, char const * key)
 		}
 		strncpy(temp,"Record",6);
 		newkey = temp;
-    }
-    else
+    } else {
 		newkey = key;
+    }
 
     if (account->attrs)
 		for (curr=account->attrs; curr; curr=curr->next)
 		{
 			if (strcasecmp(curr->key,newkey)==0)
 			{
-				if (newkey!=key)
+				if (newkey!=key) {
 					free((void *)newkey); /* avoid warning */
+				}
 				if (curr!=account->attrs)
 				{
 					prev->next = curr->next;
@@ -818,8 +820,7 @@ extern int account_set_strattr(t_account * account, char const * key, char const
 
     if (strcasecmp(curr->key,key)==0) /* if key is already the first in the attr list */
     {
-		if (val)
-		{
+		if (val) {
 			char * temp;
 
 			if (!(temp = strdup(val)))
@@ -828,13 +829,12 @@ extern int account_set_strattr(t_account * account, char const * key, char const
 				return -1;
 			}
 
-			if (strcmp(curr->val,temp)!=0)
+			if (strcmp(curr->val,temp)!=0) {
 				SET_FLAG(account,account_flag_dirty); /* we are changing an entry */
+			}
 			free((void *)curr->val); /* avoid warning */
 			curr->val = temp;
-		}
-		else
-		{
+		} else {
 			t_attribute * temp;
 
 			temp = curr->next;
@@ -850,13 +850,13 @@ extern int account_set_strattr(t_account * account, char const * key, char const
     }
 
     for (; curr->next; curr=curr->next)
-		if (strcasecmp(curr->next->key,key)==0)
+		if (strcasecmp(curr->next->key,key)==0) {
 			break;
+		}
 
     if (curr->next) /* if key is already in the attr list */
     {
-		if (val)
-		{
+		if (val) {
 			char * temp;
 
 			if (!(temp = strdup(val)))
@@ -865,13 +865,12 @@ extern int account_set_strattr(t_account * account, char const * key, char const
 				return -1;
 			}
 
-			if (strcmp(curr->next->val,temp)!=0)
+			if (strcmp(curr->next->val,temp)!=0) {
 				SET_FLAG(account,account_flag_dirty); /* we are changing an entry */
+			}
 			free((void *)curr->next->val); /* avoid warning */
 			curr->next->val = temp;
-		}
-		else
-		{
+		} else {
 			t_attribute * temp;
 
 			temp = curr->next->next;
@@ -886,8 +885,7 @@ extern int account_set_strattr(t_account * account, char const * key, char const
 		return 0;
     }
 
-    if (val)
-    {
+    if (val) {
 		SET_FLAG(account,account_flag_dirty); /* we are inserting an entry */
 		return account_insert_attr(account,key,val);
     }
@@ -910,13 +908,11 @@ static int account_load_attrs(t_account * account)
     char *       escval;
     char const * val;
 
-    if (!account)
-    {
+    if (!account) {
 		eventlog(eventlog_level_error,"account_load_attrs","got NULL account");
 		return -1;
     }
-    if (!account->filename)
-    {
+    if (!account->filename) {
 #ifndef WITH_BITS
 		eventlog(eventlog_level_error,"account_load_attrs","account has NULL filename");
 		return -1;
@@ -940,8 +936,9 @@ static int account_load_attrs(t_account * account)
 #endif /* WITH_BITS */
     }
 
-    if (TEST_FLAG(account,account_flag_loaded)) /* already done */
+    if (TEST_FLAG(account,account_flag_loaded)) { /* already done */
 		return 0;
+	}
     if (TEST_FLAG(account,account_flag_dirty)) /* if not loaded, how can it be dirty? */
     {
 		eventlog(eventlog_level_error,"account_load_attrs","can not load modified account");
@@ -965,75 +962,76 @@ static int account_load_attrs(t_account * account)
 #ifdef WITH_STORAGE_DB
     for (line=1; (buff=db_account_load_getnextattrib(&accload)); line++)
 #else
-		for (line=1; (buff=file_get_line(accountfile)); line++)
+	for (line=1; (buff=file_get_line(accountfile)); line++)
 #endif /* WITH_STORAGE_DB */
+	{
+		if (buff[0]=='#' || buff[0]=='\0')
 		{
-			if (buff[0]=='#' || buff[0]=='\0')
-			{
-				free((void *)buff); /* avoid warning */
-				continue;
-			}
-			if (strlen(buff)<6) /* "?"="" */
-			{
-				eventlog(eventlog_level_error,"account_load_attrs","malformed line %d of account file \"%s\"",line,account->filename);
-				free((void *)buff); /* avoid warning */
-				continue;
-			}
-
-			len = strlen(buff)-5+1; /* - ""="" + NUL */
-			if (!(esckey = malloc(len)))
-			{
-				eventlog(eventlog_level_error,"account_load_attrs","could not allocate memory for esckey on line %d of account file \"%s\"",line,account->filename);
-				free((void *)buff); /* avoid warning */
-				continue;
-			}
-			if (!(escval = malloc(len)))
-			{
-				eventlog(eventlog_level_error,"account_load_attrs","could not allocate memory for escval on line %d of account file \"%s\"",line,account->filename);
-				free((void *)buff); /* avoid warning */
-				free(esckey);
-				continue;
-			}
-
-			if (sscanf(buff,"\"%[^\"]\" = \"%[^\"]\"",esckey,escval)!=2)
-			{
-				if (sscanf(buff,"\"%[^\"]\" = \"\"",esckey)!=1) /* hack for an empty value field */
-				{
-					eventlog(eventlog_level_error,"account_load_attrs","malformed entry on line %d of account file \"%s\"",line,account->filename);
-					free(escval);
-					free(esckey);
-					free((void *)buff); /* avoid warning */
-					continue;
-				}
-				escval[0] = '\0';
-			}
-#ifdef WITH_STORAGE_DB
-			/* Result buffer is handled by DB and is freed later.
-			 * The key in DB is already in unescaped form.
-			 * Therefore a simple copy should be enough.
-			 */
-			key = esckey;
-#else
 			free((void *)buff); /* avoid warning */
-			key = unescape_chars(esckey);
-			free(esckey);
-#endif /* WITH_STORAGE_DB */
-			val = unescape_chars(escval);
-			free(escval);
+			continue;
+		}
+		if (strlen(buff)<6) /* "?"="" */
+		{
+			eventlog(eventlog_level_error,"account_load_attrs","malformed line %d of account file \"%s\"",line,account->filename);
+			free((void *)buff); /* avoid warning */
+			continue;
+		}
 
-			if (key && val)
+		len = strlen(buff)-5+1; /* - ""="" + NUL */
+		if (!(esckey = malloc(len)))
+		{
+			eventlog(eventlog_level_error,"account_load_attrs","could not allocate memory for esckey on line %d of account file \"%s\"",line,account->filename);
+			free((void *)buff); /* avoid warning */
+			continue;
+		}
+		if (!(escval = malloc(len)))
+		{
+			eventlog(eventlog_level_error,"account_load_attrs","could not allocate memory for escval on line %d of account file \"%s\"",line,account->filename);
+			free((void *)buff); /* avoid warning */
+			free(esckey);
+			continue;
+		}
+
+		if (sscanf(buff,"\"%[^\"]\" = \"%[^\"]\"",esckey,escval)!=2)
+		{
+			if (sscanf(buff,"\"%[^\"]\" = \"\"",esckey)!=1) /* hack for an empty value field */
+			{
+				eventlog(eventlog_level_error,"account_load_attrs","malformed entry on line %d of account file \"%s\"",line,account->filename);
+				free(escval);
+				free(esckey);
+				free((void *)buff); /* avoid warning */
+				continue;
+			}
+			escval[0] = '\0';
+		}
+#ifdef WITH_STORAGE_DB
+		/* Result buffer is handled by DB and is freed later.
+		 * The key in DB is already in unescaped form.
+		 * Therefore a simple copy should be enough.
+		 */
+		key = esckey;
+#else
+		free((void *)buff); /* avoid warning */
+		key = unescape_chars(esckey);
+		free(esckey);
+#endif /* WITH_STORAGE_DB */
+		val = unescape_chars(escval);
+		free(escval);
+
+		if (key && val) {
 #ifdef WITH_BITS
-				account_set_strattr_nobits(account,key,val);
+			account_set_strattr_nobits(account,key,val);
 #else
 			account_set_strattr(account,key,val);
 #endif /* WITH_BITS */
-			if (key) {
-				free((void *)key); /* avoid warning */
-			}
-			if (val) {
-				free((void *)val); /* avoid warning */
-			}
 		}
+		if (key) {
+			free((void *)key); /* avoid warning */
+		}
+		if (val) {
+			free((void *)val); /* avoid warning */
+		}
+	}
 
 #ifdef WITH_STORAGE_DB
     db_free_result(accload.res);
@@ -1082,20 +1080,20 @@ static t_account * account_load(char const * filename)
 
 extern int accountlist_load_default(void)
 {
-    if (default_acct)
+    if (default_acct) {
     	account_destroy(default_acct);
+	}
 
 #ifdef WITH_STORAGE_DB
     if (!(default_acct = account_load("default_user")))
 #else
-		if (!(default_acct = account_load(prefs_get_defacct())))
+	if (!(default_acct = account_load(prefs_get_defacct())))
 #endif /* WITH_STORAGE_DB */
-		{
-			eventlog(eventlog_level_error,"accountlist_load_default","could not load default account template from file \"%s\"",prefs_get_defacct());
-			return -1;
-		}
-    if (account_load_attrs(default_acct)<0)
-    {
+	{
+		eventlog(eventlog_level_error,"accountlist_load_default","could not load default account template from file \"%s\"",prefs_get_defacct());
+		return -1;
+	}
+    if (account_load_attrs(default_acct)<0) {
     	eventlog(eventlog_level_error,"accountlist_load_default","could not load default account template attributes");
 	    return -1;
     }
@@ -1104,9 +1102,8 @@ extern int accountlist_load_default(void)
     return 0;
 }
 
-
-extern int accountlist_create(void)
-{
+/* begin function that I might have messed up the brackets in */
+extern int accountlist_create(void) {
 #ifdef WITH_STORAGE_DB
     t_db_result	 acclist = {0};
 #else
@@ -1117,15 +1114,13 @@ extern int accountlist_create(void)
     t_account *  account;
     unsigned int count;
 
-    if (!(accountlist_head = hashtable_create(prefs_get_hashtable_size())))
-    {
+    if (!(accountlist_head = hashtable_create(prefs_get_hashtable_size()))) {
     	eventlog(eventlog_level_error,"accountlist_create","could not create accountlist_head");
 	    return -1;
     }
 
 #ifdef WITH_BITS
-    if (!bits_master)
-    {
+    if (!bits_master) {
     	eventlog(eventlog_level_info,"accountlist_create","running as BITS client -> no accounts loaded");
 	    return 0;
     }
@@ -1136,8 +1131,7 @@ extern int accountlist_create(void)
 #endif /* ACCT_DYN_LOAD */
 
 #ifndef WITH_STORAGE_DB
-    if (!(accountdir = p_opendir(prefs_get_userdir())))
-    {
+    if (!(accountdir = p_opendir(prefs_get_userdir()))) {
         eventlog(eventlog_level_error,"accountlist_create","unable to open user directory \"%s\" for reading (p_opendir: %s)",prefs_get_userdir(),strerror(errno));
         return -1;
     }
@@ -1146,140 +1140,137 @@ extern int accountlist_create(void)
     force_account_add = 1; /* disable the protection */
     count = 0;
 
-#ifdef WITH_STORAGE_DB
+#ifdef WITH_STORAGE_DB /* FIXME: this ifdef is bad and annoying. */
     if (db_account_list(prefs_get_db_acc_table(),&acclist)<0) {
 		return -1;
 	}
-    while ((dentry = db_account_list_getnext(&acclist)))
-    {
-        if (!(pathname = malloc(strlen(dentry)+1)))
-		{
+    while ((dentry = db_account_list_getnext(&acclist))) {
+        if (!(pathname = malloc(strlen(dentry)+1))) {
     	    eventlog(eventlog_level_error,"accountlist_create","could not allocate memory for name");
             continue;
 		}
         sprintf(pathname,"%s",dentry);
 #else
-		while ((dentry = p_readdir(accountdir)))
+	while ((dentry = p_readdir(accountdir))) { /* starts same "while" loop as in other ifdef condition */
+		if (dentry[0]=='.') {
+			continue;
+		}
+		if (!(pathname = malloc(strlen(prefs_get_userdir())+1+strlen(dentry)+1))) /* dir + / + file + NUL */
 		{
-			if (dentry[0]=='.')
-				continue;
-			if (!(pathname = malloc(strlen(prefs_get_userdir())+1+strlen(dentry)+1))) /* dir + / + file + NUL */
-			{
-				eventlog(eventlog_level_error,"accountlist_create","could not allocate memory for pathname");
-				continue;
-			}
-			sprintf(pathname,"%s/%s",prefs_get_userdir(),dentry);
+			eventlog(eventlog_level_error,"accountlist_create","could not allocate memory for pathname");
+			continue;
+		}
+		sprintf(pathname,"%s/%s",prefs_get_userdir(),dentry);
 #endif /* WITH_STORAGE_DB */
 
-			if (!(account = account_load(pathname)))
-			{
-				eventlog(eventlog_level_error,"accountlist_create","could not load account from file \"%s\"",pathname);
-				free(pathname);
-				continue;
-			}
-
-			if (!accountlist_add_account(account))
-			{
-				eventlog(eventlog_level_error,"accountlist_create","could not add account from file \"%s\" to list",pathname);
-				free(pathname);
-				account_destroy(account);
-				continue;
-			}
-
+		if (!(account = account_load(pathname))) {
+			eventlog(eventlog_level_error,"accountlist_create","could not load account from file \"%s\"",pathname);
 			free(pathname);
-
-			/* might as well free up the memory since we probably will NOT need it */
-			CLEAR_FLAG(account,account_flag_accessed); /* lie */
-			account_save(account,1000); /* big delta to force unload */
-
-			count++;
+			continue;
 		}
 
-		force_account_add = 0; /* enable the protection */
+		if (!accountlist_add_account(account)) {
+			eventlog(eventlog_level_error,"accountlist_create","could not add account from file \"%s\" to list",pathname);
+			free(pathname);
+			account_destroy(account);
+			continue;
+		}
+
+		free(pathname);
+
+		/* might as well free up the memory since we probably will NOT need it */
+		CLEAR_FLAG(account,account_flag_accessed); /* lie */
+		account_save(account,1000); /* big delta to force unload */
+
+		count++;
+	} /* should end whichever "while" loop was started, depending on the ifdef... */
+
+	force_account_add = 0; /* enable the protection */
 
 #ifdef WITH_STORAGE_DB
-		db_free_result(acclist.res);
-		db_close(&acclist.mysql);
+	db_free_result(acclist.res);
+	db_close(&acclist.mysql);
 #else
-		if (p_closedir(accountdir)<0) {
-			eventlog(eventlog_level_error,"accountlist_create","unable to close user directory \"%s\" (p_closedir: %s)",prefs_get_userdir(),strerror(errno));
-		}
+	if (p_closedir(accountdir)<0) {
+		eventlog(eventlog_level_error,"accountlist_create","unable to close user directory \"%s\" (p_closedir: %s)",prefs_get_userdir(),strerror(errno));
+	}
 
-		eventlog(eventlog_level_info,"accountlist_create","loaded %u user accounts",count);
+	eventlog(eventlog_level_info,"accountlist_create","loaded %u user accounts",count);
 #endif /* WITH_STORAGE_DB */
-		return 0;
-	}
+	return 0;
+}
+/* end function that I might have messed up the brackets in */
 
+extern int accountlist_destroy(void)
+{
+	t_entry *   curr;
+	t_account * account;
 
-	extern int accountlist_destroy(void)
+	HASHTABLE_TRAVERSE(accountlist_head,curr)
 	{
-		t_entry *   curr;
-		t_account * account;
-
-		HASHTABLE_TRAVERSE(accountlist_head,curr)
-		{
-			if (!(account = entry_get_data(curr)))
-				eventlog(eventlog_level_error,"accountlist_destroy","found NULL account in list");
-			else
-			{
-				if (account_save(account,0)<0)
-					eventlog(eventlog_level_error,"accountlist_destroy","could not save account");
-
-				account_destroy(account);
+		if (!(account = entry_get_data(curr))) {
+			eventlog(eventlog_level_error,"accountlist_destroy","found NULL account in list");
+		} else {
+			if (account_save(account,0)<0) {
+				eventlog(eventlog_level_error,"accountlist_destroy","could not save account");
 			}
-			hashtable_remove_entry(accountlist_head,curr);
+
+			account_destroy(account);
 		}
-
-		if (hashtable_destroy(accountlist_head)<0)
-			return -1;
-		accountlist_head = NULL;
-		return 0;
+		hashtable_remove_entry(accountlist_head,curr);
 	}
 
-
-	extern t_hashtable * accountlist(void)
-	{
-		return accountlist_head;
+	if (hashtable_destroy(accountlist_head)<0) {
+		return -1;
 	}
+	accountlist_head = NULL;
+	return 0;
+}
 
 
-	extern void accountlist_unload_default(void)
+extern t_hashtable * accountlist(void)
+{
+	return accountlist_head;
+}
+
+
+extern void accountlist_unload_default(void)
+{
+	account_destroy(default_acct);
+}
+
+
+extern unsigned int accountlist_get_length(void)
+{
+	return hashtable_get_length(accountlist_head);
+}
+
+
+extern int accountlist_save(unsigned int delta)
+{
+	t_entry *    curr;
+	t_account *  account;
+	unsigned int scount;
+	unsigned int tcount;
+
+	scount=tcount = 0;
+	HASHTABLE_TRAVERSE(accountlist_head,curr)
 	{
-		account_destroy(default_acct);
-	}
-
-
-	extern unsigned int accountlist_get_length(void)
-	{
-		return hashtable_get_length(accountlist_head);
-	}
-
-
-	extern int accountlist_save(unsigned int delta)
-	{
-		t_entry *    curr;
-		t_account *  account;
-		unsigned int scount;
-		unsigned int tcount;
-
-		scount=tcount = 0;
-		HASHTABLE_TRAVERSE(accountlist_head,curr)
+		account = entry_get_data(curr);
+		switch (account_save(account,delta))
 		{
-			account = entry_get_data(curr);
-			switch (account_save(account,delta))
-			{
-				case -1:
-					eventlog(eventlog_level_error,"accountlist_save","could not save account");
-					break;
-				case 1:
-					scount++;
-					break;
-				case 0:
-				default:
-					break;
-			}
-			tcount++;
+			case -1:
+				eventlog(eventlog_level_error,"accountlist_save","could not save account");
+				break;
+			case 1:
+				scount++;
+				break;
+			case 0:
+			default:
+				break;
 		}
+		tcount++;
+	} /* end HASHTABLE_TRAVERSE */
 
 #ifdef WITH_BITS
 		bits_va_lock_check();
@@ -1314,10 +1305,11 @@ extern int accountlist_create(void)
 				 * make "uid" available in the relevant struct in account.h
 				 * without the ifdef instead...
 				 */
-				if (atoi(&username[1])>0) {
+				if (atoi(&username[1])>0)
 #else
-				if (atoi(&username[1])>0 && atoi(&username[1]) == account->uid) {
+				if (atoi(&username[1])>0 && atoi(&username[1]) == account->uid)
 #endif /* ACCT_DYN_LOAD */
+				{
 					hashtable_entry_release(curr);
 					return account;
 				}
@@ -1332,16 +1324,14 @@ extern int accountlist_create(void)
 			HASHTABLE_TRAVERSE_MATCHING(accountlist_head,curr,namehash)
 			{
 				account = entry_get_data(curr);
-				if ((tname = account_get_name(account)))
-				{
-					if (strcasecmp(tname,username)==0)
-					{
+				if ((tname = account_get_name(account))) {
+					if (strcasecmp(tname,username)==0) {
 						account_unget_name(tname);
 						hashtable_entry_release(curr);
 						return account;
-					}
-					else
+					} else {
 						account_unget_name(tname);
+					}
 				}
 			}
 		}
@@ -1351,22 +1341,19 @@ extern int accountlist_create(void)
 			char * filename;
 			char * safename;
 
-			if (!(filename = strdup(username)))
-			{
+			if (!(filename = strdup(username))) {
 				eventlog(eventlog_level_error,"accountlist_find_account","could not allocate memory for filename");
 				free(pathname);
 				return NULL;
 			}
 			str_to_lower(filename);
-			if (!(safename = escape_fs_chars(filename,strlen(filename))))
-			{
+			if (!(safename = escape_fs_chars(filename,strlen(filename)))) {
 				eventlog(eventlog_level_error,"accountlist_find_account","could not escape filename");
 				free(filename);
 				return NULL;
 			}
 			free(filename);
-			if (!(pathname = malloc(strlen(prefs_get_userdir())+1+strlen(safename)+1)))
-			{
+			if (!(pathname = malloc(strlen(prefs_get_userdir())+1+strlen(safename)+1))) {
 				eventlog(eventlog_level_error,"accountlist_find_account","could not allocate memory for pathname");
 				free(filename);
 				free(safename);
@@ -1388,14 +1375,12 @@ extern int accountlist_create(void)
 				}
 			}
 # endif /* WITH_BITS */
-			if (!(account = account_load(pathname)))
-			{
+			if (!(account = account_load(pathname))) {
 				eventlog(eventlog_level_error,"accountlist_find_account","could not load account");
 				free(pathname);
 				return NULL;
 			}
-			if (!accountlist_add_account(account))
-			{
+			if (!accountlist_add_account(account)) {
 				eventlog(eventlog_level_error,"accountlist_find_account","could not add account to list");
 				free(pathname);
 				account_destroy(account);
@@ -1410,26 +1395,28 @@ extern int accountlist_create(void)
 	}
 
 
-	extern int accountlist_allow_add(void)
-	{
+extern int accountlist_allow_add(void) {
 #ifdef WITH_BITS
-		/* Client may tend to fill the accountlist with junk... let them proceed */
-		if (!bits_master) {
-			return 1;
-		}
+	/* Client may tend to fill the accountlist with junk... let them proceed */
+	if (!bits_master) {
+		return 1;
+	}
 #endif /* WITH_BITS */
 
-		if (force_account_add)
-			return 1; /* the permission was forced */
-
-		if (prefs_get_max_accounts()==0)
-			return 1; /* allow infinite accounts */
-
-		if (prefs_get_max_accounts()<=hashtable_get_length(accountlist_head))
-			return 0; /* maximum account limit reached */
-
-		return 1; /* otherwise let them proceed */
+	if (force_account_add) {
+		return 1; /* the permission was forced */
 	}
+
+	if (prefs_get_max_accounts()==0) {
+		return 1; /* allow infinite accounts */
+	}
+
+	if (prefs_get_max_accounts()<=hashtable_get_length(accountlist_head)) {
+		return 0; /* maximum account limit reached */
+	}
+
+	return 1; /* otherwise let them proceed */
+}
 
 	extern t_account * accountlist_add_account(t_account * account)
 	{
@@ -1748,98 +1735,97 @@ extern int accountlist_create(void)
 
 #ifdef ACCT_DYN_UNLOAD
 # ifdef CHECK_ACCT_REFS
-	static void accountlist_check_refs(void)
+static void accountlist_check_refs(void)
+{
+	unsigned int real;
+	t_entry *    curr;
+	t_account *  account;
+	char * 		 tname;
+
+
+	HASHTABLE_TRAVERSE(accountlist_head,curr)
 	{
-		unsigned int real;
-		t_entry *    curr;
-		t_account *  account;
-		char * 		 tname;
-
-
-		HASHTABLE_TRAVERSE(accountlist_head,curr)
-		{
-			if (!(account = entry_get_data(curr)))
-				eventlog(eventlog_level_error,"accountlist_destroy","found NULL account in list");
-			else
-			{
-				real = conn_count_acc_ref(account) + friends_count_acc_ref(account) +
-				game_count_acc_ref(account) + watch_count_acc_ref(account);
-				if ((real != account->ref) && (real + account->ref > 1))
-				{
-					eventlog(eventlog_level_error,"accountlist_check_refs","accname: %s  account->ref: %u  real: %u",(tname = account_get_name(account)),account->ref,real);
-					account_unget_name(tname);
-				}
+		if (!(account = entry_get_data(curr))) {
+			eventlog(eventlog_level_error,"accountlist_destroy","found NULL account in list");
+		} else {
+			real = conn_count_acc_ref(account) + friends_count_acc_ref(account) +
+			game_count_acc_ref(account) + watch_count_acc_ref(account);
+			if ((real != account->ref) && (real + account->ref > 1)) {
+				eventlog(eventlog_level_error,"accountlist_check_refs","accname: %s  account->ref: %u  real: %u",(tname = account_get_name(account)),account->ref,real);
+				account_unget_name(tname);
 			}
 		}
-	}
+	} /* end HASHTABLE_TRAVERSE */
+}
 # endif /* CHECK_ACCT_REFS */
 
-	extern unsigned int account_inc_ref(t_account * account)
-	{
-		account->ref++;
+extern unsigned int account_inc_ref(t_account * account)
+{
+	account->ref++;
 
 # ifdef CHECK_ACCT_REFS
-		accountlist_check_refs();
+	accountlist_check_refs();
 # endif /* CHECK_ACCT_REFS */
 
-		return account->ref;
-	}
+	return account->ref;
+}
 
-	extern unsigned int account_dec_ref(t_account * account)
-	{
-		if (account->ref > 0)
-			account->ref--;
-		else
-			eventlog(eventlog_level_error,"account_dec_ref","try do decrement when ref=0");
+extern unsigned int account_dec_ref(t_account * account)
+{
+	if (account->ref > 0) {
+		account->ref--;
+	} else {
+		eventlog(eventlog_level_error,"account_dec_ref","try do decrement when ref=0");
+	}
 # ifdef CHECK_ACCT_REFS
-		accountlist_check_refs();
+	accountlist_check_refs();
 # endif /* CHECK_ACCT_REFS */
 
-		return account->ref;
-	}
+	return account->ref;
+}
 
-	extern unsigned int account_get_ref(t_account * account)
+extern unsigned int account_get_ref(t_account * account)
+{
+	return account->ref;
+}
+
+extern void accountlist_log_ref()
+{
+	t_entry *    curr;
+	t_account *  account;
+	char const * tname;
+	unsigned int tref;
+
+	HASHTABLE_TRAVERSE(accountlist_head,curr)
 	{
-		return account->ref;
+		account = entry_get_data(curr);
+		tname = account_get_name(account);
+		tref = account_get_ref(account);
+		eventlog(eventlog_level_debug,"accountlist_log_ref","%s: %u",tname,tref);
+		account_unget_name(tname);
 	}
+}
 
-	extern void accountlist_log_ref()
+static void accountlist_remove_unused()
+{
+	t_entry *    curr;
+	t_account *  account;
+	unsigned int ftimer;
+
+	ftimer = prefs_get_user_flush_timer();
+	HASHTABLE_TRAVERSE(accountlist_head,curr)
 	{
-		t_entry *    curr;
-		t_account *  account;
-		char const * tname;
-		unsigned int tref;
-
-		HASHTABLE_TRAVERSE(accountlist_head,curr)
-		{
-			account = entry_get_data(curr);
-			tname = account_get_name(account);
-			tref = account_get_ref(account);
-			eventlog(eventlog_level_debug,"accountlist_log_ref","%s: %u",tname,tref);
-			account_unget_name(tname);
+		if (!(account = entry_get_data(curr))) {
+			eventlog(eventlog_level_error,"accountlist_remove_unused","found NULL account in list");
+		} else {
+			if (account->ref == 0) {
+				account_destroy(account);
+				hashtable_remove_entry(accountlist_head,curr);
+			}
 		}
-	}
-
-	static void accountlist_remove_unused()
-	{
-		t_entry *    curr;
-		t_account *  account;
-		unsigned int ftimer;
-
-		ftimer = prefs_get_user_flush_timer();
-		HASHTABLE_TRAVERSE(accountlist_head,curr)
-		{
-			if (!(account = entry_get_data(curr))) {
-				eventlog(eventlog_level_error,"accountlist_remove_unused","found NULL account in list");
-			} else {
-				if (account->ref == 0)
-				{
-					account_destroy(account);
-					hashtable_remove_entry(accountlist_head,curr);
-				}
-		}
-		hashtable_purge(accountlist_head);
-	}
+	} /* end HASHTABLE_TRAVERSE */
+	hashtable_purge(accountlist_head);
+}
 
 #endif /* ACCT_DYN_UNLOAD */
 

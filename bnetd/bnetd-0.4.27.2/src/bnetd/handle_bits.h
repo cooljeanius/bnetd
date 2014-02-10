@@ -1,4 +1,4 @@
-/*
+/* handle_bits.h
  * Copyright (C) 2000  Ross Combs (rocombs@cs.nmsu.edu)
  * Copyright (C) 2000  Marco Ziech (mmz@gmx.net)
  *
@@ -20,10 +20,10 @@
 
 /*****/
 #ifndef JUST_NEED_TYPES
-#ifndef INCLUDED_HANDLE_BITS_PROTOS
-#define INCLUDED_HANDLE_BITS_PROTOS
-
+# ifndef INCLUDED_HANDLE_BITS_PROTOS
+#  define INCLUDED_HANDLE_BITS_PROTOS
 extern int handle_bits_packet(t_connection * conn,t_packet const * const packet);
+# endif /* !INCLUDED_HANDLE_BITS_PROTOS */
+#endif /* !JUST_NEED_TYPES */
 
-#endif
-#endif
+/* EOF */
