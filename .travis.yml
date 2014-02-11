@@ -1,0 +1,10 @@
+language: C
+
+# try to build
+script: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
+
+compiler:
+  - clang
+  - gcc
+
+after_success: pwd

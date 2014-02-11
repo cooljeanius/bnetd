@@ -4,19 +4,20 @@
 PortSystem           1.0
 PortGroup            github 1.0
 
-github.setup         cooljeanius bnetd 0.4.27.2_1 v
+github.setup         cooljeanius bnetd 0.4.27.2_2 v
 name                 bnetd
 version              0.4.27.2
+revision             2
 categories           net games
 platforms            darwin
 maintainers          gwmail.gwu.edu:egall greenend.org.uk:owen openmaintainer
 license              GPL-2+
 description          Daemon that emulates Blizzards Battle.net service
-long_description     ${description}. Currently broken.
+long_description     ${description}. Note: old and creaky.
 
 homepage             http://www.chiark.greenend.org.uk/~owend/free/${name}.html
 master_sites         http://www.chiark.greenend.org.uk/~owend/free/
-checksums            md5 8a27ad997fabfb6d1dc514bb14c01bed
+checksums            md5  8a27ad997fabfb6d1dc514bb14c01bed
 
 fetch.type 	     git
 git.url              git://github.com/cooljeanius/${name}.git
@@ -25,19 +26,14 @@ post-extract {
     worksrcdir       ${worksrcdir}/${name}/${name}-${version}/src
 }
 
-depends_build-append port:autoconf-archive
-depends_lib-append   port:libpcap \
-                     port:rpl
-
-use_autoreconf       yes
-autoreconf.args      -fvi
+depends_lib-append   port:libpcap
 
 configure.args       --mandir=${prefix}/share/man/ \
                      --sysconfdir=${prefix}/etc \
                      --localstatedir=${prefix}/var/${name}
+configure.cflags-append -Wno-attributes
 
 build.cmd            "make -f Makefile.bak"
-use_parallel_build   no
 
 platform darwin powerpc {
     configure.args-append --build=powerpc-apple-freebsd
