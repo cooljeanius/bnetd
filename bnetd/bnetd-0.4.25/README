@@ -1,7 +1,8 @@
 README
 
 	This file contains the original release notes for bnetd version 0.4.25.
-	I have not updated them since then to reflect any changes that I might have made.
+	I have not updated them since then to reflect any changes that I might
+	have made.
 
 
 DESCRIPTION
@@ -45,7 +46,7 @@ RUNNING
 	Just run ./bnetd.  It will begin waiting for connections.  Run
 	./bnetd --help for help with command-line options.  If no config file
 	is specified, it will look for a config file in a location determined
-	when the server was compiled.  If that file doesn't exist, it will use
+	when the server was compiled.  If that file does NOT exist, it will use
 	some built-in default settings.
 
 
@@ -69,7 +70,7 @@ CONFIGURING THE CLIENT
 	not exit BNS.  Clicking Cancel will abort all changes and exit BNS.
 	Clicking OK will exit BNS after applying the changes.
 
-	MacOS:
+	MacOS Classic:
 
 	There is no automated tool to modify the resources (yet).  To do it
 	manually, first locate the Starcraft (or Diablo) preference file
@@ -91,7 +92,7 @@ SUPPORT
 	If you have trouble with the server or setting up the clients, you
 	should check to see if the answer to your problem is in our FAQ.  The
 	current version can be found on
-	http://www.bnetd.org/doc.php?docname=FAQ.html. If that doesn't solve
+	http://www.bnetd.org/doc.php?docname=FAQ.html. If that does NOT solve
 	your problem, try posting in one of the forums at
 	http://www.bnetd.org/phpBB.  You can also send email to the list
 	bnetd-discuss@bnetd.org.  See the file README.debugging in the docs
