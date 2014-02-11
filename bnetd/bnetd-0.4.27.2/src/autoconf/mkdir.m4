@@ -3,6 +3,8 @@ dnl# Check mkdir arguments.
 dnl# Defines MKDIR_TAKES_ONE_ARG.
 dnl#
 dnl# Based on code written by Alexandre Duret-Lutz <duret_g@epita.fr>.
+dnl# FIXME: this macro can sometimes report that mkdir only takes one
+dnl# argument even when it actually takes two...
 
 AC_DEFUN([AC_FUNC_MKDIR_ARGS],
 [AC_REQUIRE([AC_PROG_CC])
@@ -14,7 +16,7 @@ AC_CHECK_HEADERS_ONCE([dir.h direct.h])
 AC_CHECK_FUNCS_ONCE([mkdir _mkdir])
 AC_CACHE_CHECK([whether mkdir takes one argument],
                 [ac_cv_mkdir_takes_one_arg],
-[AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+[AC_LINK_IFELSE([AC_LANG_SOURCE([[
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H */

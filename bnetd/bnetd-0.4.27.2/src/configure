@@ -17751,7 +17751,7 @@ zwarnflags=""
 # Check whether --with-warn was given.
 if test "${with_warn+set}" = set; then :
   withval=$with_warn;
-for warning_flag in $(echo "-Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wno-sign-compare"); do
+for warning_flag in $(echo "-pedantic -Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses"); do
 	as_CACHEVAR=`$as_echo "ax_cv_check_cflags__${warning_flag}" | $as_tr_sh`
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C compiler accepts ${warning_flag}" >&5
 $as_echo_n "checking whether C compiler accepts ${warning_flag}... " >&6; }
@@ -20484,12 +20484,13 @@ else
 #endif /* !HAVE_MKDIR */
 
 _ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
+if ac_fn_c_try_link "$LINENO"; then :
   ac_cv_mkdir_takes_one_arg=yes
 else
   ac_cv_mkdir_takes_one_arg=no
 fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
 fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_mkdir_takes_one_arg" >&5
 $as_echo "$ac_cv_mkdir_takes_one_arg" >&6; }
