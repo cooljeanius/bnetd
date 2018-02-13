@@ -53,16 +53,16 @@
 extern int client_blocksend_packet(int sock, t_packet const * packet)
 {
     unsigned int size=0;
-    
+
     for (;;)
         switch (net_send_packet(sock,packet,&size))
 	{
 	case -1:
 	    return -1;
-	    
+
 	case 0:
 	    continue;
-	    
+
 	default:
 	    return 0;
 	}
@@ -72,13 +72,13 @@ extern int client_blocksend_packet(int sock, t_packet const * packet)
 extern int client_blockrecv_packet(int sock, t_packet * packet)
 {
     unsigned int size=0;
-    
+
     for (;;)
         switch (net_recv_packet(sock,packet,&size))
         {
         case -1:
             return -1;
-            
+
         case 0:
             continue;
 
@@ -92,7 +92,7 @@ extern int client_blockrecv_packet(int sock, t_packet * packet)
 extern int client_blockrecv_raw_packet(int sock, t_packet * packet, unsigned int len)
 {
     unsigned int size=0;
-    
+
     packet_set_size(packet,len);
     for (;;)
         switch (net_recv_packet(sock,packet,&size))
@@ -112,15 +112,15 @@ extern int client_get_termsize(int fd, unsigned int * w, unsigned int * h)
 {
     if (fd<0 || !w || !h)
 	return -1;
-    
+
     *w = 0;
     *h = 0;
-    
+
 #ifdef HAVE_IOCTL
 #ifdef TIOCGWINSZ
     {
 	struct winsize ws;
-	
+
 	if (ioctl(fd,TIOCGWINSZ,&ws)>=0)
 	{
 	    *w = (unsigned int)ws.ws_col;
@@ -129,24 +129,24 @@ extern int client_get_termsize(int fd, unsigned int * w, unsigned int * h)
     }
 #endif
 #endif
-    
+
 #ifdef HAVE_GETENV
     {
 	char const * str;
 	int          val;
-	
+
 	if (!*w && (str = getenv("COLUMNS")) && (val = atoi(str))>0)
 	    *w = val;
 	if (!*h && (str = getenv("LINES")) && (val = atoi(str))>0)
 	    *h = val;
     }
 #endif
-    
+
     if (!*w)
 	*w = DEF_SCREEN_WIDTH;
     if (!*h)
 	*h = DEF_SCREEN_HEIGHT;
-    
+
     return 0;
 }
 
@@ -161,7 +161,7 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
     unsigned int i;
     unsigned int count;
     int          beg_pos;
-    
+
     for (count=0; count<16; count++)
     {
 	beg_pos = 0;
@@ -169,7 +169,7 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    visible = 0; /* no room to show any of the text */
 	else if (*curpos+strlen(prompt)+1>=width)
 	    beg_pos = (int)(*curpos+strlen(prompt)+1-width);
-	
+
 	if (redraw)
 	{
 	    if (visible!=-1)
@@ -177,12 +177,12 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    if (visible==1)
 		printf("%s",text+beg_pos);
 	}
-	
+
 	fflush(stdout);
 	addlen = read(fileno(stdin),&temp,1);
 	if (addlen<1)
 	    return addlen;
-	
+
 	switch (temp)
 	{
 	case '\033': /* ESC */
@@ -201,6 +201,7 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    (*curpos)--;
 	    text[*curpos] = '\0';
 	    if (visible==1)
+	    {
 		if (beg_pos>0)
 		{
 		    beg_pos--;
@@ -208,6 +209,7 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 		}
 		else
 		    printf("\b \b");
+	    }
 	    continue;
 	case '\024': /* ^T */
 	    if (*curpos<2)
@@ -218,11 +220,11 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    }
 	    {
 		char swap;
-		
+
 		swap = text[*curpos-1];
 		text[*curpos-1] = text[*curpos-2];
 		text[*curpos-2] = swap;
-		
+
 		if (visible==1)
 		{
 		    printf("\b\b");
@@ -240,7 +242,7 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    {
 		char * t=strrchr(text,' ');
 		unsigned int t1=beg_pos,t2;
-		
+
 		addlen = t ? t - text : 0;
 		text[addlen] = '\0';
 		beg_pos -= *curpos - addlen;
@@ -272,7 +274,7 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    if (visible==1)
 	    {
 		unsigned int t2;
-		
+
 		t2 = printf("\r%s",prompt);
 		for (i=0; i<width-t2; i++)
 		    printf(" ");
@@ -309,6 +311,6 @@ extern int client_get_comm(char const * prompt, char * text, unsigned int maxlen
 	    continue;
 	}
     }
-    
+
     return 0;
 }

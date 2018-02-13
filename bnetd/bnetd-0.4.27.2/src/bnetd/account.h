@@ -88,7 +88,6 @@ t_account;
 #  ifndef ACCT_DYN_LOAD
 extern unsigned int account_get_uid(t_account const * account);
 extern t_account * create_vaccount(const char *username, unsigned int uid);
-extern unsigned int account_get_uid(t_account const * account);
 #  endif /* !ACCT_DYN_LOAD */
 extern t_account * account_create(char const * username, char const * passhash1) MALLOC_ATTR();
 extern void account_destroy(t_account * account);

@@ -77,7 +77,7 @@
 				func;\
 				break;\
 
-#define ASSERT(var,retval) if (!var) { eventlog(eventlog_level_error, __FUNCTION__, "got NULL " #var); return retval; }
+#define ASSERT(var,retval) if (!var) { eventlog(eventlog_level_error, __extension__ __FUNCTION__, "got NULL " #var); return retval; }
 #define DECLARE_PACKET_HANDLER(handler) static int handler(t_connection *, t_packet *);
 #define NELEMS(s)		sizeof(s)/sizeof(s[0])
 

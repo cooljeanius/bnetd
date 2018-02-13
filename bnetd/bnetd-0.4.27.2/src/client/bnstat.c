@@ -176,18 +176,18 @@ extern int main(int argc, char * argv[])
     unsigned int       sessionkey;
     unsigned int       sessionnum;
     unsigned int       val;
-    int                fd_stdin;
+    int                fd_stdin = 0;
     int                use_bnetd=0;
     int                use_fsgs=0;
     unsigned int       screen_width,screen_height;
     int                munged;
-    
+
     if (argc<1 || !argv || !argv[0])
     {
 	fprintf(stderr,"bad arguments\n");
 	return STATUS_FAILURE;
     }
-    
+
     for (a=1; a<argc; a++)
 	if (servname && isdigit((int)argv[a][0]) && a+1>=argc)
 	{
@@ -395,7 +395,7 @@ extern int main(int argc, char * argv[])
 	    fprintf(stderr,"%s: unknown option \"%s\"\n",argv[0],argv[a]);
 	    usage(argv[0]);
 	}
-    
+
     if (servport==0)
 	servport = BNETD_SERV_PORT;
     if (!cdowner)
@@ -406,7 +406,7 @@ extern int main(int argc, char * argv[])
 	clienttag = CLIENTTAG_STARCRAFT;
     if (!servname)
 	servname = BNETD_DEFAULT_HOST;
-    
+
     if (gotplayer)
 	changed_in = 0; /* no need to change terminal attributes */
     else
@@ -426,7 +426,7 @@ extern int main(int argc, char * argv[])
 	    fprintf(stderr,"%s: could not set terminal attributes for stdin\n",argv[0]);
 	    changed_in = 0;
 	}
-	
+
 	if (client_get_termsize(fd_stdin,&screen_width,&screen_height)<0)
 	{
 	    fprintf(stderr,"%s: could not determine screen size, assuming 80x24\n",argv[0]);
@@ -434,7 +434,7 @@ extern int main(int argc, char * argv[])
 	    screen_height = 24;
 	}
     }
-    
+
     if ((sd = client_connect(argv[0],servname,servport,cdowner,cdkey,clienttag,&saddr,&sessionkey,&sessionnum,ARCHTAG_WINX86))<0)
     {
 	fprintf(stderr,"%s: fatal error during handshake\n",argv[0]);
@@ -442,7 +442,7 @@ extern int main(int argc, char * argv[])
 	    tcsetattr(fd_stdin,TCSAFLUSH,&in_attr_old);
 	return STATUS_FAILURE;
     }
-    
+
     /* reuse this same packet over and over */
     if (!(rpacket = packet_create(packet_class_bnet)))
     {
@@ -452,7 +452,7 @@ extern int main(int argc, char * argv[])
 	    tcsetattr(fd_stdin,TCSAFLUSH,&in_attr_old);
 	return STATUS_FAILURE;
     }
-    
+
     if (!(packet = packet_create(packet_class_bnet)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -479,35 +479,35 @@ extern int main(int argc, char * argv[])
 	}
     while (packet_get_type(rpacket)!=SERVER_FILEINFOREPLY);
     dprintf("Got FILEINFOREPLY\n");
-    
+
     if (!gotplayer)
     {
 	munged = 1;
 	commpos = 0;
 	text[0] = '\0';
     }
-    
+
     for (;;)
     {
 	unsigned int i;
-	
+
 	if (!gotplayer)
 	{
 	    switch (client_get_comm("player: ",text,sizeof(text),&commpos,1,munged,screen_width))
 	    {
 	    case -1: /* cancel or error */
                 break;
-		
+
 	    case 0: /* timeout */
 		munged = 0;
                 continue;
-		
+
 	    case 1:
 		munged = 0;
                 if (text[0]=='\0')
             	    continue;
 	    }
-	    
+
 	    if (text[0]=='\0')
 	        break;
             printf("\r");
@@ -515,7 +515,7 @@ extern int main(int argc, char * argv[])
                 printf(" ");
 	    printf("\r");
 	}
-	
+
 	if (!(packet = packet_create(packet_class_bnet)))
 	{
 	    fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -530,7 +530,7 @@ extern int main(int argc, char * argv[])
 	bn_int_set(&packet->u.client_statsreq.unknown1,CLIENT_STATSREQ_UNKNOWN1);
 	packet_append_string(packet,text);
 	count = 0;
-	
+
 	if (use_bnetd)
 	{
 	    packet_append_string(packet,"BNET\\acct\\username");
@@ -548,13 +548,13 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,"FSGS\\Created");
 	    count += 1;
 	}
-	
+
 	packet_append_string(packet,"profile\\sex");
 	packet_append_string(packet,"profile\\age");
 	packet_append_string(packet,"profile\\location");
 	packet_append_string(packet,"profile\\description");
 	count += 4;
-	
+
 	if (strcmp(clienttag,"STAR")==0)
 	{
 	    packet_append_string(packet,"Record\\STAR\\0\\last game");
@@ -564,7 +564,7 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,"Record\\STAR\\0\\disconnects");
 	    packet_append_string(packet,"Record\\STAR\\0\\draws");
 	    count += 6;
-	    
+
 	    packet_append_string(packet,"Record\\STAR\\1\\last game");
 	    packet_append_string(packet,"Record\\STAR\\1\\last game result");
 	    packet_append_string(packet,"Record\\STAR\\1\\rating");
@@ -588,7 +588,7 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,"Record\\SEXP\\0\\disconnects");
 	    packet_append_string(packet,"Record\\SEXP\\0\\draws");
 	    count += 6;
-	    
+
 	    packet_append_string(packet,"Record\\SEXP\\1\\last game");
 	    packet_append_string(packet,"Record\\SEXP\\1\\last game result");
 	    packet_append_string(packet,"Record\\SEXP\\1\\rating");
@@ -638,7 +638,7 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,"Record\\W2BN\\0\\disconnects");
 	    packet_append_string(packet,"Record\\W2BN\\0\\draws");
 	    count += 6;
-	    
+
 	    packet_append_string(packet,"Record\\W2BN\\1\\last game");
 	    packet_append_string(packet,"Record\\W2BN\\1\\last game result");
 	    packet_append_string(packet,"Record\\W2BN\\1\\rating");
@@ -652,7 +652,7 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,"Record\\W2BN\\1\\disconnects");
 	    packet_append_string(packet,"Record\\W2BN\\1\\draws");
 	    count += 12;
-	    
+
 	    packet_append_string(packet,"Record\\W2BN\\3\\last game");
 	    packet_append_string(packet,"Record\\W2BN\\3\\last game result");
 	    packet_append_string(packet,"Record\\W2BN\\3\\rating");
@@ -670,7 +670,7 @@ extern int main(int argc, char * argv[])
 	bn_int_set(&packet->u.client_statsreq.key_count,count);
 	client_blocksend_packet(sd,packet);
 	packet_del_ref(packet);
-	
+
 	do
 	    if (client_blockrecv_packet(sd,rpacket)<0)
 	    {
@@ -681,7 +681,7 @@ extern int main(int argc, char * argv[])
 	    }
 	while (packet_get_type(rpacket)!=SERVER_STATSREPLY);
 	dprintf("Got STATSREPLY\n");
-	
+
 	{
 	    unsigned int   names,keys;
 	    unsigned int   j;
@@ -691,12 +691,12 @@ extern int main(int argc, char * argv[])
 	    struct in_addr laddr;
 	    time_t         tm;
 	    char           timestr[STAT_TIME_MAXLEN];
-	    
+
 	    names = bn_int_get(rpacket->u.server_statsreply.name_count);
 	    keys = bn_int_get(rpacket->u.server_statsreply.key_count);
-	    
+
 	    printf("----\n");
-	    
+
 	    strpos = sizeof(t_server_statsreply);
 	    for (i=0; i<names; i++)
 	    {
@@ -712,7 +712,7 @@ extern int main(int argc, char * argv[])
 			printf("                        Username: UNKNOWN\n");
 		    else
 			printf("                        Username: %s\n",temp);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -726,14 +726,14 @@ extern int main(int argc, char * argv[])
 #else
 			printf("                         Account: N/A\n");
 #endif
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
 			temp = "";
 		    j++;
 		    printf("               Last login client: %s\n",temp);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -746,7 +746,7 @@ extern int main(int argc, char * argv[])
 			laddr.s_addr = htonl(val);
 			printf("                 Last login host: %s\n",inet_ntoa(laddr));
 		    }
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -760,14 +760,14 @@ extern int main(int argc, char * argv[])
 			strftime(timestr,STAT_TIME_MAXLEN,STAT_TIME_FORMAT,localtime(&tm));
 			printf("                 Last login time: %s\n",timestr);
 		    }
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
 			temp = "";
 		    j++;
 		    printf("              First login client: %s\n",temp);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -780,7 +780,7 @@ extern int main(int argc, char * argv[])
 			laddr.s_addr = htonl(val);
 			printf("                First login host: %s\n",inet_ntoa(laddr));
 		    }
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -813,35 +813,35 @@ extern int main(int argc, char * argv[])
 			printf("                   Creation time: %s\n",timestr);
 		    }
 		}
-		
+
 		if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 		    strpos += strlen(temp)+1;
 		else
 		    temp = "";
 		j++;
     		printf("                             Sex: %s\n",temp);
-		
+
 		if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 		    strpos += strlen(temp)+1;
 		else
 		    temp = "";
 		j++;
     		printf("                             Age: %s\n",temp);
-		
+
 		if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 		    strpos += strlen(temp)+1;
 		else
 		    temp = "";
 		j++;
     		printf("                        Location: %s\n",temp);
-		
+
 		if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 		    strpos += strlen(temp)+1;
 		else
 		    temp = "";
 		j++;
     		printf("                     Description: %s\n",temp);
-		
+
 		if (strcmp(clienttag,"STAR")==0 ||
 		    strcmp(clienttag,"SSHR")==0 ||
 		    strcmp(clienttag,"SEXP")==0 ||
@@ -849,7 +849,7 @@ extern int main(int argc, char * argv[])
 		{
 		    t_bnettime   bntime;
 		    unsigned int wins,losses,disconnects,draws;
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -863,14 +863,14 @@ extern int main(int argc, char * argv[])
 			strftime(timestr,STAT_TIME_MAXLEN,STAT_TIME_FORMAT,localtime(&tm));
 		    }
 	    	    printf("                  Last game time: %s\n",timestr);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
 			temp = "";
 		    j++;
 	    	    printf("                Last game result: %s\n",temp);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -901,7 +901,7 @@ extern int main(int argc, char * argv[])
 			draws = 0;
 	            printf("                          Record: (%u/%u/%u) %u draws\n",wins,losses,disconnects,draws);
 		}
-		    
+
 		if (strcmp(clienttag,"STAR")==0 ||
 		    strcmp(clienttag,"SEXP")==0 ||
 		    strcmp(clienttag,"W2BN")==0)
@@ -911,7 +911,7 @@ extern int main(int argc, char * argv[])
 		    unsigned int rating,rank;
 		    unsigned int active_rating,active_rank;
 		    unsigned int high_rating,high_rank;
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -925,14 +925,14 @@ extern int main(int argc, char * argv[])
 			strftime(timestr,STAT_TIME_MAXLEN,STAT_TIME_FORMAT,localtime(&tm));
 		    }
 	    	    printf("  Last standard ladder game time: %s\n",timestr);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
 			temp = "";
 		    j++;
 	    	    printf("Last standard ladder game result: %s\n",temp);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -944,7 +944,7 @@ extern int main(int argc, char * argv[])
 	    		printf("  Current standard ladder rating: %u\n",rating);
 		    else
 	    		printf("  Current standard ladder rating: UNRATED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -956,7 +956,7 @@ extern int main(int argc, char * argv[])
 	    		printf("   Active standard ladder rating: %u\n",active_rating);
 		    else
 	    		printf("   Active standard ladder rating: UNRATED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -968,7 +968,7 @@ extern int main(int argc, char * argv[])
 	    		printf("     High standard ladder rating: %u\n",high_rating);
 		    else
 	    		printf("     High standard ladder rating: UNRATED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -980,7 +980,7 @@ extern int main(int argc, char * argv[])
 	  		printf("    Current standard ladder rank: #%u\n",rank);
 		    else
 			printf("    Current standard ladder rank: UNRANKED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -992,7 +992,7 @@ extern int main(int argc, char * argv[])
 	    		printf("     Active standard ladder rank: #%u\n",active_rank);
 		    else
 			printf("     Active standard ladder rank: UNRANKED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1004,7 +1004,7 @@ extern int main(int argc, char * argv[])
 	    		printf("       High standard ladder rank: #%u\n",high_rank);
 		    else
 			printf("       High standard ladder rank: UNRANKED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1035,7 +1035,7 @@ extern int main(int argc, char * argv[])
 			draws = 0;
 	            printf("          Standard ladder record: (%u/%u/%u) %u draws\n",wins,losses,disconnects,draws);
 		}
-		
+
 		if (strcmp(clienttag,"W2BN")==0)
 		{
 		    t_bnettime   bntime;
@@ -1043,7 +1043,7 @@ extern int main(int argc, char * argv[])
 		    unsigned int rating,rank;
 		    unsigned int active_rating,active_rank;
 		    unsigned int high_rating,high_rank;
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1057,14 +1057,14 @@ extern int main(int argc, char * argv[])
 			strftime(timestr,STAT_TIME_MAXLEN,STAT_TIME_FORMAT,localtime(&tm));
 		    }
 	    	    printf("   Last Ironman ladder game time: %s\n",timestr);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
 			temp = "";
 		    j++;
 	    	    printf(" Last Ironman ladder game result: %s\n",temp);
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1076,7 +1076,7 @@ extern int main(int argc, char * argv[])
 	    		printf("   Current Ironman ladder rating: %u\n",rating);
 		    else
 	    		printf("   Current Ironman ladder rating: UNRATED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1088,7 +1088,7 @@ extern int main(int argc, char * argv[])
 	    		printf("    Active Ironman ladder rating: %u\n",active_rating);
 		    else
 	    		printf("    Active Ironman ladder rating: UNRATED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1100,7 +1100,7 @@ extern int main(int argc, char * argv[])
 	    		printf("      High Ironman ladder rating: %u\n",high_rating);
 		    else
 	    		printf("      High Ironman ladder rating: UNRATED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1112,7 +1112,7 @@ extern int main(int argc, char * argv[])
 	  		printf("     Current Ironman ladder rank: #%u\n",rank);
 		    else
 			printf("     Current Ironman ladder rank: UNRANKED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1124,7 +1124,7 @@ extern int main(int argc, char * argv[])
 	    		printf("      Active Ironman ladder rank: #%u\n",active_rank);
 		    else
 			printf("      Active Ironman ladder rank: UNRANKED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1136,7 +1136,7 @@ extern int main(int argc, char * argv[])
 	    		printf("        High Ironman ladder rank: #%u\n",high_rank);
 		    else
 			printf("        High Ironman ladder rank: UNRANKED\n");
-		    
+
 		    if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			strpos += strlen(temp)+1;
 		    else
@@ -1167,7 +1167,7 @@ extern int main(int argc, char * argv[])
 			draws = 0;
 	            printf("           Ironman ladder record: (%u/%u/%u) %u draws\n",wins,losses,disconnects,draws);
 		}
-		
+
 		if (strcmp(clienttag,"DSHR")==0 ||
 		    strcmp(clienttag,"DRTL")==0)
 		{
@@ -1179,7 +1179,7 @@ extern int main(int argc, char * argv[])
 		    unsigned int dexterity;
 		    unsigned int vitality;
 		    unsigned int gold;
-		    
+
 		    if (use_bnetd)
 		    {
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
@@ -1193,7 +1193,7 @@ extern int main(int argc, char * argv[])
 			    printf("                           Level: %u\n",level);
 			else
 			    printf("                           Level: NONE\n");
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1202,7 +1202,7 @@ extern int main(int argc, char * argv[])
 			if (str_to_uint(temp,&class)<0)
 			    class = 99;
 			printf("                           Class: %s\n",bnclass_get_str(class));
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1210,7 +1210,7 @@ extern int main(int argc, char * argv[])
 			j++;
 			if (str_to_uint(temp,&strength)<0)
 			    strength = 0;
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1218,7 +1218,7 @@ extern int main(int argc, char * argv[])
 			j++;
 			if (str_to_uint(temp,&magic)<0)
 			    magic = 0;
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1226,7 +1226,7 @@ extern int main(int argc, char * argv[])
 			j++;
 			if (str_to_uint(temp,&dexterity)<0)
 			    dexterity = 0;
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1234,7 +1234,7 @@ extern int main(int argc, char * argv[])
 			j++;
 			if (str_to_uint(temp,&vitality)<0)
 			    vitality = 0;
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1242,14 +1242,14 @@ extern int main(int argc, char * argv[])
 			j++;
 			if (str_to_uint(temp,&gold)<0)
 			    gold = 0;
-			
+
 			printf("                           Stats: %u str  %u mag  %u dex  %u vit  %u gld\n",
 			       strength,
 			       magic,
 			       dexterity,
 			       vitality,
 			       gold);
-			
+
 			if (j<keys && (temp = packet_get_str_const(rpacket,strpos,256)))
 			    strpos += strlen(temp)+1;
 			else
@@ -1263,13 +1263,13 @@ extern int main(int argc, char * argv[])
 	    }
 	    printf("----\n");
 	}
-	
+
 	if (gotplayer)
 	    break;
 	commpos = 0;
 	text[0] = '\0';
     }
-    
+
     psock_close(sd);
     if (changed_in)
 	tcsetattr(fd_stdin,TCSAFLUSH,&in_attr_old);

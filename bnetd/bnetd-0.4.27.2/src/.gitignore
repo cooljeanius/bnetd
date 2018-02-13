@@ -36,3 +36,5 @@ cscope.files
 config*.lineno
 conf*/*.awk
 *.tmp
+*/.deps/*
+*/.dirstamp

@@ -33,7 +33,7 @@ typedef struct {
 	int		last_active;
 	int	nCharsInReadBuffer;
 	int	nCharsInWriteBuffer;
-	unsigned char	ReadBuf[kBufferSize];
+	const char	ReadBuf[kBufferSize];
 	unsigned char	WriteBuf[kBufferSize];
 } t_d2dbs_connection;
 

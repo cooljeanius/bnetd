@@ -153,6 +153,7 @@ static void winch_sig_handle(int unused);
 #ifdef HAVE_SIGACTION
 static void winch_sig_handle(int unused)
 {
+    (void)unused;
     handle_winch = 1;
 }
 #endif
@@ -161,7 +162,7 @@ static void winch_sig_handle(int unused)
 static char const * mflags_get_str(unsigned int flags)
 {
     static char buffer[32];
-    
+
     buffer[0]=buffer[1] = '\0';
     if (flags&MF_BLIZZARD)
 	strcat(buffer,",Blizzard");
@@ -183,7 +184,7 @@ static char const * mflags_get_str(unsigned int flags)
 	strcat(buffer,",PGL_Official");
     buffer[0] = '[';
     strcat(buffer,"]");
-    
+
     return buffer;
 }
 
@@ -191,7 +192,7 @@ static char const * mflags_get_str(unsigned int flags)
 static char const * cflags_get_str(unsigned int flags)
 {
     static char buffer[32];
-    
+
     buffer[0]=buffer[1] = '\0';
     if (flags&CF_PUBLIC)
 	strcat(buffer,",Public");
@@ -207,7 +208,7 @@ static char const * cflags_get_str(unsigned int flags)
 	strcat(buffer,",Official");
     buffer[0] = '[';
     strcat(buffer,"]");
-    
+
     return buffer;
 }
 
@@ -246,22 +247,22 @@ static int print_file(struct sockaddr_in * saddr, char const * filename, char co
     t_packet *   fpacket;
     unsigned int currsize;
     unsigned int filelen;
-    
+
     if (!saddr || !filename || !progname)
 	return -1;
-    
+
     if ((sd = psock_socket(PSOCK_PF_INET,PSOCK_SOCK_STREAM,PSOCK_IPPROTO_TCP))<0)
     {
 	fprintf(stderr,"%s: could not create socket (psock_socket: %s)\n",progname,strerror(psock_errno()));
 	return -1;
     }
-    
+
     if (psock_connect(sd,(struct sockaddr *)saddr,sizeof(*saddr))<0)
     {
 	fprintf(stderr,"%s: could not connect to server (psock_connect: %s)\n",progname,strerror(psock_errno()));
 	return -1;
     }
-    
+
     if (!(ipacket = packet_create(packet_class_init)))
     {
 	fprintf(stderr,"%s: could not create packet\n",progname);
@@ -270,19 +271,19 @@ static int print_file(struct sockaddr_in * saddr, char const * filename, char co
     bn_byte_set(&ipacket->u.client_initconn.class,CLIENT_INITCONN_CLASS_FILE);
     client_blocksend_packet(sd,ipacket);
     packet_del_ref(ipacket);
-    
+
     if (!(rpacket = packet_create(packet_class_file)))
     {
 	fprintf(stderr,"%s: could not create packet\n",progname);
 	return -1;
     }
-    
+
     if (!(fpacket = packet_create(packet_class_raw)))
     {
 	fprintf(stderr,"%s: could not create packet\n",progname);
 	return -1;
     }
-    
+
     if (!(packet = packet_create(packet_class_file)))
     {
 	fprintf(stderr,"%s: could not create packet\n",progname);
@@ -299,7 +300,7 @@ static int print_file(struct sockaddr_in * saddr, char const * filename, char co
     packet_append_string(packet,filename);
     client_blocksend_packet(sd,packet);
     packet_del_ref(packet);
-    
+
     do
 	if (client_blockrecv_packet(sd,rpacket)<0)
 	{
@@ -309,10 +310,10 @@ static int print_file(struct sockaddr_in * saddr, char const * filename, char co
 	    return -1;
 	}
     while (packet_get_type(rpacket)!=SERVER_FILE_REPLY);
-    
+
     filelen = bn_int_get(rpacket->u.server_file_reply.filelen);
     packet_del_ref(rpacket);
-    
+
     for (currsize=0; currsize+MAX_PACKET_SIZE<=filelen; currsize+=MAX_PACKET_SIZE)
     {
 	if (client_blockrecv_raw_packet(sd,fpacket,MAX_PACKET_SIZE)<0)
@@ -337,11 +338,11 @@ static int print_file(struct sockaddr_in * saddr, char const * filename, char co
 	str_print_term(stdout,packet_get_raw_data_const(fpacket,0),filelen,1);
     }
     fflush(stdout);
-    
+
     psock_close(sd);
-    
+
     packet_del_ref(fpacket);
-    
+
     return 0;
 }
 
@@ -406,13 +407,13 @@ extern int main(int argc, char * argv[])
     char               curr_gamename[GAME_NAME_LEN];
     char               curr_gamepass[GAME_PASS_LEN];
     int                retval;
-    
+
     if (argc<1 || !argv || !argv[0])
     {
 	fprintf(stderr,"bad arguments\n");
 	return STATUS_FAILURE;
     }
-    
+
     for (a=1; a<argc; a++)
 	if (servname && isdigit((int)argv[a][0]) && a+1>=argc)
 	{
@@ -603,7 +604,7 @@ extern int main(int argc, char * argv[])
 	    fprintf(stderr,"%s: unknown option \"%s\"\n",argv[0],argv[a]);
 	    usage(argv[0]);
 	}
-    
+
     if (servport==0)
 	servport = BNETD_SERV_PORT;
     if (!cdowner)
@@ -617,7 +618,7 @@ extern int main(int argc, char * argv[])
     }
     if (!servname)
 	servname = BNETD_DEFAULT_HOST;
-    
+
     fd_stdin = fileno(stdin);
     if (tcgetattr(fd_stdin,&in_attr_old)>=0)
     {
@@ -633,15 +634,15 @@ extern int main(int argc, char * argv[])
 	fprintf(stderr,"%s: could not set terminal attributes for stdin\n",argv[0]);
 	changed_in = 0;
     }
-    
+
 #ifdef HAVE_SIGACTION
     {
         struct sigaction winch_action;
-	
+
         winch_action.sa_handler = winch_sig_handle;
         sigemptyset(&winch_action.sa_mask);
         winch_action.sa_flags = SA_RESTART;
-	
+
         sigaction(SIGWINCH,&winch_action,NULL);
     }
 #endif
@@ -653,7 +654,7 @@ extern int main(int argc, char * argv[])
 	retval = STATUS_FAILURE;
 	goto clean_exit_nosocket;
     }
-    
+
     if (useansi)
     {
 	ansi_text_reset();
@@ -661,7 +662,7 @@ extern int main(int argc, char * argv[])
 	ansi_cursor_move_home();
 	fflush(stdout);
     }
-    
+
     if ((sd = client_connect(argv[0],
 			     servname,servport,cdowner,cdkey,clienttag,
 			     &saddr,&sessionkey,&sessionnum,ARCHTAG_WINX86))<0)
@@ -670,7 +671,7 @@ extern int main(int argc, char * argv[])
 	retval = STATUS_FAILURE;
 	goto clean_exit_nosocket;
     }
-    
+
     /* reuse this same packet over and over */
     if (!(rpacket = packet_create(packet_class_bnet)))
     {
@@ -678,7 +679,7 @@ extern int main(int argc, char * argv[])
 	retval = STATUS_FAILURE;
 	goto clean_exit_norpacket;
     }
-    
+
     if (!(packet = packet_create(packet_class_bnet)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -689,12 +690,13 @@ extern int main(int argc, char * argv[])
     packet_set_type(packet,CLIENT_FILEINFOREQ);
     bn_int_set(&packet->u.client_fileinforeq.type,CLIENT_FILEINFOREQ_TYPE_TOS);
     bn_int_set(&packet->u.client_fileinforeq.unknown2,CLIENT_FILEINFOREQ_UNKNOWN2);
-    
-    if ((clienttag == CLIENTTAG_DIABLO2DV) || (clienttag == CLIENTTAG_DIABLO2XP))
+
+    if ((strcmp(clienttag, CLIENTTAG_DIABLO2DV) == 0)
+	|| (strcmp(clienttag, CLIENTTAG_DIABLO2XP) == 0))
         packet_append_string(packet,CLIENT_FILEINFOREQ_FILE_TOSUNICODEUSA);
     else
         packet_append_string(packet,CLIENT_FILEINFOREQ_FILE_TOSUSA);
-    
+
     client_blocksend_packet(sd,packet);
     packet_del_ref(packet);
     do
@@ -705,9 +707,9 @@ extern int main(int argc, char * argv[])
 	    goto clean_exit_nochan;
 	}
     while (packet_get_type(rpacket)!=SERVER_FILEINFOREPLY);
-    
+
     /* real client would also send statsreq on past logins here */
-    
+
     printf("----\n");
     if (newacct)
     {
@@ -719,18 +721,18 @@ extern int main(int argc, char * argv[])
 	if (useansi)
 	    ansi_text_reset();
     }
-	    
+
     for (;;)
     {
         char         password[MAX_MESSAGE_LEN];
 	unsigned int pos;
 	int          status;
-        
+
 	if (newacct)
 	{
 	    char   passwordvrfy[MAX_MESSAGE_LEN];
             t_hash passhash1;
-	    
+
 	    printf("Enter information for your new account\n");
 	    munged = 1;
 	    commpos = 0;
@@ -774,7 +776,7 @@ extern int main(int argc, char * argv[])
 		printf("Usernames must not be more than %u characters long. Try again.\n",MAX_USER_NAME-1);
 		continue;
 	    }
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    password[0] = '\0';
@@ -794,7 +796,7 @@ extern int main(int argc, char * argv[])
 	    for (pos=0; pos<strlen(password); pos++)
 		if (isupper((int)password[pos]))
 		    password[pos] = tolower((int)password[pos]);
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    passwordvrfy[0] = '\0';
@@ -813,15 +815,15 @@ extern int main(int argc, char * argv[])
 		continue;
 	    for (pos=0; pos<strlen(passwordvrfy); pos++)
 		passwordvrfy[pos] = tolower((int)passwordvrfy[pos]);
-	    
+
 	    if (strcmp(password,passwordvrfy)!=0)
 	    {
 		printf("Passwords do not match. Try again.\n");
 		continue;
 	    }
-            
+
 	    bnet_hash(&passhash1,strlen(password),password); /* do the single hash */
-	    
+
 	    if (!(packet = packet_create(packet_class_bnet)))
 	    {
 		fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -834,7 +836,7 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,player);
             client_blocksend_packet(sd,packet);
 	    packet_del_ref(packet);
-	    
+
 	    do
 		if (client_blockrecv_packet(sd,rpacket)<0)
 		{
@@ -865,9 +867,9 @@ extern int main(int argc, char * argv[])
             t_hash       oldpasshash2;
             t_hash       newpasshash1;
 	    unsigned int ticks;
-	    
+
             printf("Enter your old and new login information\n");
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    player[0] = '\0';
@@ -894,7 +896,7 @@ extern int main(int argc, char * argv[])
 		printf("Usernames must not be more than %u characters long. Try again.\n",MAX_USER_NAME-1);
 		continue;
 	    }
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    passwordprev[0] = '\0';
@@ -913,7 +915,7 @@ extern int main(int argc, char * argv[])
 		continue;
 	    for (pos=0; pos<strlen(passwordprev); pos++)
 		passwordprev[pos] = tolower((int)passwordprev[pos]);
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    password[0] = '\0';
@@ -932,7 +934,7 @@ extern int main(int argc, char * argv[])
 		continue;
 	    for (pos=0; pos<strlen(password); pos++)
 		password[pos] = tolower((int)password[pos]);
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    passwordvrfy[0] = '\0';
@@ -951,13 +953,13 @@ extern int main(int argc, char * argv[])
 		continue;
 	    for (pos=0; pos<strlen(passwordvrfy); pos++)
 		passwordvrfy[pos] = tolower((int)passwordvrfy[pos]);
-	    
+
 	    if (strcmp(password,passwordvrfy)!=0)
 	    {
 		printf("New passwords do not match. Try again.\n");
 		continue;
 	    }
-	    
+
             ticks = 0; /* FIXME: what to use here? */
             bn_int_set(&temp.ticks,ticks);
             bn_int_set(&temp.sessionkey,sessionkey);
@@ -965,7 +967,7 @@ extern int main(int argc, char * argv[])
             hash_to_bnhash((t_hash const *)&oldpasshash1,temp.passhash1); /* avoid warning */
             bnet_hash(&oldpasshash2,sizeof(temp),&temp); /* do the double hash for old */
 	    bnet_hash(&newpasshash1,strlen(password),password); /* do the single hash for new */
-	    
+
 	    if (!(packet = packet_create(packet_class_bnet)))
 	    {
 		fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -981,7 +983,7 @@ extern int main(int argc, char * argv[])
 	    packet_append_string(packet,player);
             client_blocksend_packet(sd,packet);
 	    packet_del_ref(packet);
-	    
+
 	    do
 		if (client_blockrecv_packet(sd,rpacket)<0)
 		{
@@ -1001,7 +1003,7 @@ extern int main(int argc, char * argv[])
 	else
 	{
             printf("Enter your login information\n");
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    player[0] = '\0';
@@ -1028,7 +1030,7 @@ extern int main(int argc, char * argv[])
 		printf("Usernames must not be more than %u characters long. Try again.\n",MAX_USER_NAME-1);
 		continue;
 	    }
-	    
+
 	    munged = 1;
 	    commpos = 0;
 	    password[0] = '\0';
@@ -1060,14 +1062,14 @@ extern int main(int argc, char * argv[])
             t_hash       passhash1;
             t_hash       passhash2;
 	    unsigned int ticks;
-            
+
             ticks = 0; /* FIXME: what to use here? */
             bn_int_set(&temp.ticks,ticks);
             bn_int_set(&temp.sessionkey,sessionkey);
             bnet_hash(&passhash1,strlen(password),password); /* do the single hash */
             hash_to_bnhash((t_hash const *)&passhash1,temp.passhash1); /* avoid warning */
             bnet_hash(&passhash2,sizeof(temp),&temp); /* do the double hash */
-	    
+
 	    if (!(packet = packet_create(packet_class_bnet)))
 	    {
 		fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -1083,7 +1085,7 @@ extern int main(int argc, char * argv[])
             client_blocksend_packet(sd,packet);
 	    packet_del_ref(packet);
 	}
-	
+
         do
             if (client_blockrecv_packet(sd,rpacket)<0)
 	    {
@@ -1096,10 +1098,10 @@ extern int main(int argc, char * argv[])
 	    break;
 	fprintf(stderr,"Login incorrect.\n");
     }
-    
+
     fprintf(stderr,"Logged in.\n");
     printf("----\n");
-    
+
     if (newacct && (strcmp(clienttag,CLIENTTAG_DIABLORTL)==0 ||
 		    strcmp(clienttag,CLIENTTAG_DIABLOSHR)==0))
     {
@@ -1116,7 +1118,7 @@ extern int main(int argc, char * argv[])
 	client_blocksend_packet(sd,packet);
 	packet_del_ref(packet);
     }
-    
+
 #if 0 /* FIXME: what was this for? */
     if (!(packet = packet_create(packet_class_bnet)))
     {
@@ -1130,10 +1132,10 @@ extern int main(int argc, char * argv[])
     packet_append_string(packet,"");
     client_blocksend_packet(sd,packet);
     packet_del_ref(packet);
-    
+
     /* wait for playerinforeply */
 #endif
-    
+
     if (!(packet = packet_create(packet_class_bnet)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -1145,7 +1147,7 @@ extern int main(int argc, char * argv[])
     bn_int_tag_set(&packet->u.client_progident2.clienttag,clienttag);
     client_blocksend_packet(sd,packet);
     packet_del_ref(packet);
-    
+
     do
         if (client_blockrecv_packet(sd,rpacket)<0)
 	{
@@ -1154,12 +1156,12 @@ extern int main(int argc, char * argv[])
 	    goto clean_exit_nochan;
 	}
     while (packet_get_type(rpacket)!=SERVER_CHANNELLIST);
-    
+
     {
 	unsigned int cnum;
 	unsigned int chann_off;
 	char const * chann;
-	
+
 	if (!(channellist = malloc(sizeof(char const *)*1)))
 	{
 	    fprintf(stderr,"%s: could not allocate memory for channellist\n",argv[0]);
@@ -1188,7 +1190,7 @@ extern int main(int argc, char * argv[])
 	}
 	channellist[cnum] = NULL;
     }
-    
+
     if (!(packet = packet_create(packet_class_bnet)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -1201,28 +1203,28 @@ extern int main(int argc, char * argv[])
     packet_append_string(packet,channel);
     client_blocksend_packet(sd,packet);
     packet_del_ref(packet);
-    
+
     if (psock_ctl(sd,PSOCK_NONBLOCK)<0)
 	fprintf(stderr,"%s: could not set TCP socket to non-blocking mode (psock_ctl: %s)\n",argv[0],strerror(psock_errno()));
-    
+
     mode = mode_chat;
-    
+
     {
 	unsigned int   i;
 	int            highest_fd;
 	t_psock_fd_set rfds;
-	
+
 	PSOCK_FD_ZERO(&rfds);
 	highest_fd = fd_stdin;
 	if (sd>highest_fd)
 	    highest_fd = sd;
-	
+
 	currsize = 0;
-	
+
 	munged = 1; /* == need to draw prompt */
 	commpos = 0;
 	text[0] = '\0';
-	
+
 	for (;;)
 	{
 	    if (handle_winch)
@@ -1232,17 +1234,17 @@ extern int main(int argc, char * argv[])
 		printf(" \r");
 		munged = 1;
 	    }
-	    
+
 	    if (munged)
 	    {
 		printf("%s%s",mode_get_prompt(mode),text + ((screen_width <= strlen(mode_get_prompt(mode)) + commpos ) ? strlen(mode_get_prompt(mode)) + commpos + 1 - screen_width : 0));
 		fflush(stdout);
 		munged = 0;
 	    }
-	    
+
 	    PSOCK_FD_SET(fd_stdin,&rfds);
 	    PSOCK_FD_SET(sd,&rfds);
-	    
+
 	    if (psock_select(highest_fd+1,&rfds,NULL,NULL,NULL)<0)
 	    {
 		if (errno!=PSOCK_EINTR)
@@ -1260,11 +1262,11 @@ extern int main(int argc, char * argv[])
 		}
 		continue;
 	    }
-	    
+
 	    if (PSOCK_FD_ISSET(fd_stdin,&rfds)) /* got keyboard data */
 	    {
 		munged = 0;
-		
+
 		switch (client_get_comm(mode_get_prompt(mode),text,MAX_MESSAGE_LEN,&commpos,1,0,screen_width))
 		{
 		case -1: /* cancel */
@@ -1282,10 +1284,10 @@ extern int main(int argc, char * argv[])
 		    commpos = 0;
 		    text[0] = '\0';
 		    break;
-		    
+
 		case 0: /* timeout */
 		    break;
-		    
+
 		case 1:
 		    switch (mode)
 		    {
@@ -1297,9 +1299,9 @@ extern int main(int argc, char * argv[])
 0030:   2C 33 65 33 37 61 38 34   63 2C 2C 52 6F 73 73 0D    ,3e37a84c,,Ross.
 0040:   43 68 61 6C 6C 65 6E 67   65 72 0D 00                Challenger..
 9: send class=normal[0x0001] type=SERVER_STARTGAME4_ACK[0x1cff] length=8
-0000:   FF 1C 08 00 00 00 00 00                              ........        
+0000:   FF 1C 08 00 00 00 00 00                              ........
 9: recv class=normal[0x0001] type=CLIENT_LEAVECHANNEL[0x10ff] length=4
-0000:   FF 10 04 00                                          ....            
+0000:   FF 10 04 00                                          ....
 9: send class=normal[0x0001] type=SERVER_MESSAGE[0x0fff] length=34
 0000:   FF 0F 22 00 03 00 00 00   00 00 00 00 86 00 00 00    ..".............
 0010:   00 00 00 00 00 00 00 00   00 00 00 00 52 6F 73 73    ............Ross
@@ -1309,7 +1311,7 @@ extern int main(int argc, char * argv[])
 9: recv class=normal[0x0001] type=CLIENT_PLAYERINFOREQ[0x0aff] length=10
 0000:   FF 0A 0A 00 52 6F 73 73   00 00                      ....Ross..
 9: send class=normal[0x0001] type=SERVER_PLAYERINFOREPLY[0x0aff] length=30
-0000:   FF 0A 1E 00 52 6F 73 73   00 50 58 45 53 20 30 20    ....Ross.PXES 0 
+0000:   FF 0A 1E 00 52 6F 73 73   00 50 58 45 53 20 30 20    ....Ross.PXES 0
 0010:   30 20 31 30 20 30 20 30   00 52 6F 73 73 00          0 10 0 0.Ross.
 9: recv class=normal[0x0001] type=CLIENT_PROGIDENT2[0x0bff] length=8
 0000:   FF 0B 08 00 50 58 45 53                              ....PXES
@@ -1344,7 +1346,7 @@ extern int main(int argc, char * argv[])
 			munged = 1;
 			strncpy(curr_gamepass,text,sizeof(curr_gamepass));
 			curr_gamepass[sizeof(curr_gamepass)-1] = '\0';
-			
+
 			if (!(packet = packet_create(packet_class_bnet)))
 			{
 			    printf("Packet creation failed.\n");
@@ -1371,7 +1373,7 @@ extern int main(int argc, char * argv[])
 		    case mode_gamestop:
 			printf("\n");
 			munged = 1;
-			
+
 			if (!(packet = packet_create(packet_class_bnet)))
 			    printf("Packet creation failed.\n");
 			else
@@ -1465,7 +1467,7 @@ extern int main(int argc, char * argv[])
 				    packet_append_string(packet,"profile\\description");
 				    client_blocksend_packet(sd,packet);
 				    packet_del_ref(packet);
-				    
+
 				    mode = mode_waitstat;
 				}
 			    }
@@ -1488,7 +1490,7 @@ extern int main(int argc, char * argv[])
 				ansi_text_reset();
 			}
 			break;
-			
+
 		    case mode_chat:
 			if (text[0]=='\0')
 			    break;
@@ -1514,7 +1516,7 @@ extern int main(int argc, char * argv[])
 			    printf("\n");
 			    munged = 1;
 			}
-			
+
 			if (!(packet = packet_create(packet_class_bnet)))
 			{
 			    fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -1527,7 +1529,7 @@ extern int main(int argc, char * argv[])
 			client_blocksend_packet(sd,packet);
 			packet_del_ref(packet);
 			break;
-			
+
 		    default:
 			/* one of the wait states; erase what they typed */
 			printf("\r");
@@ -1539,13 +1541,13 @@ extern int main(int argc, char * argv[])
 			munged = 1;
 			break;
 		    }
-		    
+
 		    commpos = 0;
 		    text[0] = '\0';
 		    break;
 		}
 	    }
-	    
+
 	    if (PSOCK_FD_ISSET(sd,&rfds)) /* got network data */
 	    {
 		/* rpacket is from server, packet is from client */
@@ -1553,7 +1555,7 @@ extern int main(int argc, char * argv[])
 		{
 		case 0: /* nothing */
 		    break;
-		    
+
 		case 1:
 		    switch (packet_get_type(rpacket))
 		    {
@@ -1570,10 +1572,12 @@ extern int main(int argc, char * argv[])
 				printf("\r");
 				munged = 1;
 			    }
-			    printf("Got bad SERVER_ECHOREQ packet (expected %u bytes, got %u)\n",sizeof(t_server_echoreq),packet_get_size(rpacket));
+			    printf("Got bad SERVER_ECHOREQ packet (expected %zu bytes, got %u)\n",
+				   sizeof(t_server_echoreq),
+				   packet_get_size(rpacket));
 			    break;
 			}
-			
+
 			if (!(packet = packet_create(packet_class_bnet)))
 			{
 			    if (!munged)
@@ -1595,9 +1599,9 @@ extern int main(int argc, char * argv[])
 			bn_int_set(&packet->u.client_echoreply.ticks,bn_int_get(rpacket->u.server_echoreq.ticks));
 			client_blocksend_packet(sd,packet);
 			packet_del_ref(packet);
-			
+
 			break;
-			
+
 		    case SERVER_STARTGAME4_ACK:
 			if (mode==mode_gamewait)
 			{
@@ -1611,7 +1615,7 @@ extern int main(int argc, char * argv[])
 				printf("\r");
 				munged = 1;
 			    }
-			    
+
 			    if (bn_int_get(rpacket->u.server_startgame4_ack.reply)==SERVER_STARTGAME4_ACK_OK)
 			    {
 				printf("Game created.\n");
@@ -1624,7 +1628,7 @@ extern int main(int argc, char * argv[])
 			    }
 			}
 			break;
-			
+
 		    case SERVER_STATSREPLY:
 			if (mode==mode_waitstat)
 			{
@@ -1632,7 +1636,7 @@ extern int main(int argc, char * argv[])
 			    unsigned int match;
 			    unsigned int strpos;
 			    char const * temp;
-			    
+
 			    if (!munged)
 			    {
 				printf("\r");
@@ -1643,15 +1647,15 @@ extern int main(int argc, char * argv[])
 				printf("\r");
 				munged = 1;
 			    }
-			    
+
 			    names = bn_int_get(rpacket->u.server_statsreply.name_count);
 			    keys  = bn_int_get(rpacket->u.server_statsreply.key_count);
 			    match = bn_int_get(rpacket->u.server_statsreply.unknown1);
-			    
+
 			    if (names!=1 || keys!=4 || match!=statsmatch)
 				printf("mangled reply (name_count=%u key_count=%u unknown1=%u)\n",
 				       names,keys,match);
-			    
+
 			    strpos = sizeof(t_server_statsreply);
 			    if ((temp = packet_get_str_const(rpacket,strpos,256)))
 			    {
@@ -1687,7 +1691,7 @@ extern int main(int argc, char * argv[])
 			    {
 				char   msgtemp[1024];
 				char * tok;
-				
+
 				printf(" Description: \n");
 				if (useansi)
 				    ansi_text_color_fore(ansi_text_color_yellow);
@@ -1699,15 +1703,15 @@ extern int main(int argc, char * argv[])
 				    ansi_text_reset();
 				strpos += strlen(temp)+1;
 			    }
-			    
+
 			    if (match==statsmatch)
 				mode = mode_command;
 			}
 			break;
-			
+
 		    case SERVER_PLAYERINFOREPLY: /* hmm. we didn't ask for one... */
 			break;
-			
+
 		    case SERVER_MESSAGE:
 			if (packet_get_size(rpacket)<sizeof(t_server_message))
 			{
@@ -1721,14 +1725,16 @@ extern int main(int argc, char * argv[])
 				printf("\r");
 				munged = 1;
 			    }
-			    printf("Got bad SERVER_MESSAGE packet (expected %u bytes, got %u)",sizeof(t_server_message),packet_get_size(rpacket));
+			    printf("Got bad SERVER_MESSAGE packet (expected %zu bytes, got %u)",
+				   sizeof(t_server_message),
+				   packet_get_size(rpacket));
 			    break;
 			}
-			
+
 			{
 			    char const * speaker;
 			    char const * message;
-			    
+
 			    if (!(speaker = packet_get_str_const(rpacket,sizeof(t_server_message),32)))
 			    {
 				if (!munged)
@@ -1756,10 +1762,13 @@ extern int main(int argc, char * argv[])
 				    printf("\r");
 				    munged = 1;
 				}
-				printf("Got SERVER_MESSAGE packet with bad or missing message (speaker=\"%s\" start=%u len=%u)\n",speaker,sizeof(t_server_message)+strlen(speaker)+1,packet_get_size(rpacket));
+				printf("Got SERVER_MESSAGE packet with bad or missing message (speaker=\"%s\" start=%zu len=%u)\n",
+				       speaker, (sizeof(t_server_message)
+						 + strlen(speaker) + 1UL),
+				       packet_get_size(rpacket));
 				break;
 			    }
-			    
+
 			    switch (bn_int_get(rpacket->u.server_message.type))
 			    {
 			    case SERVER_MESSAGE_TYPE_JOIN:
@@ -1989,7 +1998,7 @@ extern int main(int argc, char * argv[])
 			    }
 			}
 			break;
-			
+
 		    default:
 			if (!munged)
 			{
@@ -2003,10 +2012,10 @@ extern int main(int argc, char * argv[])
 			}
 			printf("Unsupported server packet type 0x%04x\n",packet_get_type(rpacket));
 		    }
-		    
+
 		    currsize = 0;
 		    break;
-		    
+
 		case -1: /* error (probably connection closed) */
 		default:
 		    if (!munged)
@@ -2026,12 +2035,12 @@ extern int main(int argc, char * argv[])
 	    }
 	}
     }
-    
+
 clean_exit:
     {
 	unsigned int cnum;
-	
-	for (cnum=0; channellist[cnum]; cnum++);
+
+	for (cnum = 0; channellist[cnum]; cnum++)
 	    free((void *)channellist[cnum]); /* avoid warning */
 	free(channellist);
     }
@@ -2042,6 +2051,6 @@ clean_exit_norpacket:
 clean_exit_nosocket:
     if (changed_in)
 	tcsetattr(fd_stdin,TCSAFLUSH,&in_attr_old);
-    
+
     return retval;
 }

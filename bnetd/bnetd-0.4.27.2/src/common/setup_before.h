@@ -53,9 +53,13 @@
 /* do we want to track malloc() and free()? */
 /*#define USE_CHECK_ALLOC	undef this to improve performance (Yoss: now it settable by configure) */
 
-/* this will use GCC evensions to verify that all module arguments to
+/* this will use GCC extensions to verify that all module arguments to
    eventlog() are correct. */
-#undef DEBUGMODSTRINGS
+#if defined(__GNUC__) && defined(BREAK_MY_BUILD)
+# define DEBUGMODSTRINGS 1
+#else
+# undef DEBUGMODSTRINGS
+#endif /* __GNUC__ && BREAK_MY_BUILD */
 /*
    After you compile, use this script:
    strings bnetd |

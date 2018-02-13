@@ -134,14 +134,14 @@ static unsigned int dbs_packet_savedata_charsave(t_d2dbs_connection * conn, char
 	char bakfile[MAX_PATH];
 	size_t wrotelen;
 	FILE * fp;
-	
+
 	sprintf(filename,"%s/.%s.tmp",prefs_get_charsave_dir(),CharName);
 	fp = fopen(filename, "wb");
 	if (!fp) {
 		eventlog(eventlog_level_error, __FUNCTION__, "unable to open charsave file \"%s\" for writing (fopen: %s)",filename,strerror(errno));
 		return 0;
 	}
-	
+
 	wrotelen=fwrite(data,1,datalen,fp);
 	if (wrotelen<datalen) {
 		eventlog(eventlog_level_error, __FUNCTION__, "could not write charsave file \"%s\" (fwrite: %s)",filename,strerror(errno));
@@ -173,20 +173,20 @@ static unsigned int dbs_packet_savedata_charinfo(t_d2dbs_connection * conn, char
 	FILE * fp;
 	size_t wrotelen;
 	struct stat statbuf;
-	
+
 	sprintf(filepath,"%s/%s",prefs_get_charinfo_bak_dir(),AccountName);
 	if (stat(filepath,&statbuf)==-1) {
 		p_mkdir(filepath,S_IRWXU|S_IRWXG|S_IRWXO );
 		eventlog(eventlog_level_info,  __FUNCTION__, "created charinfo directory: %s",filepath);
 	}
-	
+
 	sprintf(filename,"%s/%s/.%s.tmp",prefs_get_charinfo_dir(),AccountName,CharName);
 	fp = fopen(filename, "wb");
 	if (!fp) {
 		eventlog(eventlog_level_error, __FUNCTION__, "unable to open charinfo file \"%s\" for writing (fopen: %s)",filename,strerror(errno));
 		return 0;
 	}
-	
+
 	wrotelen=fwrite(data,1,datalen,fp);
 	if (wrotelen<datalen) {
 		eventlog(eventlog_level_error, __FUNCTION__, "could not write charinfo file \"%s\" (fwrite: %s)",filename,strerror(errno));
@@ -194,7 +194,7 @@ static unsigned int dbs_packet_savedata_charinfo(t_d2dbs_connection * conn, char
 		return 0;
 	}
 	fclose(fp); /* FIXME: check return value */
-	
+
 	sprintf(bakfile,"%s/%s/%s",prefs_get_charinfo_bak_dir(),AccountName,CharName);
 	sprintf(savefile,"%s/%s/%s",prefs_get_charinfo_dir(),AccountName,CharName);
 	if (rename(savefile, bakfile)==-1) {
@@ -215,18 +215,18 @@ static unsigned int dbs_packet_getdata_charsave(t_d2dbs_connection * conn, char 
 	FILE * fp;
 	size_t readlen;
 	long filesize;
-	
+
 	sprintf(filename,"%s/%s",prefs_get_charsave_dir(),CharName);
 	fp = fopen(filename, "rb");
 	if (!fp) {
 		eventlog(eventlog_level_error, __FUNCTION__, "unable to open charsave file \"%s\" (fopen: %s)",filename,strerror(errno));
 		return 0;
 	}
-	
+
 	fseek(fp,0,SEEK_END); /* FIXME: check return value */
 	filesize = ftell(fp);
 	rewind(fp);
-	
+
 	if (filesize==-1) {
 		eventlog(eventlog_level_error, __FUNCTION__, "unable to determine charsave file size");
 		fclose(fp);
@@ -237,7 +237,7 @@ static unsigned int dbs_packet_getdata_charsave(t_d2dbs_connection * conn, char 
 		fclose(fp);
 		return 0;
 	}
-	
+
 	readlen=fread(data,1,filesize,fp);
 	if (readlen<filesize) {
 		eventlog(eventlog_level_error, __FUNCTION__, "unable to read charsave file \"%s\" (fread: %s)",filename,strerror(errno));
@@ -263,11 +263,11 @@ static unsigned int dbs_packet_getdata_charinfo(t_d2dbs_connection * conn, char 
 		eventlog(eventlog_level_error, __FUNCTION__, "unable to open charinfo file \"%s\" (fopen: %s)",filename,strerror(errno));
 		return 0;
 	}
-	
+
 	fseek(fp,0,SEEK_END);
 	filesize = ftell(fp);
 	rewind(fp);
-	
+
 	if (filesize==-1) {
 		eventlog(eventlog_level_error, __FUNCTION__, "could not determine charinfo file size");
 		fclose(fp);
@@ -278,7 +278,7 @@ static unsigned int dbs_packet_getdata_charinfo(t_d2dbs_connection * conn, char 
 		fclose(fp);
 		return 0;
 	}
-	
+
 	readlen=fread(data,1,filesize,fp);
 	if (readlen<filesize)
 	{
@@ -297,16 +297,16 @@ static unsigned int dbs_packet_savedata(t_d2dbs_connection * conn)
 {
 	unsigned short writelen;
 	unsigned short      datatype;
-	unsigned short      datalen; 
-	unsigned int        result; 
+	unsigned short      datalen;
+	unsigned int        result;
 	char AccountName[MAX_NAME_LEN+16];
 	char CharName[MAX_NAME_LEN+16];
 	char RealmName[MAX_NAME_LEN+16];
-	t_d2gs_d2dbs_save_data_request	* savecom; 
-	t_d2dbs_d2gs_save_data_reply	* saveret; 
-	unsigned char * readpos;
+	t_d2gs_d2dbs_save_data_request	* savecom;
+	t_d2dbs_d2gs_save_data_reply	* saveret;
+	const char * readpos;
 	unsigned char * writepos;
-	
+
 	readpos=conn->ReadBuf;
 	savecom=(t_d2gs_d2dbs_save_data_request	*)readpos;
 	datatype=bn_short_get(savecom->datatype);
@@ -333,7 +333,7 @@ static unsigned int dbs_packet_savedata(t_d2dbs_connection * conn)
 		if (db_d2char_savedata(prefs_get_db_char_table(),AccountName,CharName,RealmName,readpos,datalen)) {
 #else
 		if (dbs_packet_savedata_charsave(conn,AccountName,CharName,readpos,datalen)>0) {
-#endif		
+#endif
 			result=D2DBS_SAVE_DATA_SUCCESS;
 		} else {
 			datalen=0;
@@ -344,7 +344,7 @@ static unsigned int dbs_packet_savedata(t_d2dbs_connection * conn)
 		if (db_d2char_saveinfo(prefs_get_db_char_table(),AccountName,CharName,RealmName,(t_d2charinfo_file *) readpos, (unsigned int) datalen)) {
 #else
 		if (dbs_packet_savedata_charinfo(conn,AccountName,CharName,readpos,datalen)>0) {
-#endif		
+#endif
 			result=D2DBS_SAVE_DATA_SUCCESS;
 		} else {
 			datalen=0;
@@ -381,13 +381,13 @@ static unsigned int dbs_packet_getdata(t_d2dbs_connection * conn)
 {
 	unsigned short	writelen;
 	unsigned short	datatype;
-	unsigned short	datalen; 
-	unsigned int	result; 
+	unsigned short	datalen;
+	unsigned int	result;
 	char	AccountName[MAX_NAME_LEN+16];
 	char	CharName[MAX_NAME_LEN+16];
 	char	RealmName[MAX_NAME_LEN+16];
-	t_d2gs_d2dbs_get_data_request	* getcom; 
-	t_d2dbs_d2gs_get_data_reply	* getret; 
+	t_d2gs_d2dbs_get_data_request	* getcom;
+	t_d2dbs_d2gs_get_data_reply	* getret;
 	unsigned char	* readpos;
 	unsigned char	* writepos;
 	unsigned char	databuf[kBufferSize ];
@@ -398,7 +398,7 @@ static unsigned int dbs_packet_getdata(t_d2dbs_connection * conn)
 	readpos=conn->ReadBuf;
 	getcom=(t_d2gs_d2dbs_get_data_request *)readpos;
 	datatype=bn_short_get(getcom->datatype);
-	
+
 	readpos+=sizeof(*getcom);
 	strncpy(AccountName,readpos,MAX_NAME_LEN);
 	AccountName[MAX_NAME_LEN]=0;
@@ -428,16 +428,16 @@ static unsigned int dbs_packet_getdata(t_d2dbs_connection * conn)
 			eventlog(eventlog_level_info,  __FUNCTION__, "lock char %s(*%s)@%s for gs %s(%d)",CharName,AccountName,RealmName,conn->serverip,conn->serverid);
 #ifdef WITH_STORAGE_DB
 			datalen=db_d2char_loaddata(prefs_get_db_char_table(),AccountName,CharName,RealmName,databuf,kBufferSize);
-#else			
+#else
 			datalen=dbs_packet_getdata_charsave(conn,AccountName,CharName,databuf,kBufferSize );
-#endif			
+#endif
 			if (datalen>0) {
 				result=D2DBS_GET_DATA_SUCCESS;
 #ifdef WITH_STORAGE_DB
 				charinfolen=db_d2char_loadinfo(prefs_get_db_char_table(),AccountName,CharName,RealmName,&charinfo,sizeof(charinfo));
 #else
 				charinfolen=dbs_packet_getdata_charinfo(conn,AccountName,CharName,(unsigned char *)&charinfo,sizeof(charinfo));
-#endif				
+#endif
 				if (charinfolen>0) {
 					result=D2DBS_GET_DATA_SUCCESS;
 				} else {
@@ -460,7 +460,7 @@ static unsigned int dbs_packet_getdata(t_d2dbs_connection * conn)
 					eventlog(eventlog_level_info,  __FUNCTION__, "unlock char %s(*%s)@%s for gs %s(%d)",CharName,
 						AccountName,RealmName,conn->serverip,conn->serverid);
 				}
-					
+
 			}
 		}
 		if (result==D2DBS_GET_DATA_SUCCESS) {
@@ -480,9 +480,9 @@ static unsigned int dbs_packet_getdata(t_d2dbs_connection * conn)
 		datalen=db_d2char_loadinfo(prefs_get_db_char_table(),AccountName,CharName,RealmName,(t_d2charinfo_file *) databuf,kBufferSize);
 #else
 		datalen=dbs_packet_getdata_charinfo(conn,AccountName,CharName,databuf,kBufferSize );
-#endif		
+#endif
 		if (datalen>0) result=D2DBS_GET_DATA_SUCCESS;
-		else { 
+		else {
 			datalen=0;
 			result=D2DBS_GET_DATA_FAILED;
 		}
@@ -511,13 +511,13 @@ static unsigned int dbs_packet_updateladder(t_d2dbs_connection * conn)
 {
 	char	CharName[MAX_NAME_LEN+16];
 	char	RealmName[MAX_NAME_LEN+16];
-	t_d2gs_d2dbs_update_ladder	* updateladder; 
+	t_d2gs_d2dbs_update_ladder	* updateladder;
 	unsigned char	* readpos;
 	t_d2ladder_info		charladderinfo;
 
 	readpos=conn->ReadBuf;
 	updateladder=(t_d2gs_d2dbs_update_ladder *)readpos;
-	
+
 	readpos+=sizeof(*updateladder);
 	strncpy(CharName,readpos,MAX_NAME_LEN);
 	CharName[MAX_NAME_LEN]=0;
@@ -546,12 +546,12 @@ static unsigned int dbs_packet_charlock(t_d2dbs_connection * conn)
 	char CharName[MAX_NAME_LEN+16];
 	char AccountName[MAX_NAME_LEN+16];
 	char RealmName[MAX_NAME_LEN+16];
-	t_d2gs_d2dbs_char_lock * charlock; 
-	unsigned char * readpos;
+	t_d2gs_d2dbs_char_lock * charlock;
+	const char * readpos;
 
 	readpos=conn->ReadBuf;
 	charlock=(t_d2gs_d2dbs_char_lock*)readpos;
-	
+
 	readpos+=sizeof(*charlock);
 	strncpy(AccountName,readpos,MAX_NAME_LEN);
 	AccountName[MAX_NAME_LEN]=0;
@@ -591,11 +591,11 @@ static unsigned int dbs_packet_charlock(t_d2dbs_connection * conn)
 	0  :  not get a whole packet,do nothing
 	-1 :  error
 */
-extern int dbs_packet_handle(t_d2dbs_connection * conn) 
+extern int dbs_packet_handle(t_d2dbs_connection * conn)
 {
 	unsigned short		readlen,writelen;
 	t_d2dbs_d2gs_header	* readhead;
-	unsigned short		retval; 
+	unsigned short		retval;
 
 	if (conn->stats==0) {
 		if (conn->nCharsInReadBuffer<sizeof(t_d2gs_d2dbs_connect)) {

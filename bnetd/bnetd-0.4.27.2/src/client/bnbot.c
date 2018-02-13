@@ -126,6 +126,7 @@ static int selecting_get_comm(char *result, size_t result_sz) {
     ptrdiff_t thischnk;
     int r;
 
+    (void)result_sz;
     for (;;) {
 	if ((p= memchr(buffer,'\n',bufused))) {
 	    thischnk= p-buffer;
@@ -171,13 +172,13 @@ extern int main(int argc, char * argv[])
     unsigned int       commpos;
     unsigned int       currsize;
     int                fd_stdin;
-    
+
     if (argc<1 || !argv || !argv[0])
     {
 	fprintf(stderr,"bad arguments\n");
 	return STATUS_FAILURE;
     }
-    
+
     for (a=1; a<argc; a++)
 	if (servname && isdigit((int)argv[a][0]) && a+1>=argc)
 	{
@@ -201,24 +202,24 @@ extern int main(int argc, char * argv[])
 	    fprintf(stderr,"%s: unknown option \"%s\"\n",argv[0],argv[a]);
 	    usage(argv[0]);
 	}
-    
+
     if (servport==0)
         servport = BNETD_SERV_PORT;
     if (!servname)
        servname = BNETD_DEFAULT_HOST;
-    
+
     if (psock_init()<0)
     {
         fprintf(stderr,"%s: could not inialialize socket functions\n",argv[0]);
         return STATUS_FAILURE;
     }
-    
+
     if (!(host = gethostbyname(servname)))
     {
 	fprintf(stderr,"%s: unknown host \"%s\"\n",argv[0],servname);
 	return STATUS_FAILURE;
     }
-    
+
     fd_stdin = fileno(stdin);
 
     if ((sd = psock_socket(PSOCK_PF_INET,PSOCK_SOCK_STREAM,PSOCK_IPPROTO_TCP))<0)
@@ -226,7 +227,7 @@ extern int main(int argc, char * argv[])
 	fprintf(stderr,"%s: could not create socket (psock_socket: %s)\n",argv[0],strerror(psock_errno()));
 	return STATUS_FAILURE;
     }
-    
+
     memset(&saddr,0,sizeof(saddr));
     saddr.sin_family = PSOCK_AF_INET;
     saddr.sin_port   = htons(servport);
@@ -236,19 +237,19 @@ extern int main(int argc, char * argv[])
 	fprintf(stderr,"%s: could not connect to server \"%s\" port %hu (psock_connect: %s)\n",argv[0],servname,servport,strerror(psock_errno()));
 	return STATUS_FAILURE;
     }
-    
+
     if (psock_ctl(sd,PSOCK_NONBLOCK)<0)
     {
 	fprintf(stderr,"%s: could not set TCP socket to non-blocking mode (psock_ctl: %s)\n",argv[0],strerror(psock_errno()));
 	psock_close(sd);
 	return STATUS_FAILURE;
     }
-    
+
     printf("Connected to %s:%hu.\n",inet_ntoa(saddr.sin_addr),servport);
 #ifdef CLIENTDEBUG
     eventlog_set(stderr);
 #endif
-    
+
     if (!(packet = packet_create(packet_class_init)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -257,13 +258,13 @@ extern int main(int argc, char * argv[])
     bn_byte_set(&packet->u.client_initconn.class,CLIENT_INITCONN_CLASS_BOT);
     client_blocksend_packet(sd,packet);
     packet_del_ref(packet);
-    
+
     if (!(rpacket = packet_create(packet_class_raw)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
 	return STATUS_FAILURE;
     }
-    
+
     if (!(packet = packet_create(packet_class_raw)))
     {
 	fprintf(stderr,"%s: could not create packet\n",argv[0]);
@@ -280,31 +281,31 @@ extern int main(int argc, char * argv[])
 	if (fcntl(0, F_SETFL, org_stdin_flags | O_NONBLOCK))
 	    { perror("bnbot: fcntl F_SETFL"); exit(1); }
     }
-    
+
     {
 	int            highest_fd;
 	t_psock_fd_set rfds;
-	
+
 	PSOCK_FD_ZERO(&rfds);
 	highest_fd = fd_stdin;
 	if (sd>highest_fd)
 	    highest_fd = sd;
-	
+
 	commpos = 0;
 	text[0] = '\0';
-	
+
 	for (;;)
 	{
 	    PSOCK_FD_SET(fd_stdin,&rfds);
 	    PSOCK_FD_SET(sd,&rfds);
-	    
+
 	    if (psock_select(highest_fd+1,&rfds,NULL,NULL,NULL)<0)
 	    {
 		if (errno!=PSOCK_EINTR)
 		    fprintf(stderr,"%s: select failed (select: %s)\n",argv[0],strerror(errno));
 		continue;
 	    }
-	    
+
 	    if (PSOCK_FD_ISSET(sd,&rfds)) /* got network data */
 	    {
 		packet_set_size(rpacket,MAX_PACKET_SIZE-1);
@@ -314,16 +315,16 @@ extern int main(int argc, char * argv[])
 		    psock_close(sd);
 		    sd = -1;
 		}
-		
+
 		if (currsize>0)
 		{
 		    char * str=packet_get_raw_data(rpacket,0);
-		    
+
 		    str[currsize] = '\0';
 		    printf("%s\n",str);
 		    fflush(stdout);
 		}
-		
+
 		if (sd==-1) /* if connection was closed */
 		{
 		    printf("Connection closed by server.\n");
@@ -331,7 +332,7 @@ extern int main(int argc, char * argv[])
 		    return STATUS_SUCCESS;
 		}
 	    }
-	    
+
 	    if (PSOCK_FD_ISSET(fd_stdin,&rfds)) /* got keyboard data */
 	    {
 	        for (;;) {
@@ -339,10 +340,10 @@ extern int main(int argc, char * argv[])
 		    {
 		    case -1: /* cancel */
 			return STATUS_FAILURE;
-		    
+
 		    case 0: /* timeout */
 			goto xit_loop;
-		    
+
 		    case 1:
 			if (!(packet = packet_create(packet_class_raw)))
 		        {
@@ -362,6 +363,7 @@ extern int main(int argc, char * argv[])
 	    }
 	}
     }
-    
+
+    (void)commpos;
     /* not reached */
 }

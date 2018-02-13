@@ -90,7 +90,7 @@
 /* Define to 1 if you have the `ftime' function. */
 #undef HAVE_FTIME
 
-/* Define to 1 if the C complier supports __func__ */
+/* Define if the C complier supports __func__ */
 #undef HAVE_FUNC
 
 /* Define to 1 if you have the `getenv' function. */
@@ -153,9 +153,6 @@
 /* Define to 1 if you have the <libintl.h> header file. */
 #undef HAVE_LIBINTL_H
 
-/* Define to 1 if you have the `pcap' library (-lpcap). */
-#undef HAVE_LIBPCAP
-
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
@@ -175,7 +172,7 @@
 /* Define to 1 if you have the <malloc/malloc.h> header file. */
 #undef HAVE_MALLOC_MALLOC_H
 
-/* Define to 1 if the compiler supports member constants */
+/* define if the compiler supports member constants */
 #undef HAVE_MEMBER_CONSTANTS
 
 /* Define to 1 if you have the `memchr' function. */
@@ -461,15 +458,14 @@
 /* Define to 1 if you have the `_mkdir' function. */
 #undef HAVE__MKDIR
 
-/* Define to 1 if your compiler has support for __attribute__ */
+/* define if your compiler has __attribute__ */
 #undef HAVE___ATTRIBUTE__
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
 #undef LSTAT_FOLLOWS_SLASHED_SYMLINK
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Define to 1 if mkdir takes only one argument. */

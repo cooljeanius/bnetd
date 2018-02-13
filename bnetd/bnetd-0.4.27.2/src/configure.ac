@@ -1,4 +1,4 @@
-#                                               -*- Autoconf -*-
+dnl#                                               -*- Autoconf -*-
 # Copyright (C) 1999 Rob Crittenden (rcrit@greyoak.com)
 # Copyright (C) 1999, 2000 Ross Combs (rocombs@cs.nmsu.edu)
 #
@@ -37,7 +37,7 @@ AM_SANITY_CHECK
 AM_MAKE_INCLUDE
 m4_ifdef([AM_SILENT_RULES],[
 AM_SILENT_RULES([no])
-],[])
+],[])dnl
 
 # Checks for programs.
 AM_PROG_AS
@@ -64,7 +64,7 @@ if test "x${XCODEBUILD}" != "x"; then
       AC_MSG_RESULT([${XCODEBUILD_VERSION}])
 fi
 AC_PATH_PROG([RMDIR],[rmdir])
-AC_PATH_PROG([ECHO],[echo])
+AC_PATH_PROG([ECHO],[echo])dnl
 
 # Checks compiler.
 AC_PROG_CPP
@@ -93,7 +93,7 @@ fi
 # Custom checks.
 zwarnflags=""
 AC_ARG_WITH([warn],[AS_HELP_STRING([--with-warn],[enable a certain set of specific compiler warnings])],[
-for warning_flag in $(echo "-pedantic -Wall -W -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses"); do
+for warning_flag in $(echo "-Wall -Wextra -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses -Wdangling-else"); do
 	AX_CHECK_COMPILE_FLAG([${warning_flag}],[zwarnflags="${zwarnflags} ${warning_flag}"])
 done
 ])
@@ -101,10 +101,10 @@ AC_ARG_WITH([warn-lite],[AS_HELP_STRING([--with-warn-lite],[enable few compiler 
 for lite_warning_flag in $(echo "-pedantic -Wall -Wno-attributes -Wno-sign-compare -Wno-parentheses"); do
 	AX_CHECK_COMPILE_FLAG([${lite_warning_flag}],[zwarnflags="${zwarnflags} ${lite_warning_flag}"])
 done
-])
+])dnl
 
 zlangflags=""
-AC_ARG_WITH([ansi],[AS_HELP_STRING([--with-ansi],[use ANSI C mode])], [zlangflags="-ansi -pedantic"])
+AC_ARG_WITH([ansi],[AS_HELP_STRING([--with-ansi],[use ANSI C mode])], [zlangflags="-ansi -pedantic"])dnl
 
 extra_include=""
 AC_ARG_WITH([includes],[AS_HELP_STRING([--with-includes=DIR],[search include DIR for header files])],[
@@ -119,7 +119,7 @@ x/*|x.*)
 *)
   AC_MSG_RESULT([not adding any includes])
   ;;
-esac])
+esac])dnl
 
 extra_lib_dir=""
 AC_ARG_WITH([libraries],[AS_HELP_STRING([--with-libraries=DIR],[search library DIR for libraries])],[
@@ -134,20 +134,20 @@ x/*|x.*)
 *)
   AC_MSG_RESULT([not adding any libs])
   ;;
-esac])
+esac])dnl
 
 extra_lib=""
-AC_ARG_WITH([efence],[AS_HELP_STRING([--with-efence],[link with Electric Fence to find memory problems])],[extra_lib="${extra_lib} -lefence"])
+AC_ARG_WITH([efence],[AS_HELP_STRING([--with-efence],[link with Electric Fence to find memory problems])],[extra_lib="${extra_lib} -lefence"])dnl
 
 extra_define=""
 AC_ARG_WITH([debug-all],[AS_HELP_STRING([--with-debug-all],[include debugging code])],[extra_define="${extra_define} -DDEBUG_ACCOUNT -DCLIENTDEBUG -DLIST_DEBUG -DHASHTABLE_DEBUG -DUSE_CHECK_ALLOC -DTESTUNGET -DLADDER_DEBUG"])
 AC_ARG_WITH([acct-dyn-load],[AS_HELP_STRING([--with-acct-dyn-load],[do not load all account at start])],[extra_define="${extra_define} -DACCT_DYN_LOAD -UWITH_BITS"])
 AC_ARG_WITH([acct-dyn-unload],[AS_HELP_STRING([--with-acct-dyn-unload],[unload unused account])],[extra_define="${extra_define} -DACCT_DYN_UNLOAD -DACCT_DYN_LOAD -UWITH_BITS"])
 AC_ARG_WITH([gamei-server],[AS_HELP_STRING([--with-gamei-server],[gamei like server punctation])],[extra_define="${extra_define} -DGAMEI_SERVER"])
-AC_ARG_WITH([bits],[AS_HELP_STRING([--with-bits],[include BITS patch. (EXPERIMENTAL)])],[extra_define="${extra_define} -DWITH_BITS"])
+AC_ARG_WITH([bits],[AS_HELP_STRING([--with-bits],[include BITS patch. (EXPERIMENTAL)])],[extra_define="${extra_define} -DWITH_BITS"])dnl
 
 AC_ARG_WITH([storage-mysql],[AS_HELP_STRING([--with-storage-mysql],[include MySQL DataBase storage. (EXPERIMENTAL)])],[extra_define="${extra_define} -DWITH_MYSQL -DWITH_STORAGE_DB"
-  extra_lib="${extra_lib} -lmysqlclient"])
+  extra_lib="${extra_lib} -lmysqlclient"])dnl
 
 
 dnl# Enable poll()
@@ -170,7 +170,7 @@ AC_ARG_ENABLE([poll],
     ac_cv_func_poll='no'
     ;;
   esac
-])
+])dnl
 
 dnl# Shamesly stolen from squid 2.3 configure.in
 dnl# This has to be before AC_CHECK_FUNCS
@@ -224,7 +224,7 @@ CPPFLAGS="${CPPFLAGS} ${extra_include}"
 
 dnl# This is our invention so we have to substitute it ourselves:
 dnl# (autoconf already uses DEFS)
-AC_SUBST([DEFINES])
+AC_SUBST([DEFINES])dnl
 
 # Checks for compiler quirks.
 AC_PROG_GCC_TRADITIONAL
@@ -245,8 +245,7 @@ AC_CHECK_LIB([m],[pow],[LIBS="${LIBS} -lm"])
 AC_CHECK_LIB([nsl],[gethostbyname],[LIBS="${LIBS} -lnsl"])
 AC_CHECK_LIB([socket],[socket],[LIBS="${LIBS} -lsocket"])
 AC_CHECK_LIB([resolv],[inet_aton],[LIBS="${LIBS} -lresolv"])
-# FIXME: Replace `main' with a function in `-lpcap':
-AC_CHECK_LIB([pcap],[main])
+AC_CHECK_LIB([pcap],[pcap_lookupdev],[LIBS="${LIBS} -lpcap"])dnl
 
 # Checks for header files.
 AM_HEADER_TIOCGWINSZ_NEEDS_SYS_IOCTL
@@ -261,7 +260,7 @@ AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h fcntl.h grp.h i386/_types.h \
                   sys/file.h sys/ioctl.h sys/param.h sys/poll.h \
                   sys/select.h sys/socket.h sys/stropts.h sys/time.h \
                   sys/timeb.h sys/utsname.h sys/wait.h \
-                  termio.h termios.h time.h varargs.h])
+                  termio.h termios.h time.h varargs.h])dnl
 
 # Checks for typedefs and structures
 AC_C_BIGENDIAN
@@ -301,7 +300,7 @@ AC_CHECK_ALIGNOF([unsigned int])
 AC_CHECK_SIZEOF([unsigned long],[4])
 AC_CHECK_ALIGNOF([unsigned long])
 AC_CHECK_SIZEOF([unsigned long long],[0])
-AC_CHECK_ALIGNOF([unsigned long long])
+AC_CHECK_ALIGNOF([unsigned long long])dnl
 
 # Checks for library functions.
 AC_FUNC_CLOSEDIR_VOID
@@ -326,7 +325,7 @@ AC_CHECK_FUNCS([atexit atoi bcopy chdir cfree difftime dup2 ftime \
                 strpbrk strrchr strsep strstr strtol strtoul strtoull \
                 uname wait waitpid])
 AC_CHECK_DECLS([NULL])
-AC_CHECK_DECLS([mkdir])
+AC_CHECK_DECLS([mkdir])dnl
 
 if test X"${am_cv_prog_cc_stdc}" = X"no"; then
     COMPILEANSI1='${PREPROCESS} $< | sed '"'"'s/^# *\([0-9][0-9]*\)  *\([^ ]*[a-z][^ ]*\) *.*$$/#line \1 \2/'"'"' | ${SRC_ACDIR}/ansi2knr > ${SRC_SRCDIR}/.ansi2knr_tmp.c'
@@ -349,7 +348,8 @@ AC_SUBST([ANSI2KNR_DEP])
 AC_SUBST([INSTALLdir])
 AC_SUBST([install_sh])
 AC_SUBST([RMDIR])
-AC_SUBST([ECHO])
+AC_SUBST([ECHO])dnl
 
+# Output.
 AC_CONFIG_FILES([Makefile Makefile.bak])
 AC_OUTPUT
