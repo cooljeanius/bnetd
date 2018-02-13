@@ -34,7 +34,7 @@ typedef struct {
 	int	nCharsInReadBuffer;
 	int	nCharsInWriteBuffer;
 	const char	ReadBuf[kBufferSize];
-	unsigned char	WriteBuf[kBufferSize];
+	char	WriteBuf[kBufferSize];
 } t_d2dbs_connection;
 
 typedef struct raw_preset_d2gsid {

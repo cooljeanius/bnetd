@@ -29,6 +29,7 @@
 		613D92C116BFB8C4008BA576 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		613D92C316BFB8C4008BA576 /* bnetd.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bnetd.1; sourceTree = "<group>"; };
 		613D930116BFB8FC008BA576 /* src.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = src.xcodeproj; path = "bnetd-0.4.25/src/src.xcodeproj"; sourceTree = "<group>"; };
+		A57988F520339DA10096964C /* bnetd_prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bnetd_prefix.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,8 +63,9 @@
 			isa = PBXGroup;
 			children = (
 				613D930116BFB8FC008BA576 /* src.xcodeproj */,
-				613D92C116BFB8C4008BA576 /* main.c */,
+				A57988F520339DA10096964C /* bnetd_prefix.h */,
 				613D92C316BFB8C4008BA576 /* bnetd.1 */,
+				613D92C116BFB8C4008BA576 /* main.c */,
 			);
 			path = bnetd;
 			sourceTree = "<group>";
@@ -159,6 +161,8 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = bnetd/bnetd_prefix.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",

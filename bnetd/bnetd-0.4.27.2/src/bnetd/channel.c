@@ -97,544 +97,545 @@ static int channellist_do_destroy(t_list * channellist, unsigned int flag_dropme
 
 extern t_channel * channel_create(char const * fullname, char const * shortname, char const * clienttag, t_channel_flags flags, t_channel_loglevel logflag, char const * country, char const * realmname, int maxmembers, char const * password)
 {
-    t_channel * channel;
-    
-    if (!fullname)
-    {
-        eventlog(eventlog_level_error,"channel_create","got NULL fullname");
-	    return NULL;
-    }
-    if (fullname[0]=='\0')
-    {
-        eventlog(eventlog_level_error,"channel_create","got empty fullname");
-    	return NULL;
-    }
-    if (shortname && shortname[0]=='\0')
-    {
-        eventlog(eventlog_level_error,"channel_create","got empty shortname");
-	    return NULL;
-    }
-    if (clienttag && strlen(clienttag)!=4)
-    {
-    	eventlog(eventlog_level_error,"channel_create","client tag has bad length (%u chars)",strlen(clienttag));
-	    return NULL;
-    }
+  t_channel * channel;
 
-    /* non-permanent already checks for this in conn_set_channel */
-    if (flags & channel_flags_permanent)
+  if (!fullname)
+  {
+    eventlog(eventlog_level_error,"channel_create","got NULL fullname");
+    return NULL;
+  }
+  if (fullname[0]=='\0')
+  {
+    eventlog(eventlog_level_error,"channel_create","got empty fullname");
+    return NULL;
+  }
+  if (shortname && shortname[0]=='\0')
+  {
+    eventlog(eventlog_level_error,"channel_create","got empty shortname");
+    return NULL;
+  }
+  if (clienttag && strlen(clienttag)!=4)
+  {
+    eventlog(eventlog_level_error, "channel_create",
+	     "client tag has bad length (%zu chars)", strlen(clienttag));
+    return NULL;
+  }
+
+  /* non-permanent already checks for this in conn_set_channel */
+  if (flags & channel_flags_permanent)
+  {
+    if (channellist_find_channel_by_fullname(fullname))
     {
-    	if (channellist_find_channel_by_fullname(fullname))
-	    {
-	        eventlog(eventlog_level_error,"channel_create","could not create duplicate permanent channel (fullname \"%s\")",fullname);
-    	    return NULL;
-	    }
+      eventlog(eventlog_level_error,"channel_create","could not create duplicate permanent channel (fullname \"%s\")",fullname);
+      return NULL;
     }
+  }
 
-    if (!(channel = malloc(sizeof(t_channel))))
-    {
-        eventlog(eventlog_level_error,"channel_create","could not allocate memory for channel");
-        return NULL;
-    }
+  if (!(channel = malloc(sizeof(t_channel))))
+  {
+    eventlog(eventlog_level_error,"channel_create","could not allocate memory for channel");
+    return NULL;
+  }
 
-    channel->flags = flags;
-    if (channel->flags & channel_flags_permanent)
-    {
-        channel->flags |= channel_flags_public;
-	    if (clienttag)
-	        channel->flags |= channel_flags_system;
-    }
-
-    eventlog(eventlog_level_debug,"channel_create","creating new channel \"%s\" shortname=%s%s%s clienttag=%s%s%s country=%s%s%s realm=%s%s%s password=%s%s%s",fullname,
-	     shortname?"\"":"(", /* all this is doing is printing the name in quotes else "none" in parens */
-	     shortname?shortname:"none",
-	     shortname?"\"":")",
-	     clienttag?"\"":"(",
-	     clienttag?clienttag:"none",
-	     clienttag?"\"":")",
-	     country?"\"":"(",
-             country?country:"none",
-	     country?"\"":")",
-	     realmname?"\"":"(",
-             realmname?realmname:"none",
-             realmname?"\"":")",
-	     password?"\"":"(",
-             password?password:"none",
-             password?"\"":")");
-
-    if (!(channel->name = strdup(fullname)))
-    {
-        eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->name");
-    	free(channel);
-	    return NULL;
-    }
-
-    if (!shortname)
-	    channel->shortname = NULL;
-    else
-    	if (!(channel->shortname = strdup(shortname)))
-	    {
-	        eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->shortname");
-    	    free((void *)channel->name); /* avoid warning */
-	        free(channel);
-	        return NULL;
-    	}
-
+  channel->flags = flags;
+  if (channel->flags & channel_flags_permanent)
+  {
+    channel->flags |= channel_flags_public;
     if (clienttag)
-    {
-    	if (!(channel->clienttag = strdup(clienttag)))
-	    {
-	        eventlog(eventlog_level_error,"channel_create","could not allocate memory for channel->clienttag");
-    	    if (channel->shortname)
-	    	free((void *)channel->shortname); /* avoid warning */
-	        free((void *)channel->name); /* avoid warning */
-    	    free(channel);
-	        return NULL;
-    	}
-    }
-    else
-	    channel->clienttag = NULL;
+      channel->flags |= channel_flags_system;
+  }
 
-    if (country)
-    {
-    	if (!(channel->country = strdup(country)))
-	    {
-            eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->country");
-    	    if (channel->clienttag)
-	            free((void *)channel->clienttag); /* avoid warning */
-	        if (channel->shortname)
-	            free((void *)channel->shortname); /* avoid warning */
-    	    free((void *)channel->name); /* avoid warning */
-	        free(channel);
-	        return NULL;
-        	}
-        }
-    else
-    	channel->country = NULL;
+  eventlog(eventlog_level_debug,"channel_create","creating new channel \"%s\" shortname=%s%s%s clienttag=%s%s%s country=%s%s%s realm=%s%s%s password=%s%s%s",fullname,
+	   shortname?"\"":"(", /* all this is doing is printing the name in quotes else "none" in parens */
+	   shortname?shortname:"none",
+	   shortname?"\"":")",
+	   clienttag?"\"":"(",
+	   clienttag?clienttag:"none",
+	   clienttag?"\"":")",
+	   country?"\"":"(",
+	   country?country:"none",
+	   country?"\"":")",
+	   realmname?"\"":"(",
+	   realmname?realmname:"none",
+	   realmname?"\"":")",
+	   password?"\"":"(",
+	   password?password:"none",
+	   password?"\"":")");
 
-    if (realmname)
-    {
-    	if (!(channel->realmname = strdup(realmname)))
-        {
-            eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->realmname");
-	        if (channel->country)
-	        	free((void *)channel->country); /* avoid warning */
-    	    if (channel->clienttag)
-	            free((void *)channel->clienttag); /* avoid warning */
-	        if (channel->shortname)
-	            free((void *)channel->shortname); /* avoid warning */
-    	    free((void *)channel->name); /* avoid warning */
-	        free(channel);
-	        return NULL;
-       	}
-    }
-    else
-        channel->realmname=NULL;
+  if (!(channel->name = strdup(fullname)))
+  {
+    eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->name");
+    free(channel);
+    return NULL;
+  }
 
-    if (password)
+  if (!shortname)
+    channel->shortname = NULL;
+  else
+    if (!(channel->shortname = strdup(shortname)))
     {
-    	if (!(channel->password = strdup(password)))
-        {
-            eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->password");
-	        if (channel->country)
-	        	free((void *)channel->country); /* avoid warning */
-    	    if (channel->clienttag)
-	            free((void *)channel->clienttag); /* avoid warning */
-	        if (channel->shortname)
-	            free((void *)channel->shortname); /* avoid warning */
-	        if (channel->realmname)
-	            free((void *)channel->realmname); /* avoid warning */
-    	    free((void *)channel->name); /* avoid warning */
-	        free(channel);
-	        return NULL;
-       	}
-    }
-    else
-        channel->password = NULL;
-
-    if (!(channel->banlist = list_create()))
-    {
-    	eventlog(eventlog_level_error,"channel_create","could not create list");
-	    if (channel->country)
-	        free((void *)channel->country); /* avoid warning */
-        if (channel->realmname)
-            free((void *)channel->realmname); /*avoid warining */
-    	if (channel->clienttag)
-	        free((void *)channel->clienttag); /* avoid warning */
-    	if (channel->shortname)
-	        free((void *)channel->shortname); /* avoid warning */
-    	if (channel->password)
-	        free((void *)channel->password); /* avoid warning */
-    	free((void *)channel->name); /* avoid warning */
-	    free(channel);
-    	return NULL;
+      eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->shortname");
+      free((void *)channel->name); /* avoid warning */
+      free(channel);
+      return NULL;
     }
 
-    totalcount++;
-    if (totalcount==0) /* if we wrap (yeah right), don't use id 0 */
-	totalcount = 1;
-    channel->id = totalcount;
-    channel->maxmembers = maxmembers;
-    channel->currmembers = 0;
-    channel->memberlist = NULL;
+  if (clienttag)
+  {
+    if (!(channel->clienttag = strdup(clienttag)))
+    {
+      eventlog(eventlog_level_error,"channel_create","could not allocate memory for channel->clienttag");
+      if (channel->shortname)
+	free((void *)channel->shortname); /* avoid warning */
+      free((void *)channel->name); /* avoid warning */
+      free(channel);
+      return NULL;
+    }
+  }
+  else
+    channel->clienttag = NULL;
+
+  if (country)
+  {
+    if (!(channel->country = strdup(country)))
+    {
+      eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->country");
+      if (channel->clienttag)
+	free((void *)channel->clienttag); /* avoid warning */
+      if (channel->shortname)
+	free((void *)channel->shortname); /* avoid warning */
+      free((void *)channel->name); /* avoid warning */
+      free(channel);
+      return NULL;
+    }
+  }
+  else
+    channel->country = NULL;
+
+  if (realmname)
+  {
+    if (!(channel->realmname = strdup(realmname)))
+    {
+      eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->realmname");
+      if (channel->country)
+	free((void *)channel->country); /* avoid warning */
+      if (channel->clienttag)
+	free((void *)channel->clienttag); /* avoid warning */
+      if (channel->shortname)
+	free((void *)channel->shortname); /* avoid warning */
+      free((void *)channel->name); /* avoid warning */
+      free(channel);
+      return NULL;
+    }
+  }
+  else
+    channel->realmname=NULL;
+
+  if (password)
+  {
+    if (!(channel->password = strdup(password)))
+    {
+      eventlog(eventlog_level_info,"channel_create","unable to allocate memory for channel->password");
+      if (channel->country)
+	free((void *)channel->country); /* avoid warning */
+      if (channel->clienttag)
+	free((void *)channel->clienttag); /* avoid warning */
+      if (channel->shortname)
+	free((void *)channel->shortname); /* avoid warning */
+      if (channel->realmname)
+	free((void *)channel->realmname); /* avoid warning */
+      free((void *)channel->name); /* avoid warning */
+      free(channel);
+      return NULL;
+    }
+  }
+  else
+    channel->password = NULL;
+
+  if (!(channel->banlist = list_create()))
+  {
+    eventlog(eventlog_level_error,"channel_create","could not create list");
+    if (channel->country)
+      free((void *)channel->country); /* avoid warning */
+    if (channel->realmname)
+      free((void *)channel->realmname); /*avoid warining */
+    if (channel->clienttag)
+      free((void *)channel->clienttag); /* avoid warning */
+    if (channel->shortname)
+      free((void *)channel->shortname); /* avoid warning */
+    if (channel->password)
+      free((void *)channel->password); /* avoid warning */
+    free((void *)channel->name); /* avoid warning */
+    free(channel);
+    return NULL;
+  }
+
+  totalcount++;
+  if (totalcount==0) /* if we wrap (yeah right), don't use id 0 */
+    totalcount = 1;
+  channel->id = totalcount;
+  channel->maxmembers = maxmembers;
+  channel->currmembers = 0;
+  channel->memberlist = NULL;
 
 #ifdef WITH_BITS
-    channel->opr        = 0;
-    channel->next_opr   = 0;
+  channel->opr        = 0;
+  channel->next_opr   = 0;
 
-    if (bits_master)
-    	send_bits_chat_channellist_add(channel,NULL);
-    channel->ref = 0;
+  if (bits_master)
+    send_bits_chat_channellist_add(channel,NULL);
+  channel->ref = 0;
 #else
-    channel->opr        = NULL;
-    channel->next_opr   = NULL;
+  channel->opr        = NULL;
+  channel->next_opr   = NULL;
 #endif
 
+  channel->loglevel = channel_loglevel_none;
+  if (logflag)
+  {
+    time_t      now;
+    struct tm * tmnow;
+    char        dstr[64];
+    char        timetemp[CHANLOG_TIME_MAXLEN];
+
+    now = time(NULL);
+
+    if (!(tmnow = gmtime(&now)))
+      dstr[0] = '\0';
+    else
+      sprintf(dstr,"%04d%02d%02d%02d%02d%02d",
+	      1900+tmnow->tm_year,
+	      tmnow->tm_mon+1,
+	      tmnow->tm_mday,
+	      tmnow->tm_hour,
+	      tmnow->tm_min,
+	      tmnow->tm_sec);
+
+    if (!(channel->logname = malloc(strlen(prefs_get_chanlogdir())+9+strlen(dstr)+1+6+1))) /* dir + "/chanlog-" + dstr + "-" + id + NUL */
+    {
+      eventlog(eventlog_level_error,"channel_create","could not allocate memory for channel->logname");
+      list_destroy(channel->banlist);
+      if (channel->country)
+	free((void *)channel->country); /* avoid warning */
+      if (channel->realmname)
+	free((void *) channel->realmname); /* avoid warning */
+      if (channel->clienttag)
+	free((void *)channel->clienttag); /* avoid warning */
+      if (channel->shortname)
+	free((void *)channel->shortname); /* avoid warning */
+      if (channel->password)
+	free((void *)channel->password); /* avoid warning */
+      free((void *)channel->name); /* avoid warning */
+      free(channel);
+      return NULL;
+    }
+    sprintf(channel->logname,"%s/chanlog-%s-%06u",prefs_get_chanlogdir(),dstr,channel->id);
+
+    if (!(channel->log = fopen(channel->logname,"w")))
+      eventlog(eventlog_level_error,"channel_create","could not open channel log \"%s\" for writing (fopen: %s)",channel->logname,strerror(errno));
+    else
+    {
+      channel->loglevel=logflag;
+      fprintf(channel->log,"name=\"%s\"\n",channel->name);
+      if (channel->shortname)
+	fprintf(channel->log,"shortname=\"%s\"\n",channel->shortname);
+      else
+	fprintf(channel->log,"shortname=none\n");
+      fprintf(channel->log,"permanent=\"%s\"\n",(channel->flags & channel_flags_permanent)?"true":"false");
+      fprintf(channel->log,"allowbotse=\"%s\"\n",(channel->flags & channel_flags_allowbots)?"true":"false");
+      fprintf(channel->log,"allowopers=\"%s\"\n",(channel->flags & channel_flags_allowopers)?"true":"false");
+      fprintf(channel->log,"loglevel=\"%s,%s\"\n",((channel_loglevel_public&channel->loglevel)?"public":""),((channel_loglevel_command&channel->loglevel)?"command":""));
+      if (channel->clienttag)
+	fprintf(channel->log,"clienttag=\"%s\"\n",channel->clienttag);
+      else
+	fprintf(channel->log,"clienttag=none\n");
+
+      if (tmnow)
+	strftime(timetemp,sizeof(timetemp),CHANLOG_TIME_FORMAT,tmnow);
+      else
+	strcpy(timetemp,"?");
+      fprintf(channel->log,"created=\"%s\"\n\n",timetemp);
+      fflush(channel->log);
+    }
+  }
+  if (!(channel->loglevel))
+  {
+    channel->logname = NULL;
+    channel->log = NULL;
     channel->loglevel = channel_loglevel_none;
-    if (logflag)
-    {
-    	time_t      now;
-	    struct tm * tmnow;
-    	char        dstr[64];
-	    char        timetemp[CHANLOG_TIME_MAXLEN];
+  }
 
-    	now = time(NULL);
+  if (list_prepend_data(channellist_head,channel)<0)
+  {
+    eventlog(eventlog_level_error,"channel_create","could not prepend temp");
+    if (channel->log)
+      if (fclose(channel->log)<0)
+	eventlog(eventlog_level_error,"channel_create","could not close channel log \"%s\" after writing (fclose: %s)",channel->logname,strerror(errno));
+    if (channel->logname)
+      free((void *)channel->logname); /* avoid warning */
+    list_destroy(channel->banlist);
+    if (channel->country)
+      free((void *)channel->country); /* avoid warning */
+    if (channel->realmname)
+      free((void *) channel->realmname); /* avoid warning */
+    if (channel->clienttag)
+      free((void *)channel->clienttag); /* avoid warning */
+    if (channel->shortname)
+      free((void *)channel->shortname); /* avoid warning */
+    if (channel->password)
+      free((void *)channel->password); /* avoid warning */
+    free((void *)channel->name); /* avoid warning */
+    free(channel);
+    return NULL;
+  }
 
-    	if (!(tmnow = gmtime(&now)))
-	        dstr[0] = '\0';
-    	else
-	        sprintf(dstr,"%04d%02d%02d%02d%02d%02d",
-		        1900+tmnow->tm_year,
-    		    tmnow->tm_mon+1,
-	    	    tmnow->tm_mday,
-		        tmnow->tm_hour,
-		        tmnow->tm_min,
-    		    tmnow->tm_sec);
+  if (!(channel->topic = strdup("")))
+  {
+    eventlog(eventlog_level_error,"channel_create","could not allocate memmory for topic");
+    if (channel->log)
+      if (fclose(channel->log)<0)
+	eventlog(eventlog_level_error,"channel_create","could not close channel log \"%s\" after writing (fclose: %s)",channel->logname,strerror(errno));
+    if (channel->logname)
+      free((void *)channel->logname); /* avoid warning */
+    list_destroy(channel->banlist);
+    if (channel->country)
+      free((void *)channel->country); /* avoid warning */
+    if (channel->realmname)
+      free((void *) channel->realmname); /* avoid warning */
+    if (channel->clienttag)
+      free((void *)channel->clienttag); /* avoid warning */
+    if (channel->shortname)
+      free((void *)channel->shortname); /* avoid warning */
+    if (channel->password)
+      free((void *)channel->password); /* avoid warning */
+    free((void *)channel->name); /* avoid warning */
+    /* FIXME: We should cleanup after list_prepend_data */
+    free(channel);
+    return NULL;
+  }
 
-    	if (!(channel->logname = malloc(strlen(prefs_get_chanlogdir())+9+strlen(dstr)+1+6+1))) /* dir + "/chanlog-" + dstr + "-" + id + NUL */
-	    {
-	        eventlog(eventlog_level_error,"channel_create","could not allocate memory for channel->logname");
-    	    list_destroy(channel->banlist);
-	        if (channel->country)
-		    free((void *)channel->country); /* avoid warning */
-            if (channel->realmname)
-                free((void *) channel->realmname); /* avoid warning */
-	        if (channel->clienttag)
-		        free((void *)channel->clienttag); /* avoid warning */
-	        if (channel->shortname)
-        		free((void *)channel->shortname); /* avoid warning */
-           	if (channel->password)
-	            free((void *)channel->password); /* avoid warning */
-	        free((void *)channel->name); /* avoid warning */
-    	    free(channel);
-	        return NULL;
-    	}
-	    sprintf(channel->logname,"%s/chanlog-%s-%06u",prefs_get_chanlogdir(),dstr,channel->id);
-
-    	if (!(channel->log = fopen(channel->logname,"w")))
-	        eventlog(eventlog_level_error,"channel_create","could not open channel log \"%s\" for writing (fopen: %s)",channel->logname,strerror(errno));
-    	else
-	    {
-    	    channel->loglevel=logflag;
-	        fprintf(channel->log,"name=\"%s\"\n",channel->name);
-	        if (channel->shortname)
-        		fprintf(channel->log,"shortname=\"%s\"\n",channel->shortname);
-	        else
-        		fprintf(channel->log,"shortname=none\n");
-	        fprintf(channel->log,"permanent=\"%s\"\n",(channel->flags & channel_flags_permanent)?"true":"false");
-    	    fprintf(channel->log,"allowbotse=\"%s\"\n",(channel->flags & channel_flags_allowbots)?"true":"false");
-	        fprintf(channel->log,"allowopers=\"%s\"\n",(channel->flags & channel_flags_allowopers)?"true":"false");
-	        fprintf(channel->log,"loglevel=\"%s,%s\"\n",((channel_loglevel_public&channel->loglevel)?"public":""),((channel_loglevel_command&channel->loglevel)?"command":""));
-    	    if (channel->clienttag)
-	        	fprintf(channel->log,"clienttag=\"%s\"\n",channel->clienttag);
-    	    else
-	        	fprintf(channel->log,"clienttag=none\n");
-
-    	    if (tmnow)
-	        	strftime(timetemp,sizeof(timetemp),CHANLOG_TIME_FORMAT,tmnow);
-    	    else
-	        	strcpy(timetemp,"?");
-    	    fprintf(channel->log,"created=\"%s\"\n\n",timetemp);
-	        fflush(channel->log);
-    	}
-    }
-    if (!(channel->loglevel))
-    {
-    	channel->logname = NULL;
-	    channel->log = NULL;
-    	channel->loglevel = channel_loglevel_none;
-    }
-
-    if (list_prepend_data(channellist_head,channel)<0)
-    {
-        eventlog(eventlog_level_error,"channel_create","could not prepend temp");
-	    if (channel->log)
-	        if (fclose(channel->log)<0)
-        		eventlog(eventlog_level_error,"channel_create","could not close channel log \"%s\" after writing (fclose: %s)",channel->logname,strerror(errno));
-        if (channel->logname)
-            free((void *)channel->logname); /* avoid warning */
-        list_destroy(channel->banlist);
-        if (channel->country)
-            free((void *)channel->country); /* avoid warning */
-        if (channel->realmname)
-            free((void *) channel->realmname); /* avoid warning */
-        if (channel->clienttag)
-	        free((void *)channel->clienttag); /* avoid warning */
-        if (channel->shortname)
-	        free((void *)channel->shortname); /* avoid warning */
-    	if (channel->password)
-	        free((void *)channel->password); /* avoid warning */
-        free((void *)channel->name); /* avoid warning */
-        free(channel);
-        return NULL;
-    }
-
-    if (!(channel->topic = strdup("")))
-    {
-        eventlog(eventlog_level_error,"channel_create","could not allocate memmory for topic");
-	    if (channel->log)
-	        if (fclose(channel->log)<0)
-		        eventlog(eventlog_level_error,"channel_create","could not close channel log \"%s\" after writing (fclose: %s)",channel->logname,strerror(errno));
-	    if (channel->logname)
-	        free((void *)channel->logname); /* avoid warning */
-	    list_destroy(channel->banlist);
-    	if (channel->country)
-	        free((void *)channel->country); /* avoid warning */
-        if (channel->realmname)
-            free((void *) channel->realmname); /* avoid warning */
-    	if (channel->clienttag)
-	        free((void *)channel->clienttag); /* avoid warning */
-    	if (channel->shortname)
-	        free((void *)channel->shortname); /* avoid warning */
-    	if (channel->password)
-	        free((void *)channel->password); /* avoid warning */
-    	free((void *)channel->name); /* avoid warning */
-	    /* FIXME: We should cleanup after list_prepend_data */
-    	free(channel);
-        return NULL;
-    }
-
-    eventlog(eventlog_level_debug,"channel_create","channel created successfully");
-    return channel;
+  eventlog(eventlog_level_debug,"channel_create","channel created successfully");
+  return channel;
 }
 
 
 static int channel_do_destroy(t_list * channellist, t_channel * channel, unsigned int flag_dropmember)
 {
-    t_elem          * ban;
-    t_channelmember * member;
+  t_elem          * ban;
+  t_channelmember * member;
 
-    if (!channel)
-    {
-	    eventlog(eventlog_level_error,__FUNCTION__,"got NULL channel");
-	    return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,__FUNCTION__,"got NULL channel");
+    return -1;
+  }
 
-    if (channel->memberlist)
-    {
-        /* When called by channellist_reload, dropping of members & connections is neccessary instead of clean deletion */
-        if (flag_dropmember) {
-            while (channel->memberlist)
-	        {
-	            member = channel->memberlist;
-	            channel->memberlist = channel->memberlist->next;
-	            free((void*)member);
-	        }
-        }
-        else
-        {
-	        eventlog(eventlog_level_debug,__FUNCTION__,"channel is not empty, deferring");
-	        channel->flags &= ~channel_flags_permanent; /* make it go away when the last person leaves */
-	        return -1;
-        }
+  if (channel->memberlist)
+  {
+    /* When called by channellist_reload, dropping of members & connections is neccessary instead of clean deletion */
+    if (flag_dropmember) {
+      while (channel->memberlist)
+      {
+	member = channel->memberlist;
+	channel->memberlist = channel->memberlist->next;
+	free((void*)member);
+      }
     }
+    else
+    {
+      eventlog(eventlog_level_debug,__FUNCTION__,"channel is not empty, deferring");
+      channel->flags &= ~channel_flags_permanent; /* make it go away when the last person leaves */
+      return -1;
+    }
+  }
 
 #ifdef WITH_BITS
-    send_bits_chat_channellist_del(channel_get_channelid(channel));
+  send_bits_chat_channellist_del(channel_get_channelid(channel));
 #endif
 
-    if (list_remove_data(channellist,channel)<0)
-    {
-        eventlog(eventlog_level_error,__FUNCTION__,"could not remove item from list");
-        return -1;
-    }
+  if (list_remove_data(channellist,channel)<0)
+  {
+    eventlog(eventlog_level_error,__FUNCTION__,"could not remove item from list");
+    return -1;
+  }
 
-    if (channel->name)
-        eventlog(eventlog_level_info,__FUNCTION__,"destroying channel with name \"%s\"",channel->name);
-    else if (channel->shortname)
-        eventlog(eventlog_level_info,__FUNCTION__,"destroying channel with shortname \"%s\"",channel->shortname);
+  if (channel->name)
+    eventlog(eventlog_level_info,__FUNCTION__,"destroying channel with name \"%s\"",channel->name);
+  else if (channel->shortname)
+    eventlog(eventlog_level_info,__FUNCTION__,"destroying channel with shortname \"%s\"",channel->shortname);
 
-    LIST_TRAVERSE(channel->banlist,ban)
-    {
-	    char const * banned;
+  LIST_TRAVERSE(channel->banlist,ban)
+  {
+    char const * banned;
 
-	    if (!(banned = elem_get_data(ban)))
-	        eventlog(eventlog_level_error,__FUNCTION__,"found NULL name in banlist");
-	    else
-	        free((void *)banned); /* avoid warning */
-	    if (list_remove_elem(channel->banlist,ban)<0)
-	        eventlog(eventlog_level_error,__FUNCTION__,"unable to remove item from list");
-    }
-    list_destroy(channel->banlist);
+    if (!(banned = elem_get_data(ban)))
+      eventlog(eventlog_level_error,__FUNCTION__,"found NULL name in banlist");
+    else
+      free((void *)banned); /* avoid warning */
+    if (list_remove_elem(channel->banlist,ban)<0)
+      eventlog(eventlog_level_error,__FUNCTION__,"unable to remove item from list");
+  }
+  list_destroy(channel->banlist);
 
-    if (channel->log)
-    {
-	    time_t      now;
-	    struct tm * tmnow;
-	    char        timetemp[CHANLOG_TIME_MAXLEN];
+  if (channel->log)
+  {
+    time_t      now;
+    struct tm * tmnow;
+    char        timetemp[CHANLOG_TIME_MAXLEN];
 
-	    now = time(NULL);
-	    if ((!(tmnow = gmtime(&now))))
-	        strcpy(timetemp,"?");
-	    else
-	        strftime(timetemp,sizeof(timetemp),CHANLOG_TIME_FORMAT,tmnow);
-	    fprintf(channel->log,"\ndestroyed=\"%s\"\n",timetemp);
+    now = time(NULL);
+    if ((!(tmnow = gmtime(&now))))
+      strcpy(timetemp,"?");
+    else
+      strftime(timetemp,sizeof(timetemp),CHANLOG_TIME_FORMAT,tmnow);
+    fprintf(channel->log,"\ndestroyed=\"%s\"\n",timetemp);
 
-	    if (fclose(channel->log)<0)
-	        eventlog(eventlog_level_error,__FUNCTION__,"could not close channel log \"%s\" after writing (fclose: %s)",channel->logname,strerror(errno));
-    }
+    if (fclose(channel->log)<0)
+      eventlog(eventlog_level_error,__FUNCTION__,"could not close channel log \"%s\" after writing (fclose: %s)",channel->logname,strerror(errno));
+  }
 
-    if (channel->logname)
-    	free((void *)channel->logname); /* avoid warning */
-    if (channel->country)
-    	free((void *)channel->country); /* avoid warning */
-    if (channel->realmname)
-    	free((void *)channel->realmname); /* avoid warning */
-    if (channel->clienttag)
-    	free((void *)channel->clienttag); /* avoid warning */
-    if (channel->shortname)
-    	free((void *)channel->shortname); /* avoid warning */
-   	if (channel->password)
-        free((void *)channel->password); /* avoid warning */
-    if (channel->name)
-        free((void *)channel->name); /* avoid warning */
-    if (channel->topic)
-    	free((void *)channel->topic); /* avoid warning */
-    free(channel);
+  if (channel->logname)
+    free((void *)channel->logname); /* avoid warning */
+  if (channel->country)
+    free((void *)channel->country); /* avoid warning */
+  if (channel->realmname)
+    free((void *)channel->realmname); /* avoid warning */
+  if (channel->clienttag)
+    free((void *)channel->clienttag); /* avoid warning */
+  if (channel->shortname)
+    free((void *)channel->shortname); /* avoid warning */
+  if (channel->password)
+    free((void *)channel->password); /* avoid warning */
+  if (channel->name)
+    free((void *)channel->name); /* avoid warning */
+  if (channel->topic)
+    free((void *)channel->topic); /* avoid warning */
+  free(channel);
 
-    return 0;
+  return 0;
 }
 
 
 extern int channel_destroy(t_channel * channel) {
-    return channel_do_destroy(channellist_head, channel, 0);
+  return channel_do_destroy(channellist_head, channel, 0);
 }
 
 
 extern char const * channel_get_name(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_warn,"channel_get_name","got NULL channel");
-   	    return "";
-    }
-    return channel->name;
+  if (!channel)
+  {
+    eventlog(eventlog_level_warn,"channel_get_name","got NULL channel");
+    return "";
+  }
+  return channel->name;
 }
 
 extern char const * channel_get_password(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_warn,__FUNCTION__,"got NULL channel");
-   	    return "";
-    }
-    return channel->password;
+  if (!channel)
+  {
+    eventlog(eventlog_level_warn,__FUNCTION__,"got NULL channel");
+    return "";
+  }
+  return channel->password;
 }
 
 extern char const * channel_get_clienttag(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_error,"channel_get_clienttag","got NULL channel");
-	    return "";
-    }
-    return channel->clienttag;
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_get_clienttag","got NULL channel");
+    return "";
+  }
+  return channel->clienttag;
 }
 
 
 extern t_channel_flags channel_get_flags(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_error,"channel_get_flags","got NULL channel");
-	    return channel_flags_none;
-    }
-    return channel->flags;
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_get_flags","got NULL channel");
+    return channel_flags_none;
+  }
+  return channel->flags;
 }
 
 
 extern int channel_get_permanent(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_error,"channel_get_permanent","got NULL channel");
-	    return 0;
-    }
-    return (channel->flags & channel_flags_permanent);
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_get_permanent","got NULL channel");
+    return 0;
+  }
+  return (channel->flags & channel_flags_permanent);
 }
 
 
 extern unsigned int channel_get_channelid(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_error,"channel_get_channelid","got NULL channel");
-	    return 0;
-    }
-    return channel->id;
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_get_channelid","got NULL channel");
+    return 0;
+  }
+  return channel->id;
 }
 
 
 extern int channel_set_channelid(t_channel * channel, unsigned int channelid)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_error,"channel_set_channelid","got NULL channel");
-	    return -1;
-    }
-    channel->id = channelid;
-    return 0;
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_set_channelid","got NULL channel");
+    return -1;
+  }
+  channel->id = channelid;
+  return 0;
 }
 
 
 extern int channel_add_connection(t_channel * channel, t_connection * connection, char const * channelpassword)
 {
-    if (!channel)
-    {
-	    eventlog(eventlog_level_error,__FUNCTION__,"got NULL channel");
-    	return -1;
-    }
-    if (!connection)
-    {
-	    eventlog(eventlog_level_error,__FUNCTION__,"got NULL connection");
-    	return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,__FUNCTION__,"got NULL channel");
+    return -1;
+  }
+  if (!connection)
+  {
+    eventlog(eventlog_level_error,__FUNCTION__,"got NULL connection");
+    return -1;
+  }
 
-    if(channel->password)
+  if(channel->password)
+  {
+    if(!channelpassword)
     {
-        if(!channelpassword)
-        {
-            eventlog(eventlog_level_error,__FUNCTION__,"[%u] tried to join private channel \"%s\" without password",conn_get_sessionnum(connection),channel->name);
-        	message_send_text(connection,message_type_error,connection,"This is a private channel !");
-            return -1;
-        }
-        /*JEBs20030103 strcmp is from standard library ! Could it be used or do we have to build an own ? */
-        if(strcmp(channel->password,channelpassword) != 0)
-        {
-	        eventlog(eventlog_level_error,__FUNCTION__,"[%u] tried to join private channel \"%s\" with wrong password",conn_get_sessionnum(connection),channel->name);
-            message_send_text(connection,message_type_error,connection,"Password mismatch !");
-            return -1;
-        }
+      eventlog(eventlog_level_error,__FUNCTION__,"[%u] tried to join private channel \"%s\" without password",conn_get_sessionnum(connection),channel->name);
+      message_send_text(connection,message_type_error,connection,"This is a private channel !");
+      return -1;
     }
+    /*JEBs20030103 strcmp is from standard library ! Could it be used or do we have to build an own ? */
+    if(strcmp(channel->password,channelpassword) != 0)
+    {
+      eventlog(eventlog_level_error,__FUNCTION__,"[%u] tried to join private channel \"%s\" with wrong password",conn_get_sessionnum(connection),channel->name);
+      message_send_text(connection,message_type_error,connection,"Password mismatch !");
+      return -1;
+    }
+  }
 
 #ifdef WITH_BITS
-    {
+  {
     t_packet * p;
     t_query *q;
 
     p = packet_create(packet_class_bits);
     if (!p) {
-    	eventlog(eventlog_level_error,"channel_add_connection","could not create packet");
-	    return -1;
+      eventlog(eventlog_level_error,"channel_add_connection","could not create packet");
+      return -1;
     }
     channel_add_ref(channel);
     channel->currmembers++;
@@ -647,32 +648,32 @@ extern int channel_add_connection(t_channel * channel, t_connection * connection
     bn_int_set(&p->u.bits_chat_channel_join_request.latency,conn_get_latency(connection));
     q = query_create(bits_query_type_chat_channel_join);
     if (!q) {
-    	eventlog(eventlog_level_error,"channel_add_connection","could not create query");
-	    packet_del_ref(p);
-	    return -1;
+      eventlog(eventlog_level_error,"channel_add_connection","could not create query");
+      packet_del_ref(p);
+      return -1;
     }
     query_attach_conn(q,"client",connection);
     bn_int_set(&p->u.bits_chat_channel_join_request.qid,query_get_qid(q));
     send_bits_packet(p);
     packet_del_ref(p);
     return 0;
-    }
+  }
 #else
-    {
+  {
     t_channelmember * member;
     t_connection *    user;
 
     if (channel_check_banning(channel,connection))
     {
-    	channel_message_log(channel,channel_loglevel_public,connection,0,"JOIN FAILED (banned)");
-	    return -1;
+      channel_message_log(channel,channel_loglevel_public,connection,0,"JOIN FAILED (banned)");
+      return -1;
     }
 
 
     if (!(member = malloc(sizeof(t_channelmember))))
     {
-    	eventlog(eventlog_level_error,"channel_add_connection","could not allocate memory for channelmember");
-	    return -1;
+      eventlog(eventlog_level_error,"channel_add_connection","could not allocate memory for channelmember");
+      return -1;
     }
     member->connection = connection;
     member->next = channel->memberlist;
@@ -684,21 +685,21 @@ extern int channel_add_connection(t_channel * channel, t_connection * connection
     message_send_text(connection,message_type_channel,connection,channel_get_name(channel));
     for (user=channel_get_first(channel); user; user=channel_get_next())
     {
-    	message_send_text(connection,message_type_adduser,user,NULL);
-	    if (user!=connection)
-	        message_send_text(user,message_type_join,connection,NULL);
+      message_send_text(connection,message_type_adduser,user,NULL);
+      if (user!=connection)
+	message_send_text(user,message_type_join,connection,NULL);
     }
 
     /* please don't remove this notice */
     if (channel_loglevel_public&channel->loglevel && channel->log)
-    	message_send_text(connection,message_type_info,connection,prefs_get_log_notice());
+      message_send_text(connection,message_type_info,connection,prefs_get_log_notice());
 
     eventlog(eventlog_level_debug,"channel_add_connection","choosing operator");
     if (!channel->opr)
-	    channel_choose_operator(channel,connection); /* try using this account */
+      channel_choose_operator(channel,connection); /* try using this account */
 
     return 0;
-    }
+  }
 #endif
 }
 
@@ -706,445 +707,445 @@ extern int channel_add_connection(t_channel * channel, t_connection * connection
 extern int channel_del_connection(t_channel * channel, t_connection * connection)
 {
 #ifdef WITH_BITS
-    t_packet * p;
+  t_packet * p;
 
-    if (!channel) {
-	eventlog(eventlog_level_error,"channel_del_connection","got NULL channel");
-	return -1;
-    }
-    if (!connection) {
-	eventlog(eventlog_level_error,"channel_del_connection","got NULL connection");
-	return -1;
-    }
+  if (!channel) {
+    eventlog(eventlog_level_error,"channel_del_connection","got NULL channel");
+    return -1;
+  }
+  if (!connection) {
+    eventlog(eventlog_level_error,"channel_del_connection","got NULL connection");
+    return -1;
+  }
 
-    p = packet_create(packet_class_bits);
-    if (!p) {
-	eventlog(eventlog_level_error,"channel_del_connection","could not create packet");
-	return -1;
-    }
-    packet_set_size(p,sizeof(t_bits_chat_channel_leave));
-    packet_set_type(p,BITS_CHAT_CHANNEL_LEAVE);
-    bn_int_set(&p->u.bits_chat_channel_leave.channelid,channel_get_channelid(channel));
-    bn_int_set(&p->u.bits_chat_channel_leave.sessionid,conn_get_sessionid(connection));
-    bits_packet_generic(p,BITS_ADDR_MASTER);
-    send_bits_packet(p);
-    packet_del_ref(p);
-    channel_del_ref(channel);
-    channel->currmembers--;
-    list_purge(channellist_head);
+  p = packet_create(packet_class_bits);
+  if (!p) {
+    eventlog(eventlog_level_error,"channel_del_connection","could not create packet");
+    return -1;
+  }
+  packet_set_size(p,sizeof(t_bits_chat_channel_leave));
+  packet_set_type(p,BITS_CHAT_CHANNEL_LEAVE);
+  bn_int_set(&p->u.bits_chat_channel_leave.channelid,channel_get_channelid(channel));
+  bn_int_set(&p->u.bits_chat_channel_leave.sessionid,conn_get_sessionid(connection));
+  bits_packet_generic(p,BITS_ADDR_MASTER);
+  send_bits_packet(p);
+  packet_del_ref(p);
+  channel_del_ref(channel);
+  channel->currmembers--;
+  list_purge(channellist_head);
 
-    return 0;
+  return 0;
 #else
-    t_channelmember * curr;
-    t_channelmember * temp;
+  t_channelmember * curr;
+  t_channelmember * temp;
 
-    if (!channel)
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_del_connection","got NULL channel");
+    return -1;
+  }
+  if (!connection)
+  {
+    eventlog(eventlog_level_error,"channel_del_connection","got NULL connection");
+    return -1;
+  }
+
+  channel_message_log(channel,channel_loglevel_public,connection,0,"PARTED");
+
+  channel_message_send(channel,message_type_part,connection,NULL);
+
+  curr = channel->memberlist;
+  if (curr->connection==connection)
+  {
+    channel->memberlist = channel->memberlist->next;
+    free(curr);
+  }
+  else
+  {
+    while (curr->next && curr->next->connection!=connection)
+      curr = curr->next;
+
+    if (curr->next)
     {
-	eventlog(eventlog_level_error,"channel_del_connection","got NULL channel");
-        return -1;
-    }
-    if (!connection)
-    {
-	eventlog(eventlog_level_error,"channel_del_connection","got NULL connection");
-        return -1;
-    }
-
-    channel_message_log(channel,channel_loglevel_public,connection,0,"PARTED");
-
-    channel_message_send(channel,message_type_part,connection,NULL);
-
-    curr = channel->memberlist;
-    if (curr->connection==connection)
-    {
-        channel->memberlist = channel->memberlist->next;
-        free(curr);
+      temp = curr->next;
+      curr->next = curr->next->next;
+      free(temp);
     }
     else
     {
-        while (curr->next && curr->next->connection!=connection)
-            curr = curr->next;
-
-        if (curr->next)
-        {
-            temp = curr->next;
-            curr->next = curr->next->next;
-            free(temp);
-        }
-	else
-	{
-	    eventlog(eventlog_level_error,"channel_del_connection","[%d] connection not in channel member list",conn_get_socket(connection));
-	    return -1;
-	}
+      eventlog(eventlog_level_error,"channel_del_connection","[%d] connection not in channel member list",conn_get_socket(connection));
+      return -1;
     }
-    channel->currmembers--;
+  }
+  channel->currmembers--;
 
-    if (channel->next_opr==connection)
-	channel_set_next_operator(channel,NULL);
-    if (channel->opr==connection)
-	channel_choose_operator(channel,NULL);
+  if (channel->next_opr==connection)
+    channel_set_next_operator(channel,NULL);
+  if (channel->opr==connection)
+    channel_choose_operator(channel,NULL);
 
-    if (!channel->memberlist && !(channel->flags & channel_flags_permanent)) /* if channel is empty, delete it unless it's a permanent channel */
-    {
-	    channel_do_destroy(channellist_head, channel, 0);
-	    list_purge(channellist_head);
-    }
+  if (!channel->memberlist && !(channel->flags & channel_flags_permanent)) /* if channel is empty, delete it unless it's a permanent channel */
+  {
+    channel_do_destroy(channellist_head, channel, 0);
+    list_purge(channellist_head);
+  }
 
-    return 0;
+  return 0;
 #endif
 }
 
 
 extern void channel_update_latency(t_connection * me)
 {
-    t_channel *    channel;
+  t_channel *    channel;
 #ifndef WITH_BITS
-    t_message *    message;
-    t_connection * c;
+  t_message *    message;
+  t_connection * c;
 #endif
 
-    if (!me)
-    {
-    	eventlog(eventlog_level_error,"channel_update_latency","got NULL connection");
-        return;
-    }
-    if (!(channel = conn_get_channel(me)))
-    {
-    	eventlog(eventlog_level_error,"channel_update_latency","connection has no channel");
-        return;
-    }
+  if (!me)
+  {
+    eventlog(eventlog_level_error,"channel_update_latency","got NULL connection");
+    return;
+  }
+  if (!(channel = conn_get_channel(me)))
+  {
+    eventlog(eventlog_level_error,"channel_update_latency","connection has no channel");
+    return;
+  }
 
 #ifndef WITH_BITS
-    if (!(message = message_create(message_type_userflags,me,NULL,NULL))) /* handles NULL text */
-	    return;
+  if (!(message = message_create(message_type_userflags,me,NULL,NULL))) /* handles NULL text */
+    return;
 
-    for (c=channel_get_first(channel); c; c=channel_get_next())
-        if (conn_get_class(c)==conn_class_bnet)
-            message_send(message,c);
-    message_destroy(message);
+  for (c=channel_get_first(channel); c; c=channel_get_next())
+    if (conn_get_class(c)==conn_class_bnet)
+      message_send(message,c);
+  message_destroy(message);
 #else
-    /* FIXME: check whether an update is needed */
-    channel_message_send(channel,message_type_userflags,me,NULL); /* handles NULL text */
+  /* FIXME: check whether an update is needed */
+  channel_message_send(channel,message_type_userflags,me,NULL); /* handles NULL text */
 #endif
 }
 
 
 extern void channel_update_flags(t_connection * me)
 {
-    t_channel *    channel;
+  t_channel *    channel;
 #ifndef WITH_BITS
-    t_message *    message;
-    t_connection * c;
+  t_message *    message;
+  t_connection * c;
 #endif
 
-    if (!me)
-    {
-    	eventlog(eventlog_level_error,"channel_update_flags","got NULL connection");
-        return;
-    }
-    if (!(channel = conn_get_channel(me)))
-    {
-    	eventlog(eventlog_level_error,"channel_update_flags","connection has no channel");
-        return;
-    }
+  if (!me)
+  {
+    eventlog(eventlog_level_error,"channel_update_flags","got NULL connection");
+    return;
+  }
+  if (!(channel = conn_get_channel(me)))
+  {
+    eventlog(eventlog_level_error,"channel_update_flags","connection has no channel");
+    return;
+  }
 
 #ifndef WITH_BITS
-    if (!(message = message_create(message_type_userflags,me,NULL,NULL))) /* handles NULL text */
-    	return;
+  if (!(message = message_create(message_type_userflags,me,NULL,NULL))) /* handles NULL text */
+    return;
 
-    for (c=channel_get_first(channel); c; c=channel_get_next())
-    	message_send(message,c);
+  for (c=channel_get_first(channel); c; c=channel_get_next())
+    message_send(message,c);
 
-    message_destroy(message);
+  message_destroy(message);
 #else
-    /* FIXME: check whether an update is needed */
-    	/* TODO */
-    channel_message_send(channel,message_type_userflags,me,NULL); /* handles NULL text */
+  /* FIXME: check whether an update is needed */
+  /* TODO */
+  channel_message_send(channel,message_type_userflags,me,NULL); /* handles NULL text */
 #endif
 }
 
 
 extern void channel_message_log(t_channel const * channel, t_channel_loglevel level, t_connection * me, int fromuser, char const * text)
 {
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_message_log","got NULL channel");
-        return;
-    }
-    if (!me)
-    {
-    	eventlog(eventlog_level_error,"channel_message_log","got NULL connection");
-        return;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_message_log","got NULL channel");
+    return;
+  }
+  if (!me)
+  {
+    eventlog(eventlog_level_error,"channel_message_log","got NULL connection");
+    return;
+  }
 
-    if (channel->log && level&channel->loglevel)
-    {
-	time_t       now;
-	struct tm *  tmnow;
-	char         timetemp[CHANLOG_TIME_MAXLEN];
-	char const * tname;
+  if (channel->log && level&channel->loglevel)
+  {
+    time_t       now;
+    struct tm *  tmnow;
+    char         timetemp[CHANLOG_TIME_MAXLEN];
+    char const * tname;
 
-	now = time(NULL);
-	if ((!(tmnow = gmtime(&now))))
-	    strcpy(timetemp,"?");
-	else
-	    strftime(timetemp,sizeof(timetemp),CHANLOGLINE_TIME_FORMAT,tmnow);
+    now = time(NULL);
+    if ((!(tmnow = gmtime(&now))))
+      strcpy(timetemp,"?");
+    else
+      strftime(timetemp,sizeof(timetemp),CHANLOGLINE_TIME_FORMAT,tmnow);
 
-	if (fromuser)
-	    fprintf(channel->log,"%s: \"%s\" \"%s\"\n",timetemp,(tname = conn_get_username(me)),text);
-	else
-	    fprintf(channel->log,"%s: \"%s\" %s\n",timetemp,(tname = conn_get_username(me)),text);
-	conn_unget_username(me,tname);
-	fflush(channel->log);
-    }
+    if (fromuser)
+      fprintf(channel->log,"%s: \"%s\" \"%s\"\n",timetemp,(tname = conn_get_username(me)),text);
+    else
+      fprintf(channel->log,"%s: \"%s\" %s\n",timetemp,(tname = conn_get_username(me)),text);
+    conn_unget_username(me,tname);
+    fflush(channel->log);
+  }
 }
 
 
 extern void channel_message_send(t_channel const * channel, t_message_type type, t_connection * me, char const * text)
 {
-    t_connection * c;
-    unsigned int   heard;
-    t_message *    message;
+  t_connection * c;
+  unsigned int   heard;
+  t_message *    message;
 #ifdef WITH_BITS
-    t_bits_channelmember * member;
-    t_elem const * curr;
+  t_bits_channelmember * member;
+  t_elem const * curr;
 #else
-    char const *   tname;
+  char const *   tname;
 #endif
 
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_message_send","got NULL channel");
-        return;
-    }
-    if (!me)
-    {
-    	eventlog(eventlog_level_error,"channel_message_send","got NULL connection");
-        return;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_message_send","got NULL channel");
+    return;
+  }
+  if (!me)
+  {
+    eventlog(eventlog_level_error,"channel_message_send","got NULL connection");
+    return;
+  }
 
-    if (!(message = message_create(type,me,NULL,text)))
-    {
-    	eventlog(eventlog_level_error,"channel_message_send","could not create message");
-	    return;
-    }
+  if (!(message = message_create(type,me,NULL,text)))
+  {
+    eventlog(eventlog_level_error,"channel_message_send","could not create message");
+    return;
+  }
 
 #ifndef WITH_BITS
-    heard = 0;
-    tname = conn_get_chatname(me);
-    for (c=channel_get_first(channel); c; c=channel_get_next())
-    {
-    	if (c==me && (type==message_type_talk || type==message_type_join))
-	        continue; /* ignore ourself */
-    	if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
-	            conn_check_ignoring(c,tname)==1)
-	        continue; /* ignore squelched players */
-    	if (message_send(message,c)==0 && c!=me)
-	        heard = 1;
-    }
-    conn_unget_chatname(me,tname);
+  heard = 0;
+  tname = conn_get_chatname(me);
+  for (c=channel_get_first(channel); c; c=channel_get_next())
+  {
+    if (c==me && (type==message_type_talk || type==message_type_join))
+      continue; /* ignore ourself */
+    if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
+	conn_check_ignoring(c,tname)==1)
+      continue; /* ignore squelched players */
+    if (message_send(message,c)==0 && c!=me)
+      heard = 1;
+  }
+  conn_unget_chatname(me,tname);
 #else
-    heard = 1; /* FIXME: check if there is more than 1 member in the channel */
-    member = channel_find_member_bysessionid(channel,conn_get_sessionid(me));
-    if (!member) {
-    	char const * username;
+  heard = 1; /* FIXME: check if there is more than 1 member in the channel */
+  member = channel_find_member_bysessionid(channel,conn_get_sessionid(me));
+  if (!member) {
+    char const * username;
 
-        eventlog(eventlog_level_error,"channel_message_send","could not find sending user \"%s\" with sessionid 0x%08x",(username = conn_get_username(me)),conn_get_sessionid(me));
-	    conn_unget_username(me,username);
-    } else {
-	    send_bits_chat_channel(member,channel_get_channelid(channel),type,text);
-    }
-    LIST_TRAVERSE_CONST(connlist(),curr)
-    {
-    	c = elem_get_data(curr);
-	    if (c==me && (type==message_type_talk || type==message_type_join))
-	        continue; /* ignore ourself */
-	    /* FIXME: what about ignore? Yoss: can this be done in this way in BITS? */
-        /* FIXME: ignoring checking disable as long as in reenabling phase
-        if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
-	            conn_check_ignoring(c,tname)==1) */
-	    if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast))
-            if ((conn_get_class(c) == conn_class_bnet)||(conn_get_class(c) == conn_class_bot)) {
-	            if (conn_get_channel(c) == channel) {
-		            message_send(message,c);
-	            }
-	        }
-    }
+    eventlog(eventlog_level_error,"channel_message_send","could not find sending user \"%s\" with sessionid 0x%08x",(username = conn_get_username(me)),conn_get_sessionid(me));
+    conn_unget_username(me,username);
+  } else {
+    send_bits_chat_channel(member,channel_get_channelid(channel),type,text);
+  }
+  LIST_TRAVERSE_CONST(connlist(),curr)
+  {
+    c = elem_get_data(curr);
+    if (c==me && (type==message_type_talk || type==message_type_join))
+      continue; /* ignore ourself */
+    /* FIXME: what about ignore? Yoss: can this be done in this way in BITS? */
+    /* FIXME: ignoring checking disable as long as in reenabling phase
+     if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
+     conn_check_ignoring(c,tname)==1) */
+    if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast))
+      if ((conn_get_class(c) == conn_class_bnet)||(conn_get_class(c) == conn_class_bot)) {
+	if (conn_get_channel(c) == channel) {
+	  message_send(message,c);
+	}
+      }
+  }
 #endif
-    message_destroy(message);
+  message_destroy(message);
 
-    if (!heard && (type==message_type_talk || type==message_type_emote))
-	message_send_text(me,message_type_info,me,"No one hears you.");
+  if (!heard && (type==message_type_talk || type==message_type_emote))
+    message_send_text(me,message_type_info,me,"No one hears you.");
 }
 
 
 extern void channel_message_send_to_admins(t_channel const * channel, t_message_type type, t_connection * me, char const * text)
 {
-    t_connection * c;
-    unsigned int   heard;
-    t_message *    message;
+  t_connection * c;
+  unsigned int   heard;
+  t_message *    message;
 #ifdef WITH_BITS
-    t_bits_channelmember * member;
-    t_elem const * curr;
+  t_bits_channelmember * member;
+  t_elem const * curr;
 #else
-    char const *   tname;
+  char const *   tname;
 #endif
 
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_message_send","got NULL channel");
-        return;
-    }
-    if (!me)
-    {
-    	eventlog(eventlog_level_error,"channel_message_send","got NULL connection");
-        return;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_message_send","got NULL channel");
+    return;
+  }
+  if (!me)
+  {
+    eventlog(eventlog_level_error,"channel_message_send","got NULL connection");
+    return;
+  }
 
-    if (!(message = message_create(type,me,NULL,text)))
-    {
-    	eventlog(eventlog_level_error,"channel_message_send","could not create message");
-	    return;
-    }
+  if (!(message = message_create(type,me,NULL,text)))
+  {
+    eventlog(eventlog_level_error,"channel_message_send","could not create message");
+    return;
+  }
 
 #ifndef WITH_BITS
-    heard = 0;
-    tname = conn_get_chatname(me);
-    for (c=channel_get_first(channel); c; c=channel_get_next())
-    {
-	if (account_get_auth_admin(conn_get_account(c))!=1)
-	    continue; /* send only to admins */
-	if (c==me && (type==message_type_talk || type==message_type_join))
-	    continue; /* ignore ourself */
-	if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
-	    conn_check_ignoring(c,tname)==1)
-	    continue; /* ignore squelched players */
-	if (message_send(message,c)==0 && c!=me)
-	    heard = 1;
-    }
-    conn_unget_chatname(me,tname);
+  heard = 0;
+  tname = conn_get_chatname(me);
+  for (c=channel_get_first(channel); c; c=channel_get_next())
+  {
+    if (account_get_auth_admin(conn_get_account(c))!=1)
+      continue; /* send only to admins */
+    if (c==me && (type==message_type_talk || type==message_type_join))
+      continue; /* ignore ourself */
+    if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
+	conn_check_ignoring(c,tname)==1)
+      continue; /* ignore squelched players */
+    if (message_send(message,c)==0 && c!=me)
+      heard = 1;
+  }
+  conn_unget_chatname(me,tname);
 #else
-    heard = 1; /* FIXME: check if there is more than 1 member in the channel */
-    member = channel_find_member_bysessionid(channel,conn_get_sessionid(me));
-    if (!member) {
-    	char const * username;
+  heard = 1; /* FIXME: check if there is more than 1 member in the channel */
+  member = channel_find_member_bysessionid(channel,conn_get_sessionid(me));
+  if (!member) {
+    char const * username;
 
-        eventlog(eventlog_level_error,"channel_message_send","could not find sending user \"%s\" with sessionid 0x%08x",(username = conn_get_username(me)),conn_get_sessionid(me));
-	    conn_unget_username(me,username);
-    } else {
-	    send_bits_chat_channel(member,channel_get_channelid(channel),type,text);
+    eventlog(eventlog_level_error,"channel_message_send","could not find sending user \"%s\" with sessionid 0x%08x",(username = conn_get_username(me)),conn_get_sessionid(me));
+    conn_unget_username(me,username);
+  } else {
+    send_bits_chat_channel(member,channel_get_channelid(channel),type,text);
+  }
+  LIST_TRAVERSE_CONST(connlist(),curr)
+  {
+    c = elem_get_data(curr);
+    if (account_get_auth_admin(conn_get_account(c))!=1)
+      continue; /* send only to admins */
+    if (c==me && (type==message_type_talk || type==message_type_join))
+      continue; /* ignore ourself */
+    /* FIXME: Still in reactivation phase, so ignoring disabled for now
+     if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
+     conn_check_ignoring(c,tname)==1)    */
+    if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast))
+      continue; /* ignore squelched players */
+    if ((conn_get_class(c) == conn_class_bnet)||(conn_get_class(c) == conn_class_bot)) {
+      if (conn_get_channel(c) == channel) {
+	message_send(message,c);
+      }
     }
-    LIST_TRAVERSE_CONST(connlist(),curr)
-    {
-    	c = elem_get_data(curr);
-    	if (account_get_auth_admin(conn_get_account(c))!=1)
-	        continue; /* send only to admins */
-	    if (c==me && (type==message_type_talk || type==message_type_join))
-	        continue; /* ignore ourself */
-        /* FIXME: Still in reactivation phase, so ignoring disabled for now
-        if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast) &&
-	            conn_check_ignoring(c,tname)==1)    */
-	    if ((type==message_type_talk || type==message_type_whisper || type==message_type_emote || type==message_type_broadcast))
-	        continue; /* ignore squelched players */
-        if ((conn_get_class(c) == conn_class_bnet)||(conn_get_class(c) == conn_class_bot)) {
-	        if (conn_get_channel(c) == channel) {
-		        message_send(message,c);
-	        }
-	    }
-    }
+  }
 #endif
-    message_destroy(message);
+  message_destroy(message);
 
-    if (!heard && (type==message_type_talk || type==message_type_emote))
-	message_send_text(me,message_type_info,me,"No one hears you.");
+  if (!heard && (type==message_type_talk || type==message_type_emote))
+    message_send_text(me,message_type_info,me,"No one hears you.");
 }
 
 
 extern int channel_choose_operator(t_channel * channel, t_connection * tryop)
 {
 #ifdef WITH_BITS
-    eventlog(eventlog_level_error,"channel_choose_operator","FIXME");
-    return 0;
+  eventlog(eventlog_level_error,"channel_choose_operator","FIXME");
+  return 0;
 #else
-    t_connection *          oldop;
-    t_channelmember const * curr;
+  t_connection *          oldop;
+  t_channelmember const * curr;
 
-    if (!channel)
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_choose_operator","got NULL channel");
+    return -1;
+  }
+
+  oldop = channel->opr;
+
+  if (channel->next_opr) /* someone was designated */
+  {
+    if (conn_get_channel(channel->next_opr)!=channel)
     {
-	eventlog(eventlog_level_error,"channel_choose_operator","got NULL channel");
-	return -1;
+      eventlog(eventlog_level_error,"channel_choose_operator","designated next operator not in this channel");
+      return -1;
     }
+    channel->opr = channel->next_opr;
+    channel->next_opr = NULL;
+  }
+  else
+  {
+    t_connection * newop;
+    t_account *    account;
 
-    oldop = channel->opr;
+    newop = channel->opr;
 
-    if (channel->next_opr) /* someone was designated */
-    {
-	if (conn_get_channel(channel->next_opr)!=channel)
+    /* choose the designee, or the last (oldest) member of the channel
+     that is eligible */
+    for (curr=channel->memberlist; curr; curr=curr->next)
+      if (curr->connection!=channel->opr)
+      {
+	if (!(account = conn_get_account(curr->connection)))
 	{
-	    eventlog(eventlog_level_error,"channel_choose_operator","designated next operator not in this channel");
-	    return -1;
+	  eventlog(eventlog_level_error,"channel_choose_operator","connection without account in channel \"%s\"",channel->name);
+	  continue;
 	}
-	channel->opr = channel->next_opr;
-	channel->next_opr = NULL;
-    }
-    else
-    {
-        t_connection * newop;
-	t_account *    account;
+	/* designation overrides everything else... */
+	if (tryop && curr->connection!=tryop)
+	  continue;
+	/* specific account setting overrides other settings... */
+	if (account_get_auth_operator(account,channel->name)==1) /* default to false */
+	{
+	  newop = curr->connection;
+	  continue;
+	}
+	/* channel overrides general account settings... */
+	if (!(channel->flags & channel_flags_allowopers))
+	  continue;
+	/* finally, check general account settings */
+	if (account_get_auth_operator(account,NULL)==1) /* default to false */
+	  newop = curr->connection;
+      }
 
-	newop = channel->opr;
+    channel->opr = newop;
+  }
 
-	/* choose the designee, or the last (oldest) member of the channel
-           that is eligible */
-	for (curr=channel->memberlist; curr; curr=curr->next)
-	    if (curr->connection!=channel->opr)
-	    {
-		if (!(account = conn_get_account(curr->connection)))
-		{
-		    eventlog(eventlog_level_error,"channel_choose_operator","connection without account in channel \"%s\"",channel->name);
-		    continue;
-		}
-		/* designation overrides everything else... */
-		if (tryop && curr->connection!=tryop)
-		    continue;
-		/* specific account setting overrides other settings... */
-		if (account_get_auth_operator(account,channel->name)==1) /* default to false */
-		{
-        	    newop = curr->connection;
-		    continue;
-		}
-		/* channel overrides general account settings... */
-		if (!(channel->flags & channel_flags_allowopers))
-		    continue;
-		/* finally, check general account settings */
-		if (account_get_auth_operator(account,NULL)==1) /* default to false */
-        	    newop = curr->connection;
-	    }
+  /* the requested connection was not chosen */
+  if (tryop && channel->opr!=tryop)
+    return -1;
 
-	channel->opr = newop;
-    }
+  /* there is nobody else who can be an op */
+  if (oldop==channel->opr)
+    channel->opr = NULL;
 
-    /* the requested connection was not chosen */
-    if (tryop && channel->opr!=tryop)
-	return -1;
+  /* update flags */
+  if (oldop)
+  {
+    channel_message_log(channel,channel_loglevel_public,oldop,0,"NO LONGER OPERATOR");
+    conn_del_flags(oldop,MF_GAVEL);
+  }
+  if (channel->opr)
+  {
+    channel_message_log(channel,channel_loglevel_public,channel->opr,0,"NOW OPERATOR");
+    conn_add_flags(channel->opr,MF_GAVEL);
+    message_send_text(channel->opr,message_type_info,channel->opr,"You are now the operator for this channel.");
+  }
 
-    /* there is nobody else who can be an op */
-    if (oldop==channel->opr)
-        channel->opr = NULL;
-
-    /* update flags */
-    if (oldop)
-    {
-	channel_message_log(channel,channel_loglevel_public,oldop,0,"NO LONGER OPERATOR");
-        conn_del_flags(oldop,MF_GAVEL);
-    }
-    if (channel->opr)
-    {
-	channel_message_log(channel,channel_loglevel_public,channel->opr,0,"NOW OPERATOR");
-	conn_add_flags(channel->opr,MF_GAVEL);
-	message_send_text(channel->opr,message_type_info,channel->opr,"You are now the operator for this channel.");
-    }
-
-    return 0;
+  return 0;
 #endif
 }
 
@@ -1152,16 +1153,16 @@ extern int channel_choose_operator(t_channel * channel, t_connection * tryop)
 extern t_connection * channel_get_operator(t_channel const * channel)
 {
 #ifdef WITH_BITS
-    eventlog(eventlog_level_error,"channel_get_operator","BITS FIXME");
-    return NULL;
+  eventlog(eventlog_level_error,"channel_get_operator","BITS FIXME");
+  return NULL;
 #else
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_get_operator","got NULL channel");
-	    return NULL;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_get_operator","got NULL channel");
+    return NULL;
+  }
 
-    return channel->opr;
+  return channel->opr;
 #endif
 }
 
@@ -1169,142 +1170,142 @@ extern t_connection * channel_get_operator(t_channel const * channel)
 extern int channel_set_next_operator(t_channel * channel, t_connection * conn)
 {
 #ifdef WITH_BITS
-    eventlog(eventlog_level_error,"channel_set_next_operator","BITS FIXME");
-    return 0;
+  eventlog(eventlog_level_error,"channel_set_next_operator","BITS FIXME");
+  return 0;
 #else
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_set_next_operator","got NULL channel");
-	    return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_set_next_operator","got NULL channel");
+    return -1;
+  }
 
-    if (conn && channel->opr==conn)
-	    return -1;
+  if (conn && channel->opr==conn)
+    return -1;
 
-    channel->next_opr = conn;
-    return 0;
+  channel->next_opr = conn;
+  return 0;
 #endif
 }
 
 
 extern int channel_ban_user(t_channel * channel, char const * user)
 {
-    t_elem const * curr;
-    char *         temp;
+  t_elem const * curr;
+  char *         temp;
 
-    if (!channel)
-    {
-	eventlog(eventlog_level_error,"channel_ban_user","got NULL channel");
-	return -1;
-    }
-    if (!user)
-    {
-	eventlog(eventlog_level_error,"channel_ban_user","got NULL user");
-	return -1;
-    }
-    if (!channel->name)
-    {
-	eventlog(eventlog_level_error,"channel_ban_user","got channel with NULL name");
-	return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_ban_user","got NULL channel");
+    return -1;
+  }
+  if (!user)
+  {
+    eventlog(eventlog_level_error,"channel_ban_user","got NULL user");
+    return -1;
+  }
+  if (!channel->name)
+  {
+    eventlog(eventlog_level_error,"channel_ban_user","got channel with NULL name");
+    return -1;
+  }
 
-    if (strcasecmp(channel->name,CHANNEL_NAME_BANNED)==0 ||
-	strcasecmp(channel->name,CHANNEL_NAME_KICKED)==0)
-        return -1;
+  if (strcasecmp(channel->name,CHANNEL_NAME_BANNED)==0 ||
+      strcasecmp(channel->name,CHANNEL_NAME_KICKED)==0)
+    return -1;
 
-    LIST_TRAVERSE_CONST(channel->banlist,curr)
-        if (strcasecmp(elem_get_data(curr),user)==0)
-            return 0;
-
-    if (!(temp = strdup(user)))
-    {
-        eventlog(eventlog_level_error,"channel_ban_user","could not allocate memory for temp");
-        return -1;
-    }
-    if (list_append_data(channel->banlist,temp)<0)
-    {
-	free(temp);
-        eventlog(eventlog_level_error,"channel_ban_user","unable to append to list");
-        return -1;
-    }
+  LIST_TRAVERSE_CONST(channel->banlist,curr)
+  if (strcasecmp(elem_get_data(curr),user)==0)
     return 0;
+
+  if (!(temp = strdup(user)))
+  {
+    eventlog(eventlog_level_error,"channel_ban_user","could not allocate memory for temp");
+    return -1;
+  }
+  if (list_append_data(channel->banlist,temp)<0)
+  {
+    free(temp);
+    eventlog(eventlog_level_error,"channel_ban_user","unable to append to list");
+    return -1;
+  }
+  return 0;
 }
 
 
 extern int channel_unban_user(t_channel * channel, char const * user)
 {
-    t_elem * curr;
+  t_elem * curr;
 
-    if (!channel)
-    {
-	eventlog(eventlog_level_error,"channel_unban_user","got NULL channel");
-	return -1;
-    }
-    if (!user)
-    {
-	eventlog(eventlog_level_error,"channel_unban_user","got NULL user");
-	return -1;
-    }
-
-    LIST_TRAVERSE(channel->banlist,curr)
-    {
-	char const * banned;
-
-	if (!(banned = elem_get_data(curr)))
-	{
-            eventlog(eventlog_level_error,"channel_unban_user","found NULL name in banlist");
-	    continue;
-	}
-        if (strcasecmp(banned,user)==0)
-        {
-            if (list_remove_elem(channel->banlist,curr)<0)
-            {
-                eventlog(eventlog_level_error,"channel_unban_user","unable to remove item from list");
-                return -1;
-            }
-            free((void *)banned); /* avoid warning */
-            return 0;
-        }
-    }
-
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_unban_user","got NULL channel");
     return -1;
+  }
+  if (!user)
+  {
+    eventlog(eventlog_level_error,"channel_unban_user","got NULL user");
+    return -1;
+  }
+
+  LIST_TRAVERSE(channel->banlist,curr)
+  {
+    char const * banned;
+
+    if (!(banned = elem_get_data(curr)))
+    {
+      eventlog(eventlog_level_error,"channel_unban_user","found NULL name in banlist");
+      continue;
+    }
+    if (strcasecmp(banned,user)==0)
+    {
+      if (list_remove_elem(channel->banlist,curr)<0)
+      {
+	eventlog(eventlog_level_error,"channel_unban_user","unable to remove item from list");
+	return -1;
+      }
+      free((void *)banned); /* avoid warning */
+      return 0;
+    }
+  }
+
+  return -1;
 }
 
 
 extern int channel_check_banning(t_channel const * channel, t_connection const * user)
 {
-    t_elem const * curr;
+  t_elem const * curr;
 
-    if (!channel)
-    {
-	eventlog(eventlog_level_error,"channel_check_banning","got NULL channel");
-	return -1;
-    }
-    if (!user)
-    {
-	eventlog(eventlog_level_error,"channel_check_banning","got NULL user");
-	return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_check_banning","got NULL channel");
+    return -1;
+  }
+  if (!user)
+  {
+    eventlog(eventlog_level_error,"channel_check_banning","got NULL user");
+    return -1;
+  }
 
-    if (!(channel->flags & channel_flags_allowbots) && conn_get_class(user)==conn_class_bot)
-	return 1;
+  if (!(channel->flags & channel_flags_allowbots) && conn_get_class(user)==conn_class_bot)
+    return 1;
 
-    LIST_TRAVERSE_CONST(channel->banlist,curr)
-        if (conn_match(user,elem_get_data(curr))==1)
-            return 1;
+  LIST_TRAVERSE_CONST(channel->banlist,curr)
+  if (conn_match(user,elem_get_data(curr))==1)
+    return 1;
 
-    return 0;
+  return 0;
 }
 
 
 extern int channel_get_length(t_channel const * channel)
 {
-    t_channelmember const * curr;
-    int                     count;
+  t_channelmember const * curr;
+  int                     count;
 
-    for (curr=channel->memberlist,count=0; curr; curr=curr->next,count++);
+  for (curr=channel->memberlist,count=0; curr; curr=curr->next,count++);
 
-    return count;
+  return count;
 }
 
 
@@ -1314,15 +1315,15 @@ extern t_connection * channel_get_first(t_channel const * channel)
 extern t_bits_channelmember * channel_get_first(t_channel const * channel)
 #endif
 {
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_get_first","got NULL channel");
-        return NULL;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_get_first","got NULL channel");
+    return NULL;
+  }
 
-    memberlist_curr = channel->memberlist;
+  memberlist_curr = channel->memberlist;
 
-    return channel_get_next();
+  return channel_get_next();
 }
 
 #ifndef WITH_BITS
@@ -1332,264 +1333,264 @@ extern t_bits_channelmember * channel_get_next(void)
 #endif
 {
 
-    t_channelmember * member;
+  t_channelmember * member;
 
-    if (memberlist_curr)
-    {
-        member = memberlist_curr;
-        memberlist_curr = memberlist_curr->next;
+  if (memberlist_curr)
+  {
+    member = memberlist_curr;
+    memberlist_curr = memberlist_curr->next;
 
 #ifndef WITH_BITS
-        return member->connection;
+    return member->connection;
 #else
-	    return &member->member;
+    return &member->member;
 #endif
-    }
-    return NULL;
+  }
+  return NULL;
 }
 
 
 extern t_list * channel_get_banlist(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_warn,"channel_get_banlist","got NULL channel");
-	    return NULL;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_warn,"channel_get_banlist","got NULL channel");
+    return NULL;
+  }
 
-    return channel->banlist;
+  return channel->banlist;
 }
 
 
 extern char const * channel_get_shortname(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_warn,"channel_get_shortname","got NULL channel");
-	    return NULL;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_warn,"channel_get_shortname","got NULL channel");
+    return NULL;
+  }
 
-    return channel->shortname;
+  return channel->shortname;
 }
 
 
 #ifdef WITH_BITS
 extern int channel_add_member(t_channel * channel, int sessionid, int flags, int latency)
 {
-	/* BITS version of channel_add_connection() */
-    t_channelmember * member;
-    t_bits_channelmember * user;
-    t_connection  * joinc;
-    t_bits_loginlist_entry * lle;
+  /* BITS version of channel_add_connection() */
+  t_channelmember * member;
+  t_bits_channelmember * user;
+  t_connection  * joinc;
+  t_bits_loginlist_entry * lle;
 
 
-    if (!channel)
-    {
-    	eventlog(eventlog_level_error,"channel_add_member","got NULL channel");
-	    return -1;
-    }
-    lle = bits_loginlist_bysessionid(sessionid);
-    if (!lle)
-    {
-    	eventlog(eventlog_level_error,"channel_add_member","joining user is not logged in (sessionid=0x%08x)",sessionid);
-	    return -1;
-    }
-    if (!(member = malloc(sizeof(t_channelmember))))
-    {
-    	eventlog(eventlog_level_error,"channel_add_member","could not allocate memory for channelmember");
-	    return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_add_member","got NULL channel");
+    return -1;
+  }
+  lle = bits_loginlist_bysessionid(sessionid);
+  if (!lle)
+  {
+    eventlog(eventlog_level_error,"channel_add_member","joining user is not logged in (sessionid=0x%08x)",sessionid);
+    return -1;
+  }
+  if (!(member = malloc(sizeof(t_channelmember))))
+  {
+    eventlog(eventlog_level_error,"channel_add_member","could not allocate memory for channelmember");
+    return -1;
+  }
 
-    /* defaults */
-    eventlog(eventlog_level_debug,"channel_add_member","sessionid=#%u flags=0x%08x latency=%d",sessionid,flags,latency);
-    member->member.sessionid = sessionid;
-    member->member.latency = latency;
-    member->member.flags = flags;
-    member->next = channel->memberlist;
-    /* operator */
-    if ((bits_master) && (channel->flags & channel_flags_allowopers)) {
-	    if ((!channel->opr)||(!channel->memberlist)) {
-	        member->member.flags |= MF_GAVEL;
-	        channel->opr = sessionid;
-	    }
+  /* defaults */
+  eventlog(eventlog_level_debug,"channel_add_member","sessionid=#%u flags=0x%08x latency=%d",sessionid,flags,latency);
+  member->member.sessionid = sessionid;
+  member->member.latency = latency;
+  member->member.flags = flags;
+  member->next = channel->memberlist;
+  /* operator */
+  if ((bits_master) && (channel->flags & channel_flags_allowopers)) {
+    if ((!channel->opr)||(!channel->memberlist)) {
+      member->member.flags |= MF_GAVEL;
+      channel->opr = sessionid;
     }
-    /* add */
-    channel->memberlist = member;
-    send_bits_chat_channel_join(NULL,channel_get_channelid(channel),&member->member);
+  }
+  /* add */
+  channel->memberlist = member;
+  send_bits_chat_channel_join(NULL,channel_get_channelid(channel),&member->member);
 
-    /* send message_type_join to local users */
-    joinc = connlist_find_connection_by_sessionid(sessionid);
-    if (!joinc) {
-	    joinc = bits_rconn_create(latency,flags,lle->sessionid);
-	    conn_set_botuser(joinc,lle->chatname);
-    }
-    for (user=channel_get_first(channel); user; user=channel_get_next())
-    {
-    	t_connection * userc;
-    	userc = connlist_find_connection_by_sessionid(user->sessionid);
-    	if (userc)
-	        message_send_text(userc,message_type_join,joinc,NULL);
-    }
-    if (conn_get_class(joinc)==conn_class_remote) {
-	    bits_rconn_destroy(joinc);
-    }
-    return 0;
+  /* send message_type_join to local users */
+  joinc = connlist_find_connection_by_sessionid(sessionid);
+  if (!joinc) {
+    joinc = bits_rconn_create(latency,flags,lle->sessionid);
+    conn_set_botuser(joinc,lle->chatname);
+  }
+  for (user=channel_get_first(channel); user; user=channel_get_next())
+  {
+    t_connection * userc;
+    userc = connlist_find_connection_by_sessionid(user->sessionid);
+    if (userc)
+      message_send_text(userc,message_type_join,joinc,NULL);
+  }
+  if (conn_get_class(joinc)==conn_class_remote) {
+    bits_rconn_destroy(joinc);
+  }
+  return 0;
 }
 
 extern int channel_del_member(t_channel * channel, t_bits_channelmember * member)
 {
-	/* BITS version of channel_del_connection() */
-    t_channelmember * curr;
-    t_channelmember * prev = NULL;
-    t_bits_loginlist_entry * lle;
+  /* BITS version of channel_del_connection() */
+  t_channelmember * curr;
+  t_channelmember * prev = NULL;
+  t_bits_loginlist_entry * lle;
 
-    if (!channel)
-    {
-	eventlog(eventlog_level_error,"channel_del_member","got NULL channel");
-        return -1;
-    }
-    if (!member)
-    {
-	eventlog(eventlog_level_error,"channel_del_member","got NULL member");
-        return -1;
-    }
-    lle = bits_loginlist_bysessionid(member->sessionid);
-    if (!lle) {
-	eventlog(eventlog_level_error,"channel_del_member","leaving user is not logged in");
-	return -1;
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_error,"channel_del_member","got NULL channel");
+    return -1;
+  }
+  if (!member)
+  {
+    eventlog(eventlog_level_error,"channel_del_member","got NULL member");
+    return -1;
+  }
+  lle = bits_loginlist_bysessionid(member->sessionid);
+  if (!lle) {
+    eventlog(eventlog_level_error,"channel_del_member","leaving user is not logged in");
+    return -1;
+  }
 
-    eventlog(eventlog_level_debug,"channel_del_member","sessionid=0x%08x",member->sessionid);
-    send_bits_chat_channel_leave(channel_get_channelid(channel),member->sessionid);
-    curr = channel->memberlist;
-    while (curr) {
-        if (&curr->member == member) { /* compare the pointers */
-            t_bits_channelmember * user;
-   	    t_connection * joinc;
-   	    int op_has_changed = 0;
+  eventlog(eventlog_level_debug,"channel_del_member","sessionid=0x%08x",member->sessionid);
+  send_bits_chat_channel_leave(channel_get_channelid(channel),member->sessionid);
+  curr = channel->memberlist;
+  while (curr) {
+    if (&curr->member == member) { /* compare the pointers */
+      t_bits_channelmember * user;
+      t_connection * joinc;
+      int op_has_changed = 0;
 
-   	    /* operator, part 1 */
-            if ((bits_master)&&(channel->flags & channel_flags_allowopers)) {
-            	if (channel->opr == 0) {
-            	    channel->opr = channel->next_opr;
-            	    channel->next_opr = 0;
-            	    op_has_changed = 1;
-            	}
-             	if (channel->next_opr != 0) {
-            	    if (channel->next_opr == member->sessionid) {
-		        channel->next_opr = 0;
-   	            }
-   	        }
-           	if (channel->opr != 0) {
-            	    if (channel->opr == member->sessionid) {
-		        channel->opr = channel->next_opr;
-		        channel->next_opr = 0;
-            	        op_has_changed = 1;
-   	            }
-   	        }
-   	    }
-	    /* send message_type_part to local conns */
-   	    joinc = connlist_find_connection_by_sessionid(curr->member.sessionid);
-            if (!joinc) {
-	        joinc = bits_rconn_create(curr->member.latency,curr->member.flags,lle->sessionid);
-	        conn_set_botuser(joinc,lle->chatname);
-            }
-            for (user=channel_get_first(channel); user; user=channel_get_next())
-            {
-    	        t_connection * userc;
-    	        userc = connlist_find_connection_by_sessionid(user->sessionid);
-      	        if (userc)
-		    message_send_text(userc,message_type_part,joinc,NULL);
-	    }
-	    if (conn_get_class(joinc)==conn_class_remote) {
-	        bits_rconn_destroy(joinc);
-	    }
+      /* operator, part 1 */
+      if ((bits_master)&&(channel->flags & channel_flags_allowopers)) {
+	if (channel->opr == 0) {
+	  channel->opr = channel->next_opr;
+	  channel->next_opr = 0;
+	  op_has_changed = 1;
+	}
+	if (channel->next_opr != 0) {
+	  if (channel->next_opr == member->sessionid) {
+	    channel->next_opr = 0;
+	  }
+	}
+	if (channel->opr != 0) {
+	  if (channel->opr == member->sessionid) {
+	    channel->opr = channel->next_opr;
+	    channel->next_opr = 0;
+	    op_has_changed = 1;
+	  }
+	}
+      }
+      /* send message_type_part to local conns */
+      joinc = connlist_find_connection_by_sessionid(curr->member.sessionid);
+      if (!joinc) {
+	joinc = bits_rconn_create(curr->member.latency,curr->member.flags,lle->sessionid);
+	conn_set_botuser(joinc,lle->chatname);
+      }
+      for (user=channel_get_first(channel); user; user=channel_get_next())
+      {
+	t_connection * userc;
+	userc = connlist_find_connection_by_sessionid(user->sessionid);
+	if (userc)
+	  message_send_text(userc,message_type_part,joinc,NULL);
+      }
+      if (conn_get_class(joinc)==conn_class_remote) {
+	bits_rconn_destroy(joinc);
+      }
 
-	    if (prev) {
-		prev->next = curr->next;
-	    } else {
-	    	channel->memberlist = curr->next;
-	    }
-	    free(curr);
-	    /* operator, part 2 */
-            if ((bits_master)&&(channel->flags & channel_flags_allowopers)) {
-		if ((channel->opr == 0)&&(channel->memberlist)) {
-		    channel->opr = channel->memberlist->member.sessionid;
-               	    op_has_changed = 1;
-		}
-		if ((op_has_changed)&&(channel->opr))
+      if (prev) {
+	prev->next = curr->next;
+      } else {
+	channel->memberlist = curr->next;
+      }
+      free(curr);
+      /* operator, part 2 */
+      if ((bits_master)&&(channel->flags & channel_flags_allowopers)) {
+	if ((channel->opr == 0)&&(channel->memberlist)) {
+	  channel->opr = channel->memberlist->member.sessionid;
+	  op_has_changed = 1;
+	}
+	if ((op_has_changed)&&(channel->opr))
         {
-		    t_bits_channelmember * m;
+	  t_bits_channelmember * m;
 
-		    m = channel_find_member_bysessionid(channel,channel->opr);
-		    m->flags |= MF_GAVEL;
-		    send_bits_chat_channel_join(NULL,channel_get_channelid(channel),m);
-        	}
-        	if ((!channel->memberlist)&&(!(channel->flags & channel_flags_permanent))) {
-		        /* destroy the channel */
-		        channel_do_destroy(channellist_head, channel, 0);
-        	}
-         }
-            /* --- */
-	    return 0;
-    	}
-	prev = curr;
-	curr = curr->next;
+	  m = channel_find_member_bysessionid(channel,channel->opr);
+	  m->flags |= MF_GAVEL;
+	  send_bits_chat_channel_join(NULL,channel_get_channelid(channel),m);
+	}
+	if ((!channel->memberlist)&&(!(channel->flags & channel_flags_permanent))) {
+	  /* destroy the channel */
+	  channel_do_destroy(channellist_head, channel, 0);
+	}
+      }
+      /* --- */
+      return 0;
     }
-    return 1;
+    prev = curr;
+    curr = curr->next;
+  }
+  return 1;
 }
 
 extern t_bits_channelmember * channel_find_member_bysessionid(t_channel const * channel, int sessionid)
 {
-	t_bits_channelmember * member;
+  t_bits_channelmember * member;
 
-	if (!channel) {
-		eventlog(eventlog_level_error,"channel_find_member_bysessionid","got NULL channel");
-		return NULL;
-	}
-	member = channel_get_first(channel);
-	while (member) {
-		if (member->sessionid == sessionid) {
-			return member;
-		}
-		member = channel_get_next();
-	}
-	return NULL;
+  if (!channel) {
+    eventlog(eventlog_level_error,"channel_find_member_bysessionid","got NULL channel");
+    return NULL;
+  }
+  member = channel_get_first(channel);
+  while (member) {
+    if (member->sessionid == sessionid) {
+      return member;
+    }
+    member = channel_get_next();
+  }
+  return NULL;
 }
 
 extern int channel_add_ref(t_channel * channel) {
-	if (!channel) {
-		eventlog(eventlog_level_error,"channel_add_ref","got NULL channel");
-		return -1;
-	}
-	if (!bits_uplink_connection) return 0;
-	if (channel->ref == 0) {
-		eventlog(eventlog_level_debug,"channel_add_ref","joining channel \"%s\" (#%u)",channel_get_name(channel),channel_get_channelid(channel));
-		send_bits_chat_channel_server_join(channel_get_channelid(channel));
-	}
-	channel->ref++;
-	return 0;
+  if (!channel) {
+    eventlog(eventlog_level_error,"channel_add_ref","got NULL channel");
+    return -1;
+  }
+  if (!bits_uplink_connection) return 0;
+  if (channel->ref == 0) {
+    eventlog(eventlog_level_debug,"channel_add_ref","joining channel \"%s\" (#%u)",channel_get_name(channel),channel_get_channelid(channel));
+    send_bits_chat_channel_server_join(channel_get_channelid(channel));
+  }
+  channel->ref++;
+  return 0;
 }
 
 extern int channel_del_ref(t_channel * channel) {
-	if (!channel) {
-		eventlog(eventlog_level_error,"channel_del_ref","got NULL channel");
-		return -1;
-	}
-	if (!bits_uplink_connection) return 0;
-	if (channel->ref < 1) {
-		eventlog(eventlog_level_error,"channel_del_ref","reference counter <= 0");
-		return -1;
-	}
-	if (channel->ref == 1) {
-		eventlog(eventlog_level_debug,"channel_del_ref","leaving channel \"%s\" (#%u)",channel_get_name(channel),channel_get_channelid(channel));
-		send_bits_chat_channel_server_leave(channel_get_channelid(channel));
-		/* delete all members */
-		while (channel->memberlist)
-			channel_del_member(channel,&channel->memberlist->member);
-	}
-	channel->ref--;
-	return 0;
+  if (!channel) {
+    eventlog(eventlog_level_error,"channel_del_ref","got NULL channel");
+    return -1;
+  }
+  if (!bits_uplink_connection) return 0;
+  if (channel->ref < 1) {
+    eventlog(eventlog_level_error,"channel_del_ref","reference counter <= 0");
+    return -1;
+  }
+  if (channel->ref == 1) {
+    eventlog(eventlog_level_debug,"channel_del_ref","leaving channel \"%s\" (#%u)",channel_get_name(channel),channel_get_channelid(channel));
+    send_bits_chat_channel_server_leave(channel_get_channelid(channel));
+    /* delete all members */
+    while (channel->memberlist)
+      channel_del_member(channel,&channel->memberlist->member);
+  }
+  channel->ref--;
+  return 0;
 }
 
 #endif
@@ -1597,209 +1598,209 @@ extern int channel_del_ref(t_channel * channel) {
 
 static int channellist_load_permanent(char const * filename)
 {
-    FILE              * fp;
-    unsigned int        line;
-    unsigned int        pos;
-    t_channel_flags     flags;
-    t_channel_loglevel	logflag;
-    char              * buff;
-    char              * name;
-    char              * sname;
-    char              * tag;
-    char              * bot;
-    char              * oper;
-    char              * log;
-    char              * country;
-    char              * max;
-    char              * newname;
-    char              * realmname;
+  FILE              * fp;
+  unsigned int        line;
+  unsigned int        pos;
+  t_channel_flags     flags;
+  t_channel_loglevel	logflag;
+  char              * buff;
+  char              * name;
+  char              * sname;
+  char              * tag;
+  char              * bot;
+  char              * oper;
+  char              * log;
+  char              * country;
+  char              * max;
+  char              * newname;
+  char              * realmname;
 
-    if (!filename)
-    {
-    	eventlog(eventlog_level_error,"channellist_load_permanent","got NULL filename");
-	    return -1;
-    }
+  if (!filename)
+  {
+    eventlog(eventlog_level_error,"channellist_load_permanent","got NULL filename");
+    return -1;
+  }
 
 #ifdef WITH_BITS
-    if (bits_uplink_connection)
-    {
-    	eventlog(eventlog_level_info,"channellist_load_permanent","not loading permanent channels from file");
-	    return 0;
-    }
+  if (bits_uplink_connection)
+  {
+    eventlog(eventlog_level_info,"channellist_load_permanent","not loading permanent channels from file");
+    return 0;
+  }
 #endif
-    if (!(fp = fopen(filename,"r")))
-    {
-    	eventlog(eventlog_level_error,"channellist_load_permanent","could not open channel file \"%s\" for reading (fopen: %s)",filename,strerror(errno));
-	    return -1;
-    }
+  if (!(fp = fopen(filename,"r")))
+  {
+    eventlog(eventlog_level_error,"channellist_load_permanent","could not open channel file \"%s\" for reading (fopen: %s)",filename,strerror(errno));
+    return -1;
+  }
 
-    for (line=1; (buff = file_get_line(fp)); line++)
+  for (line=1; (buff = file_get_line(fp)); line++)
+  {
+    if (buff[0]=='#' || buff[0]=='\0')
     {
-	if (buff[0]=='#' || buff[0]=='\0')
-	{
-	    free(buff);
-	    continue;
-	}
-        pos = 0;
-	if (!(name = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing name in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
-	if (!(sname = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing sname in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
-	if (!(tag = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing tag in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
-	if (!(bot = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing bot in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
-	if (!(oper = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing oper in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
-	if (!(log = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing log in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
-	if (!(country = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing country in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
+      free(buff);
+      continue;
+    }
+    pos = 0;
+    if (!(name = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing name in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
+    if (!(sname = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing sname in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
+    if (!(tag = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing tag in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
+    if (!(bot = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing bot in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
+    if (!(oper = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing oper in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
+    if (!(log = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing log in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
+    if (!(country = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing country in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
     if (!(realmname = next_token(buff,&pos)))
     {
-        eventlog(eventlog_level_error,"channellist_load_permanent","missing realmname in line %u in file \"%s\"",line,filename);
-        free(buff);
-        continue;
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing realmname in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
     }
-	if (!(max = next_token(buff,&pos)))
-	{
-	    eventlog(eventlog_level_error,"channellist_load_permanent","missing max in line %u in file \"%s\"",line,filename);
-	    free(buff);
-	    continue;
-	}
+    if (!(max = next_token(buff,&pos)))
+    {
+      eventlog(eventlog_level_error,"channellist_load_permanent","missing max in line %u in file \"%s\"",line,filename);
+      free(buff);
+      continue;
+    }
 
     flags = channel_flags_none;
-	switch (str_get_bool(bot))
-	{
-	case 1:
-	    flags |= channel_flags_allowbots;
-	    break;
-	case 0:
-	    flags &= ~channel_flags_allowbots;  /* unneeded, but safe */
-	    break;
-	default:
-	    eventlog(eventlog_level_error,"channellist_load_permanent","invalid boolean value \"%s\" for field 4 on line %u in file \"%s\"",bot,line,filename);
-	    free(buff);
-	    continue;
-    }
-
-	switch (str_get_bool(oper))
-	{
-	case 1:
-	    flags |= channel_flags_allowopers;
-	    break;
-	case 0:
-	    flags &= ~channel_flags_allowopers;  /* unneeded, but safe */
-	    break;
-	default:
-	    eventlog(eventlog_level_error,"channellist_load_permanent","invalid boolean value \"%s\" for field 5 on line %u in file \"%s\"",oper,line,filename);
-	    free(buff);
-	    continue;
-    }
-
-	logflag = channel_loglevel_none;
-	if (strchr(log,'p'))
-	    logflag |= channel_loglevel_public;
-	if (strchr(log,'c'))
-	    logflag |= channel_loglevel_command;
-
-	if (strcmp(sname,"NULL") == 0)
-	    sname = NULL;
-	if (strcmp(tag,"NULL") == 0)
-	    tag = NULL;
-    if (strcmp(name,"NONE") == 0)
-	    name = NULL;
-    if (strcmp(country, "NULL") == 0)
-        country = NULL;
-    if (strcmp(realmname,"NULL") == 0)
-        realmname = NULL;
-
-	if (name)
-        channel_create(name,sname,tag,(flags | channel_flags_permanent),logflag,country,realmname,atoi(max),NULL);
-	else
-	{
-        newname = channel_format_name(sname,country,realmname,atoi(max),1);
-        if (newname)
-	    {
-            channel_create(newname,sname,tag,(flags | channel_flags_permanent),logflag,country,realmname,atoi(max),NULL);
-            free(newname);
-	    }
-        else
-            eventlog(eventlog_level_error,"channellist_load_permanent","cannot format channel name");
-    }
-
-	/* FIXME: call channel_delete() on current perm channels and do a
-	   channellist_find_channel() and set the long name, perm flag, etc,
-	   otherwise call channel_create(). This will make HUPing the server
-       handle re-reading this file correctly. */
+    switch (str_get_bool(bot))
+    {
+      case 1:
+	flags |= channel_flags_allowbots;
+	break;
+      case 0:
+	flags &= ~channel_flags_allowbots;  /* unneeded, but safe */
+	break;
+      default:
+	eventlog(eventlog_level_error,"channellist_load_permanent","invalid boolean value \"%s\" for field 4 on line %u in file \"%s\"",bot,line,filename);
 	free(buff);
+	continue;
     }
 
-    if (fclose(fp)<0)
-		eventlog(eventlog_level_error,"channellist_load_permanent","could not close channel file \"%s\" after reading (fclose: %s)",filename,strerror(errno));
-    return 0;
+    switch (str_get_bool(oper))
+    {
+      case 1:
+	flags |= channel_flags_allowopers;
+	break;
+      case 0:
+	flags &= ~channel_flags_allowopers;  /* unneeded, but safe */
+	break;
+      default:
+	eventlog(eventlog_level_error,"channellist_load_permanent","invalid boolean value \"%s\" for field 5 on line %u in file \"%s\"",oper,line,filename);
+	free(buff);
+	continue;
+    }
+
+    logflag = channel_loglevel_none;
+    if (strchr(log,'p'))
+      logflag |= channel_loglevel_public;
+    if (strchr(log,'c'))
+      logflag |= channel_loglevel_command;
+
+    if (strcmp(sname,"NULL") == 0)
+      sname = NULL;
+    if (strcmp(tag,"NULL") == 0)
+      tag = NULL;
+    if (strcmp(name,"NONE") == 0)
+      name = NULL;
+    if (strcmp(country, "NULL") == 0)
+      country = NULL;
+    if (strcmp(realmname,"NULL") == 0)
+      realmname = NULL;
+
+    if (name)
+      channel_create(name,sname,tag,(flags | channel_flags_permanent),logflag,country,realmname,atoi(max),NULL);
+    else
+    {
+      newname = channel_format_name(sname,country,realmname,atoi(max),1);
+      if (newname)
+      {
+	channel_create(newname,sname,tag,(flags | channel_flags_permanent),logflag,country,realmname,atoi(max),NULL);
+	free(newname);
+      }
+      else
+	eventlog(eventlog_level_error,"channellist_load_permanent","cannot format channel name");
+    }
+
+    /* FIXME: call channel_delete() on current perm channels and do a
+     channellist_find_channel() and set the long name, perm flag, etc,
+     otherwise call channel_create(). This will make HUPing the server
+     handle re-reading this file correctly. */
+    free(buff);
+  }
+
+  if (fclose(fp)<0)
+    eventlog(eventlog_level_error,"channellist_load_permanent","could not close channel file \"%s\" after reading (fclose: %s)",filename,strerror(errno));
+  return 0;
 }
 
 static char * channel_format_name(char const * sname, char const * country, char const * realmname, int maxmembers, unsigned int id)
 {
-    char * fullname;
-    unsigned int len;
+  char * fullname;
+  unsigned int len;
 
-    if (!sname)
-    {
-        eventlog(eventlog_level_error,"channel_format_name","got NULL sname");
-        return NULL;
-    }
-    len = strlen(sname)+1; /* FIXME: check lengths and format */
-    if (country)
-    	len += strlen(country) + 1;
-    if (realmname)
-    	len += strlen(realmname) + 1;
-    len += 32 + 1;          /* FIXME: id stringlen ?! */
+  if (!sname)
+  {
+    eventlog(eventlog_level_error,"channel_format_name","got NULL sname");
+    return NULL;
+  }
+  len = strlen(sname)+1; /* FIXME: check lengths and format */
+  if (country)
+    len += strlen(country) + 1;
+  if (realmname)
+    len += strlen(realmname) + 1;
+  len += 32 + 1;          /* FIXME: id stringlen ?! */
 
-    if (!(fullname=malloc(len)))
-    {
-        eventlog(eventlog_level_error,"channel_format_name","could not allocate memory for fullname");
-        return NULL;
-    }
+  if (!(fullname=malloc(len)))
+  {
+    eventlog(eventlog_level_error,"channel_format_name","could not allocate memory for fullname");
+    return NULL;
+  }
 
-    if (maxmembers < 0)
-        sprintf(fullname,"%s%s%s%s%s",
+  if (maxmembers < 0)
+    sprintf(fullname,"%s%s%s%s%s",
             realmname?realmname:"",
             realmname?" ":"",
             sname,
             country?" ":"",
             country?country:"");
-    else
-        sprintf(fullname,"%s%s%s%s%s-%d",
+  else
+    sprintf(fullname,"%s%s%s%s%s-%d",
             realmname?realmname:"",
             realmname?" ":"",
             sname,
@@ -1807,228 +1808,228 @@ static char * channel_format_name(char const * sname, char const * country, char
             country?country:"",
             id);
 
-    return fullname;
+  return fullname;
 }
 
 #ifndef WITH_BITS
 
 extern int channellist_reload(void)
 {
-    t_elem          * curr;
-    t_channel       * channel,
-                    * old_channel;
-    t_channelmember * memberlist,
-                    * member,
-                    * old_member;
-    t_list          * channellist_old = NULL;
+  t_elem          * curr;
+  t_channel       * channel,
+  * old_channel;
+  t_channelmember * memberlist,
+  * member,
+  * old_member;
+  t_list          * channellist_old = NULL;
 
-    if (channellist_head)
+  if (channellist_head)
+  {
+    if (!(channellist_old = list_create()))
+      return -1;
+
+    /* First pass - get members */
+    LIST_TRAVERSE(channellist_head,curr)
     {
-        if (!(channellist_old = list_create()))
-            return -1;
+      if (!(channel = elem_get_data(curr)))
+      {
+	eventlog(eventlog_level_error,"channellist_reload","channel list contains NULL item");
+	continue;
+      }
+      /* Trick to avoid automatic channel destruction */
+      channel->flags |= channel_flags_permanent;
+      if (channel->memberlist)
+      {
+	/* we need channelname, password and memberlist */
+	old_channel = (t_channel *) malloc(sizeof(t_channel));
 
-        /* First pass - get members */
-        LIST_TRAVERSE(channellist_head,curr)
-        {
-	        if (!(channel = elem_get_data(curr)))
-	        {
-	            eventlog(eventlog_level_error,"channellist_reload","channel list contains NULL item");
-	            continue;
-	        }
-	        /* Trick to avoid automatic channel destruction */
-	        channel->flags |= channel_flags_permanent;
-	        if (channel->memberlist)
-	        {
-	            /* we need channelname, password and memberlist */
-                old_channel = (t_channel *) malloc(sizeof(t_channel));
+	if(channel->name) old_channel->name = strdup(channel->name);
+	else old_channel->name = NULL;
 
-                if(channel->name) old_channel->name = strdup(channel->name);
-                else old_channel->name = NULL;
+	if(channel->shortname) old_channel->shortname = strdup(channel->shortname);
+	else old_channel->shortname = NULL;
 
-                if(channel->shortname) old_channel->shortname = strdup(channel->shortname);
-                else old_channel->shortname = NULL;
+	if(channel->password) old_channel->password = strdup(channel->password);
+	else old_channel->password = NULL;
 
-                if(channel->password) old_channel->password = strdup(channel->password);
-                else old_channel->password = NULL;
+	/* These aren't really needed but cause we use ...destroy function they better should be initialized */
+	old_channel->log = NULL;
+	old_channel->logname = NULL;
+	old_channel->country = NULL;
+	old_channel->realmname = NULL;
+	old_channel->clienttag = NULL;
+	old_channel->topic = NULL;
+	old_channel->banlist = list_create();
 
-                /* These aren't really needed but cause we use ...destroy function they better should be initialized */
-                old_channel->log = NULL;
-                old_channel->logname = NULL;
-                old_channel->country = NULL;
-                old_channel->realmname = NULL;
-                old_channel->clienttag = NULL;
-                old_channel->topic = NULL;
-                old_channel->banlist = list_create();
+	old_channel->memberlist = NULL;
+	member = channel->memberlist;
 
-                old_channel->memberlist = NULL;
-	            member = channel->memberlist;
-
-	            /* First pass - copy member */
-	            while (member)
-	            {
-	                if (!(old_member = malloc(sizeof(t_channelmember))))
-	                {
-	                    eventlog(eventlog_level_error,__FUNCTION__,"could not allocate memory for channelmember");
-                        if (channellist_do_destroy(channellist_old, 1) < 0)
-                        {
-                            eventlog(eventlog_level_error,__FUNCTION__,"could not destroy old channellist");
-	                        return -1;
-	                    }
-	                    return 0;   /* Possible that it would be better to be -1 */
-	                }
-	                old_member->connection = member->connection;
-	                if (old_channel->memberlist)
-	                    old_member->next = old_channel->memberlist;
-	                else
-	                    old_member->next = NULL;
-                    old_channel->memberlist = old_member;
-	                member = member->next;
-	            }
-
-	            /* Second pass - remove connections from channel */
-	            member = old_channel->memberlist;
-	            while (member)
-	            {
-	                channel_del_connection(channel,member->connection);
-	                conn_set_channel_var(member->connection,NULL);
-	                member = member->next;
-	            }
-
-	            if (list_prepend_data(channellist_old,old_channel)<0)
-	            {
-	                eventlog(eventlog_level_error,"channellist_reload","error reloading channel list, destroying channellist_old");
-                    if (channellist_do_destroy(channellist_old, 1) < 0)
-                    {
-                        eventlog(eventlog_level_error,__FUNCTION__,"could not destroy old channellist");
-                        return -1;
-                    }
-                    return 0;   /* Possible that it would be better to be -1 */
-	            }
-	        }
-
-	        /* Channel is empty - Destroying it */
-	        channel->flags &= ~channel_flags_permanent;
-	        if (channel_do_destroy(channellist_head, channel, 0)<0)
-	            eventlog(eventlog_level_error,"channellist_reload","could not destroy channel");
-        }
-
-        /* Cleanup and reload */
-        if (list_destroy(channellist_head)<0)
-            return -1;
-
-        channellist_head = NULL;
-        channellist_create();
-
-        /* Now put all users on their previous channel */
-        LIST_TRAVERSE(channellist_old,curr)
-        {
-	        if (!(channel = elem_get_data(curr)))
-	        {
-	            eventlog(eventlog_level_error,"channellist_reload","old channel list contains NULL item");
-	            continue;
-	        }
-
-	        memberlist = channel->memberlist;
-	        while (memberlist)
-	        {
-	            member = memberlist;
-	            memberlist = memberlist->next;
-                if(channel->shortname)
-                    conn_set_channel(member->connection, channel->shortname, channel->password);
-                else if(channel->name)
-                    conn_set_channel(member->connection, channel->name, channel->password);
-                else
-                {
-	                eventlog(eventlog_level_error,__FUNCTION__,"old channel lost. Leave member without rejoin to his old channel");
-	                continue;
-    	        }
-	        }
-        }
-
-        if (channellist_do_destroy(channellist_old, 1) < 0)
-        {
-            eventlog(eventlog_level_error,__FUNCTION__,"could not destroy old channellist");
-	        return -1;
+	/* First pass - copy member */
+	while (member)
+	{
+	  if (!(old_member = malloc(sizeof(t_channelmember))))
+	  {
+	    eventlog(eventlog_level_error,__FUNCTION__,"could not allocate memory for channelmember");
+	    if (channellist_do_destroy(channellist_old, 1) < 0)
+	    {
+	      eventlog(eventlog_level_error,__FUNCTION__,"could not destroy old channellist");
+	      return -1;
 	    }
+	    return 0;   /* Possible that it would be better to be -1 */
+	  }
+	  old_member->connection = member->connection;
+	  if (old_channel->memberlist)
+	    old_member->next = old_channel->memberlist;
+	  else
+	    old_member->next = NULL;
+	  old_channel->memberlist = old_member;
+	  member = member->next;
+	}
+
+	/* Second pass - remove connections from channel */
+	member = old_channel->memberlist;
+	while (member)
+	{
+	  channel_del_connection(channel,member->connection);
+	  conn_set_channel_var(member->connection,NULL);
+	  member = member->next;
+	}
+
+	if (list_prepend_data(channellist_old,old_channel)<0)
+	{
+	  eventlog(eventlog_level_error,"channellist_reload","error reloading channel list, destroying channellist_old");
+	  if (channellist_do_destroy(channellist_old, 1) < 0)
+	  {
+	    eventlog(eventlog_level_error,__FUNCTION__,"could not destroy old channellist");
+	    return -1;
+	  }
+	  return 0;   /* Possible that it would be better to be -1 */
+	}
+      }
+
+      /* Channel is empty - Destroying it */
+      channel->flags &= ~channel_flags_permanent;
+      if (channel_do_destroy(channellist_head, channel, 0)<0)
+	eventlog(eventlog_level_error,"channellist_reload","could not destroy channel");
     }
-    return 0;
+
+    /* Cleanup and reload */
+    if (list_destroy(channellist_head)<0)
+      return -1;
+
+    channellist_head = NULL;
+    channellist_create();
+
+    /* Now put all users on their previous channel */
+    LIST_TRAVERSE(channellist_old,curr)
+    {
+      if (!(channel = elem_get_data(curr)))
+      {
+	eventlog(eventlog_level_error,"channellist_reload","old channel list contains NULL item");
+	continue;
+      }
+
+      memberlist = channel->memberlist;
+      while (memberlist)
+      {
+	member = memberlist;
+	memberlist = memberlist->next;
+	if(channel->shortname)
+	  conn_set_channel(member->connection, channel->shortname, channel->password);
+	else if(channel->name)
+	  conn_set_channel(member->connection, channel->name, channel->password);
+	else
+	{
+	  eventlog(eventlog_level_error,__FUNCTION__,"old channel lost. Leave member without rejoin to his old channel");
+	  continue;
+	}
+      }
+    }
+
+    if (channellist_do_destroy(channellist_old, 1) < 0)
+    {
+      eventlog(eventlog_level_error,__FUNCTION__,"could not destroy old channellist");
+      return -1;
+    }
+  }
+  return 0;
 }
 #endif
 
 extern int channellist_create(void)
 {
-    if (!(channellist_head = list_create()))
-	    return -1;
+  if (!(channellist_head = list_create()))
+    return -1;
 
-    return channellist_load_permanent(prefs_get_channelfile());
+  return channellist_load_permanent(prefs_get_channelfile());
 }
 
 
 extern int channellist_destroy(void)
 {
-    return channellist_do_destroy(channellist_head, 0);
+  return channellist_do_destroy(channellist_head, 0);
 }
 
 static int channellist_do_destroy(t_list * channellist, unsigned int flag_dropmember)
 {
-    t_channel    * channel;
-    t_elem const * curr;
+  t_channel    * channel;
+  t_elem const * curr;
 
-    if (channellist)
+  if (channellist)
+  {
+    LIST_TRAVERSE(channellist,curr)
     {
-	    LIST_TRAVERSE(channellist,curr)
-	    {
-	        if (!(channel = elem_get_data(curr))) /* should not happen */
-	        {
-    		    eventlog(eventlog_level_error,__FUNCTION__,"channel list contains NULL item");
-	    	    continue;
-	        }
-	        channel_do_destroy(channellist, channel, flag_dropmember);
-	    }
-
-	    if (list_destroy(channellist)<0)
-	        return -1;
-	    channellist = NULL;
+      if (!(channel = elem_get_data(curr))) /* should not happen */
+      {
+	eventlog(eventlog_level_error,__FUNCTION__,"channel list contains NULL item");
+	continue;
+      }
+      channel_do_destroy(channellist, channel, flag_dropmember);
     }
 
-    return 0;
+    if (list_destroy(channellist)<0)
+      return -1;
+    channellist = NULL;
+  }
+
+  return 0;
 }
 
 
 extern t_list * channellist(void)
 {
-    return channellist_head;
+  return channellist_head;
 }
 
 
 extern int channellist_get_length(void)
 {
-    return list_get_length(channellist_head);
+  return list_get_length(channellist_head);
 }
 
 
 extern t_channel * channellist_find_channel_by_fullname(char const * name)
 {
-    t_channel *    channel;
-    t_elem const * curr;
+  t_channel *    channel;
+  t_elem const * curr;
 
-    if (channellist_head)
+  if (channellist_head)
+  {
+    LIST_TRAVERSE(channellist_head,curr)
     {
-	LIST_TRAVERSE(channellist_head,curr)
-	{
-	    channel = elem_get_data(curr);
-	    if (!channel->name)
-	    {
-		eventlog(eventlog_level_error,"channellist_find_channel_by_fullname","found channel with NULL name");
-		continue;
-	    }
+      channel = elem_get_data(curr);
+      if (!channel->name)
+      {
+	eventlog(eventlog_level_error,"channellist_find_channel_by_fullname","found channel with NULL name");
+	continue;
+      }
 
-	    if (strcasecmp(channel->name,name)==0)
-		return channel;
-	}
+      if (strcasecmp(channel->name,name)==0)
+	return channel;
     }
+  }
 
-    return NULL;
+  return NULL;
 }
 
 
@@ -2038,173 +2039,173 @@ extern t_channel * channellist_find_channel_by_fullname(char const * name)
  */
 extern t_channel * channellist_find_channel_by_name(char const * name, char const * country, char const * realmname)
 {
-    t_channel       *   channel;
-    t_elem const    *   curr;
-    int                 foundperm;
-    int                 maxchannel; /* the number of "rollover" channels that exist */
-    char const      *   saveshortname;
-    char const      *   savetag;
-    int                 savelogflag;
-    char const      *   savecountry;
-    char const      *   saverealmname;
-    int                 savemaxmembers;
-    t_channel_flags     saveflags;
+  t_channel       *   channel;
+  t_elem const    *   curr;
+  int                 foundperm;
+  int                 maxchannel; /* the number of "rollover" channels that exist */
+  char const      *   saveshortname;
+  char const      *   savetag;
+  int                 savelogflag;
+  char const      *   savecountry;
+  char const      *   saverealmname;
+  int                 savemaxmembers;
+  t_channel_flags     saveflags;
 
-    maxchannel = 0;
-    foundperm = 0;
-    if (channellist_head)
+  maxchannel = 0;
+  foundperm = 0;
+  if (channellist_head)
+  {
+    LIST_TRAVERSE(channellist_head,curr)
     {
-	LIST_TRAVERSE(channellist_head,curr)
+      channel = elem_get_data(curr);
+      if (!channel->name)
+      {
+	eventlog(eventlog_level_error,"channellist_find_channel_by_name","found channel with NULL name");
+	continue;
+      }
+
+      if (strcasecmp(channel->name,name)==0)
+      {
+	eventlog(eventlog_level_debug,"channellist_find_channel_by_name","found exact match for \"%s\"",name);
+	return channel;
+      }
+
+      if (channel->shortname && strcasecmp(channel->shortname,name)==0)
+      {
+	/* FIXME: what should we do if the client doesn't have a country (or realm) ?
+	 * For now, just take the first channel that would match. */
+	if ( (!channel->country || !country ||
+	      (channel->country && country && (strcmp(channel->country, country)==0))) &&
+	    ((!channel->realmname || !realmname) ||
+	     (channel->realmname && realmname && (strcmp(channel->realmname, realmname)==0))) )
+
 	{
-	    channel = elem_get_data(curr);
-	    if (!channel->name)
-	    {
-    		eventlog(eventlog_level_error,"channellist_find_channel_by_name","found channel with NULL name");
-	    	continue;
-	    }
-
-	    if (strcasecmp(channel->name,name)==0)
-	    {
-		    eventlog(eventlog_level_debug,"channellist_find_channel_by_name","found exact match for \"%s\"",name);
-		    return channel;
-	    }
-
-        if (channel->shortname && strcasecmp(channel->shortname,name)==0)
-	    {
-		    /* FIXME: what should we do if the client doesn't have a country (or realm) ?
-		     * For now, just take the first channel that would match. */
-	        if ( (!channel->country || !country ||
-                 (channel->country && country && (strcmp(channel->country, country)==0))) &&
-	             ((!channel->realmname || !realmname) ||
-                 (channel->realmname && realmname && (strcmp(channel->realmname, realmname)==0))) )
-
-		    {
-		        if (channel->maxmembers==-1 || channel->currmembers<channel->maxmembers)
-		        {
-			        eventlog(eventlog_level_debug,"channellist_find_channel_by_name","found permanent channel \"%s\" for \"%s\"",channel->name,name);
-			        return channel;
-		        }
-		        maxchannel++;
-		    }
-		    else
-		        eventlog(eventlog_level_debug,"channellist_find_channel_by_name","countries or realms didn't match");
+	  if (channel->maxmembers==-1 || channel->currmembers<channel->maxmembers)
+	  {
+	    eventlog(eventlog_level_debug,"channellist_find_channel_by_name","found permanent channel \"%s\" for \"%s\"",channel->name,name);
+	    return channel;
+	  }
+	  maxchannel++;
+	}
+	else
+	  eventlog(eventlog_level_debug,"channellist_find_channel_by_name","countries or realms didn't match");
 
 #ifdef WITH_BITS
-		    if (!bits_master) /* BITS slaves have to handle permanent, rollover channel seperately with an extra */
-		        return channel; /* request to the master. Only the master has to decide whether to create a new instance ... */
+	if (!bits_master) /* BITS slaves have to handle permanent, rollover channel seperately with an extra */
+	  return channel; /* request to the master. Only the master has to decide whether to create a new instance ... */
 #endif
 
-		    foundperm = 1;
+	foundperm = 1;
 
-		    /* save off some info in case we need to create a new copy */
-		    saveshortname = channel->shortname;
-		    savetag = channel->clienttag;
-            saveflags = (channel_flags_none | (channel->flags & channel_flags_allowbots) | (channel->flags & channel_flags_allowopers));
-		    savelogflag = channel->loglevel;
-            if (country && channel->country)
-		        savecountry = country;
-		    else
-		        savecountry = channel->country;
-            if (realmname && channel->realmname)
-                saverealmname = realmname;
-            else
-                saverealmname = channel->realmname;
-		    savemaxmembers = channel->maxmembers;
-	    }
-	} /* LIST_TRAVERSE */
-    }
+	/* save off some info in case we need to create a new copy */
+	saveshortname = channel->shortname;
+	savetag = channel->clienttag;
+	saveflags = (channel_flags_none | (channel->flags & channel_flags_allowbots) | (channel->flags & channel_flags_allowopers));
+	savelogflag = channel->loglevel;
+	if (country && channel->country)
+	  savecountry = country;
+	else
+	  savecountry = channel->country;
+	if (realmname && channel->realmname)
+	  saverealmname = realmname;
+	else
+	  saverealmname = channel->realmname;
+	savemaxmembers = channel->maxmembers;
+      }
+    } /* LIST_TRAVERSE */
+  }
 
-    /* we've gone thru the whole list and either there was no match or the
-     * channels are all full.
-     */
+  /* we've gone thru the whole list and either there was no match or the
+   * channels are all full.
+   */
 
-    if (foundperm) /* All the channels were full, create a new one */
-    {	           /* Only BITS masters should reach this point. */
-	    char * channelname;
+  if (foundperm) /* All the channels were full, create a new one */
+  {	           /* Only BITS masters should reach this point. */
+    char * channelname;
 
-        if (!(channelname=channel_format_name(saveshortname,savecountry,saverealmname,savemaxmembers,maxchannel+1)))
-            return NULL;
+    if (!(channelname=channel_format_name(saveshortname,savecountry,saverealmname,savemaxmembers,maxchannel+1)))
+      return NULL;
 
-        /* FIXME: In the case that this channel shall be created cause the other system/permanent channels are full,
-                  it would be better to create it without "permanent", to let it close when the last member leaves */
-        channel = channel_create(channelname,saveshortname,savetag,(saveflags | channel_flags_permanent),savelogflag,savecountry,saverealmname,savemaxmembers,'\0');
-        free(channelname);
+    /* FIXME: In the case that this channel shall be created cause the other system/permanent channels are full,
+     it would be better to create it without "permanent", to let it close when the last member leaves */
+    channel = channel_create(channelname,saveshortname,savetag,(saveflags | channel_flags_permanent),savelogflag,savecountry,saverealmname,savemaxmembers,'\0');
+    free(channelname);
 
-	    eventlog(eventlog_level_debug,"channellist_find_channel_by_name","created copy \"%s\" of channel \"%s\"",(channel)?(channel->name):("<failed>"),name);
-        return channel;
-    }
+    eventlog(eventlog_level_debug,"channellist_find_channel_by_name","created copy \"%s\" of channel \"%s\"",(channel)?(channel->name):("<failed>"),name);
+    return channel;
+  }
 
-    /* no match */
-    eventlog(eventlog_level_debug,"channellist_find_channel_by_name","could not find channel \"%s\"",name);
-    return NULL;
+  /* no match */
+  eventlog(eventlog_level_debug,"channellist_find_channel_by_name","could not find channel \"%s\"",name);
+  return NULL;
 }
 
 
 extern t_channel * channellist_find_channel_bychannelid(unsigned int channelid)
 {
-    t_channel *    channel;
-    t_elem const * curr;
+  t_channel *    channel;
+  t_elem const * curr;
 
-    if (channellist_head)
+  if (channellist_head)
+  {
+    LIST_TRAVERSE(channellist_head,curr)
     {
-	LIST_TRAVERSE(channellist_head,curr)
-	{
-	    channel = elem_get_data(curr);
-	    if (!channel->name)
-	    {
-		eventlog(eventlog_level_error,"channellist_find_channel_bychannelid","found channel with NULL name");
-		continue;
-	    }
-	    if (channel->id==channelid)
-		return channel;
-	}
+      channel = elem_get_data(curr);
+      if (!channel->name)
+      {
+	eventlog(eventlog_level_error,"channellist_find_channel_bychannelid","found channel with NULL name");
+	continue;
+      }
+      if (channel->id==channelid)
+	return channel;
     }
+  }
 
-    return NULL;
+  return NULL;
 }
 
 
-extern char * channel_get_topic(t_channel const * channel)
+extern const char * channel_get_topic(t_channel const * channel)
 {
-    if (!channel)
-    {
-        eventlog(eventlog_level_warn,"channel_get_topic","got NULL channel");
-	    return "";
-    }
-    if (channel->topic)
-	    return channel->topic;
-    else	/* should not happen */
-    {
-	    eventlog(eventlog_level_error,"channel_get_topic","got NULL topic");
-	    return "";
-    }
+  if (!channel)
+  {
+    eventlog(eventlog_level_warn,"channel_get_topic","got NULL channel");
+    return "";
+  }
+  if (channel->topic)
+    return channel->topic;
+  else	/* should not happen */
+  {
+    eventlog(eventlog_level_error,"channel_get_topic","got NULL topic");
+    return "";
+  }
 }
 
 
 extern int channel_set_topic(t_channel * channel, char const * topic)
 {
-    if (channel->topic)
-	    free(channel->topic);
-    channel->topic = strdup(topic);
-    if (!channel->topic)
-    {
-	    eventlog(eventlog_level_error,"channel_set_topic","could not allocate memmory for topic");
-	    return -1;
-    }
-    return 0;
+  if (channel->topic)
+    free(channel->topic);
+  channel->topic = strdup(topic);
+  if (!channel->topic)
+  {
+    eventlog(eventlog_level_error,"channel_set_topic","could not allocate memmory for topic");
+    return -1;
+  }
+  return 0;
 }
 
 
 extern int channel_send_topic(t_channel const * channel, t_connection * c)
 {
-    char tstr[MAX_MESSAGE_LEN];
+  char tstr[MAX_MESSAGE_LEN];
 
-    if (strcasecmp(channel_get_topic(channel),""))
-        sprintf(tstr,"Topic: %s",channel_get_topic(channel));
-    else
-	    sprintf(tstr,"No topic set.");
+  if (strcasecmp(channel_get_topic(channel),""))
+    sprintf(tstr,"Topic: %s",channel_get_topic(channel));
+  else
+    sprintf(tstr,"No topic set.");
 
-    message_send_text(c,message_type_info,c,tstr);
+  message_send_text(c,message_type_info,c,tstr);
 
-    return 0;
+  return 0;
 }

@@ -93,7 +93,7 @@ fi
 # Custom checks.
 zwarnflags=""
 AC_ARG_WITH([warn],[AS_HELP_STRING([--with-warn],[enable a certain set of specific compiler warnings])],[
-for warning_flag in $(echo "-Wall -Wextra -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses -Wdangling-else"); do
+for warning_flag in $(echo "-Wall -Wextra -Wshadow -Wpointer-arith -Wnull-dereference -Wcast-align -Wwrite-strings -Wstrict-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Wunreachable-code -Winline -Wpacked -Wimplicit -Wno-attributes -Wno-sign-compare -Wno-parentheses -Wdangling-else"); do
 	AX_CHECK_COMPILE_FLAG([${warning_flag}],[zwarnflags="${zwarnflags} ${warning_flag}"])
 done
 ])

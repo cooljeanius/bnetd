@@ -46,7 +46,7 @@ static int add_charlistreq_packet(t_packet * rpacket, t_account * account, char 
 extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 {
     t_packet * rpacket;
-    
+
     if (!c)
     {
 	eventlog(eventlog_level_error,"handle_auth_packet","[%d] got NULL connection",conn_get_socket(c));
@@ -62,7 +62,7 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 	eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad packet (class %d)",conn_get_socket(c),(int)packet_get_class(packet));
 	return -1;
     }
-    
+
     switch (conn_get_state(c))
     {
     case conn_state_connected:
@@ -71,23 +71,23 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 	case CLIENT_AUTHLOGINREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_authloginreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad AUTHLOGINREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_authloginreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad AUTHLOGINREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_authloginreq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    {
 		char const   * username;
 		t_connection * normalcon;
 		unsigned int   reply;
-		
+
 		if (!(username = packet_get_str_const(packet,sizeof(t_client_authloginreq),MAX_USER_NAME)))
 		{
 		    eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad AUTHLOGINREQ packet (missing or too long username)",conn_get_socket(c));
 		    break;
 		}
-		
+
 		eventlog(eventlog_level_debug,"handle_auth_packet","[%d] username = \"%s\"",conn_get_socket(c),username);
-		
+
 		if (!(normalcon = connlist_find_connection_by_sessionkey(bn_int_get(packet->u.client_authloginreq.sessionkey))))
 		{
 		    eventlog(eventlog_level_info,"handle_auth_packet","[%d] auth login for \"%s\" refused (bad session key %u)",conn_get_socket(c),username,bn_int_get(packet->u.client_authloginreq.sessionkey));
@@ -106,16 +106,16 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		    t_hash       secret_hash;
 		    t_hash       try_hash;
 		    char const * tname;
-		    
+
 		    salt = bn_int_get(packet->u.client_authloginreq.unknown9);
 		    bn_int_set(&temp.salt,salt);
 		    bn_int_set(&temp.sessionkey,conn_get_sessionkey(normalcon));
 		    bn_int_set(&temp.sessionnum,conn_get_sessionnum(normalcon));
 		    bn_int_set(&temp.secret,conn_get_secret(normalcon));
 		    bnet_hash(&secret_hash,sizeof(temp),&temp);
-		    
+
 		    bnhash_to_hash(packet->u.client_authloginreq.secret_hash,&try_hash);
-		    
+
 		    if (hash_eq(try_hash,secret_hash)!=1)
 		    {
 			eventlog(eventlog_level_info,"handle_auth_packet","[%d] auth login for \"%s\" refused (bad password)",conn_get_socket(c),username);
@@ -139,7 +139,7 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 			}
 		    }
 		}
-		
+
 		if ((rpacket = packet_create(packet_class_auth)))
 		{
 		    packet_set_size(rpacket,sizeof(t_server_authloginreply));
@@ -150,34 +150,34 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		}
 	    }
 	    break;
-	    
+
 	default:
 	    eventlog(eventlog_level_error,"handle_auth_packet","[%d] unknown (unlogged in) auth packet type 0x%02hx, len %u",conn_get_socket(c),packet_get_type(packet),packet_get_size(packet));
 	}
 	break;
-	
+
     case conn_state_loggedin:
 	switch (packet_get_type(packet))
 	{
 	case CLIENT_CREATECHARREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_createcharreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CREATECHARREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_createcharreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CREATECHARREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_createcharreq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    {
 		char const *          charname;
 		unsigned int          reply;
 		t_character_class     charclass;
 		t_character_expansion charexpansion;
-		
+
 		if (!(charname = packet_get_str_const(packet,sizeof(t_client_createcharreq),UNCHECKED_NAME_STR)))
 		{
 		    eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CREATECHARREQ packet (missing or too long charname)",conn_get_socket(c));
 		    break;
 		}
-		
+
 		eventlog(eventlog_level_debug,"handle_auth_packet","[%d] CREATECHARREQ %u %04x %04x",
 			 conn_get_socket(c),
 			 bn_short_get(packet->u.client_createcharreq.class),
@@ -240,7 +240,7 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		    conn_set_character(c,characterlist_find_character(conn_get_realmname(c),charname));
 		    reply = SERVER_CREATECHARREPLY_REPLY_SUCCESS;
 		}
-		
+
 		if ((rpacket = packet_create(packet_class_auth)))
 		{
 		    packet_set_size(rpacket,sizeof(t_server_createcharreply));
@@ -251,14 +251,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		}
 	    }
 	    break;
-	    
+
 	case CLIENT_CREATEGAMEREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_creategamereq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CREATEGAMEREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_creategamereq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CREATEGAMEREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_creategamereq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    /* FIXME: actually create game */
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
@@ -272,14 +272,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_JOINGAMEREQ2:
 	    if (packet_get_size(packet)<sizeof(t_client_joingamereq2))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad JOINGAMEREQ2 packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_joingamereq2),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad JOINGAMEREQ2 packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_joingamereq2),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
 		packet_set_size(rpacket,sizeof(t_server_joingamereply2));
@@ -297,14 +297,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_D2GAMELISTREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_d2gamelistreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad D2GAMELISTREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_d2gamelistreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad D2GAMELISTREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_d2gamelistreq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    /* FIXME: actually get game list */
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
@@ -334,14 +334,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_GAMEINFOREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_gameinforeq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad GAMEINFOREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_gameinforeq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad GAMEINFOREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_gameinforeq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    /* FIXME: send real game info */
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
@@ -363,25 +363,25 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_CHARLOGINREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_charloginreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CHARLOGINREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_charloginreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CHARLOGINREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_charloginreq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    {
 		char const *  charname;
 		t_character * ch;
 		char const *  charlist;
-		
+
 		if (!(charname = packet_get_str_const(packet,sizeof(t_client_charloginreq),UNCHECKED_NAME_STR)))
 		{
 		    eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CHARLOGINREQ packet (missing or too long charname)",conn_get_socket(c));
 		    break;
 		}
-	        
+
 	        if ((rpacket = packet_create(packet_class_auth)))
 	        {
 		    packet_set_size(rpacket,sizeof(t_server_charloginreply));
@@ -418,14 +418,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 	        }
 	    }
 	    break;
-	    
+
 	case CLIENT_DELETECHARREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_deletecharreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad DELETECHARREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_deletecharreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad DELETECHARREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_deletecharreq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
 		packet_set_size(rpacket,sizeof(t_server_deletecharreply));
@@ -436,14 +436,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_LADDERREQ2:
 	    if (packet_get_size(packet)<sizeof(t_client_ladderreq2))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad LADDERREQ2 packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_ladderreq2),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad LADDERREQ2 packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_ladderreq2),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
 		packet_set_size(rpacket,sizeof(t_server_ladderreply2));
@@ -458,14 +458,14 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_AUTHMOTDREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_authmotdreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad AUTHMOTDREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_authmotdreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad AUTHMOTDREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_authmotdreq),packet_get_size(packet));
 		break;
 	    }
-	    
+
 	    if ((rpacket = packet_create(packet_class_auth)))
 	    {
 		packet_set_size(rpacket,sizeof(t_server_authmotdreply));
@@ -476,11 +476,11 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		packet_del_ref(rpacket);
 	    }
 	    break;
-	    
+
 	case CLIENT_CHARLISTREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_charlistreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CHARLISTREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_charlistreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CHARLISTREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_charlistreq),packet_get_size(packet));
 		break;
 	    }
 
@@ -543,7 +543,7 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 			number_of_characters += add_charlistreq_packet(rpacket, conn_get_account(c), conn_get_clienttag(c), realmname, tempname);
 
 			start = next_char + 1;
-		    }    
+		    }
 		}
 
 		bn_short_set(&rpacket->u.server_charlistreply.nchars_1, number_of_characters);
@@ -562,13 +562,13 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 	case CLIENT_CONVERTCHARREQ:
 	    if (packet_get_size(packet)<sizeof(t_client_convertcharreq))
 	    {
-		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CONVERTCHARREQ packet (expected %u bytes, got %u)",conn_get_socket(c),sizeof(t_client_convertcharreq),packet_get_size(packet));
+		eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CONVERTCHARREQ packet (expected %zu bytes, got %u)",conn_get_socket(c),sizeof(t_client_convertcharreq),packet_get_size(packet));
 		break;
 	    }
 
 	    {
 		char const * charname;
-		
+
 		if (!(charname = packet_get_str_const(packet,sizeof(t_client_convertcharreq),UNCHECKED_NAME_STR)))
 		{
 		    eventlog(eventlog_level_error,"handle_auth_packet","[%d] got bad CONVERTCHARREQ packet (missing or too long charname)",conn_get_socket(c));
@@ -578,7 +578,7 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		eventlog(eventlog_level_debug,"handle_auth_packet","[%d] CONVERTCHARREQ %s, FIXME: Add code later",
 			 conn_get_socket(c),
                          charname);
-		
+
 		if ((rpacket = packet_create(packet_class_auth)))
 		{
 		    packet_set_size(rpacket,sizeof(t_server_convertcharreply));
@@ -589,16 +589,16 @@ extern int handle_auth_packet(t_connection * c, t_packet const * const packet)
 		}
             }
             break;
-            
+
 	default:
 	    eventlog(eventlog_level_error,"handle_auth_packet","[%d] unknown (logged in) auth packet type 0x%02hx, len %u",conn_get_socket(c),packet_get_type(packet),packet_get_size(packet));
 	}
 	break;
-	
+
     default:
 	eventlog(eventlog_level_error,"handle_auth_packet","[%d] unknown auth connection state %d",conn_get_socket(c),(int)conn_get_state(c));
     }
-    
+
     return 0;
 }
 
@@ -632,7 +632,7 @@ static int add_charlistreq_packet (t_packet * rpacket, t_account * account, char
 0090:   81 80 80 80 FF FF FF 00   68 61 6B 61 6E 50 61 6C    ........hakanPal
 00A0:   54 65 6D 70 00 84 80 FF   FF FF FF FF FF FF FF FF    Temp............
 00B0:   FF FF 04 FF FF FF FF FF   FF FF FF FF FF FF 01 A1    ................
-00C0:   80 80 80 FF FF FF 00                                 .......         
+00C0:   80 80 80 FF FF FF 00                                 .......
 
 # 20 packet from server: type=0x0017(SERVER_CHARLISTREPLY) length=164 class=auth
 0000:   A4 00 17 08 00 00 00 00   00 00 00 61 73 61 00 84    ...........asa..
@@ -645,7 +645,7 @@ static int add_charlistreq_packet (t_packet * rpacket, t_account * account, char
 0070:   FF FF FF FF FF 01 A1 80   80 80 FF FF FF 00 61 6D    ..............am
 0080:   61 00 84 80 FF FF FF FF   FF FF FF FF FF FF FF 01    a...............
 0090:   FF FF FF FF FF FF FF FF   FF FF FF 01 A1 80 80 80    ................
-00A0:   FF FF FF 00                                          ....            
+00A0:   FF FF FF 00                                          ....
 
 
 	     */
@@ -655,7 +655,7 @@ static int add_charlistreq_packet (t_packet * rpacket, t_account * account, char
         int  append_length;
         char chardata[64];
 	int  length;
-	
+
         length = hex_to_str(chardata_as_hex, chardata, 33); /* FIXME: make sure chardata_as_hex is long enough (33*3 (+1?) ) */
 	/* Append a '\0' as terminator to character data */
 	chardata[length] = '\0';

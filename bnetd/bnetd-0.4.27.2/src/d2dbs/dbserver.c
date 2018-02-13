@@ -140,67 +140,70 @@ extern int dbs_server_main(const char* pcAddress, unsigned short nPort)
  * Sets up a listener on the given interface and port, returning the
  * listening socket if successful; if not, returns -1.
  */
-/* FIXME: No it doesn't!  pcAddress is not ever referenced in this
- * function.
- */
 static int dbs_server_init(const char* pcAddress, unsigned short  nPort)
 {
-	int	sd;
-	struct sockaddr_in sinInterface;
-	int	val;
+  int	sd;
+  struct sockaddr_in sinInterface;
+  int	val;
 
-	if (! (dbs_server_connection_list=list_create()))
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "list_create() failed");
-		return -1;
-	}
+  if (pcAddress == NULL)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "NULL pcAddress");
+    return -1;
+  }
 
-	if (d2ladder_init()==-1)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "d2ladder_init() failed");
-		return -1;
-	}
+  if (! (dbs_server_connection_list=list_create()))
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "list_create() failed");
+    return -1;
+  }
 
-	if (cl_init(DEFAULT_HASHTBL_LEN, DEFAULT_GS_MAX)==-1)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "cl_init() failed");
-		return -1;
-	}
+  if (d2ladder_init()==-1)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "d2ladder_init() failed");
+    return -1;
+  }
 
-	if (psock_init()<0)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "psock_init() failed");
-		return -1;
-	}
-	
-	sd = psock_socket(PSOCK_PF_INET, PSOCK_SOCK_STREAM, PSOCK_IPPROTO_TCP);
-	if (sd==-1)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "psock_socket() failed : %s",strerror(psock_errno()));
-		return -1;
-	}
+  if (cl_init(DEFAULT_HASHTBL_LEN, DEFAULT_GS_MAX)==-1)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "cl_init() failed");
+    return -1;
+  }
 
-	val = 1;
-	if (psock_setsockopt(sd, PSOCK_SOL_SOCKET, PSOCK_SO_REUSEADDR, &val, sizeof(val)) < 0)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "psock_setsockopt() failed : %s",strerror(psock_errno()));
-	}
+  if (psock_init()<0)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "psock_init() failed");
+    return -1;
+  }
 
-	sinInterface.sin_family = PSOCK_AF_INET;
-	sinInterface.sin_addr.s_addr = INADDR_ANY;
-	sinInterface.sin_port = nPort;
-	if (psock_bind(sd, (struct sockaddr*)&sinInterface, (psock_t_socklen)sizeof(struct sockaddr_in)) < 0)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "psock_bind() failed : %s",strerror(psock_errno()));
-		return -1;
-	}
-	if (psock_listen(sd, LISTEN_QUEUE) < 0)
-	{
-		eventlog(eventlog_level_error, __FUNCTION__, "psock_listen() failed : %s",strerror(psock_errno()));
-		return -1;
-	}
+  sd = psock_socket(PSOCK_PF_INET, PSOCK_SOCK_STREAM, PSOCK_IPPROTO_TCP);
+  if (sd==-1)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "psock_socket() failed : %s",strerror(psock_errno()));
+    return -1;
+  }
 
-	return sd;
+  val = 1;
+  if (psock_setsockopt(sd, PSOCK_SOL_SOCKET, PSOCK_SO_REUSEADDR, &val, sizeof(val)) < 0)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "psock_setsockopt() failed : %s",strerror(psock_errno()));
+  }
+
+  sinInterface.sin_family = PSOCK_AF_INET;
+  sinInterface.sin_addr.s_addr = INADDR_ANY;
+  sinInterface.sin_port = nPort;
+  if (psock_bind(sd, (struct sockaddr*)&sinInterface, (psock_t_socklen)sizeof(struct sockaddr_in)) < 0)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "psock_bind() failed : %s",strerror(psock_errno()));
+    return -1;
+  }
+  if (psock_listen(sd, LISTEN_QUEUE) < 0)
+  {
+    eventlog(eventlog_level_error, __FUNCTION__, "psock_listen() failed : %s",strerror(psock_errno()));
+    return -1;
+  }
+
+  return sd;
 }
 
 
@@ -227,7 +230,7 @@ static int dbs_server_setup_fdsets(t_psock_fd_set * pReadFDs, t_psock_fd_set * p
 	highest_fd=lsocket;
 
 	LIST_TRAVERSE_CONST(dbs_server_connection_list,elem)
-	{		
+	{
 		if (!(it=elem_get_data(elem))) continue;
 		if (it->nCharsInReadBuffer < (kBufferSize-kMaxPacketLength)) {
 			/* There's space in the read buffer, so pay attention to incoming data. */
@@ -261,7 +264,7 @@ static BOOL dbs_server_read_data(t_d2dbs_connection* conn)
 	} else if (nBytes < 0) {
 		int 		err;
 		psock_t_socklen errlen;
-		
+
 		err = 0;
 		errlen = sizeof(err);
 		if (psock_getsockopt(conn->sd, PSOCK_SOL_SOCKET, PSOCK_SO_ERROR, &err, &errlen)<0)
@@ -338,7 +341,7 @@ static int dbs_server_list_add_socket(int sd, unsigned int ipaddr)
 	it->nCharsInWriteBuffer=0;
 	list_append_data(dbs_server_connection_list,it);
 	in.s_addr = htonl(ipaddr);
-	strncpy(it->serverip, inet_ntoa(in), sizeof(it->serverip)-1);
+	strncpy((char *)it->serverip, inet_ntoa(in), sizeof(it->serverip)-1);
 
 	return 1;
 }
@@ -370,114 +373,117 @@ static int dbs_handle_timed_events(void)
 
 static void dbs_server_loop(int lsocket)
 {
-	struct sockaddr_in sinRemote;
-	int	sd;
-	fd_set ReadFDs, WriteFDs, ExceptFDs;
-	t_elem * elem;
-	t_d2dbs_connection* it;
-	BOOL	bOK;
-	const char* pcErrorType;
-	struct timeval         tv;
-	int	highest_fd;
-	int	listpurgecount;
-	psock_t_socklen nAddrSize = sizeof(sinRemote);
-	
-	listpurgecount=0;
-	while (1) {
+  struct sockaddr_in sinRemote;
+  int	sd;
+  fd_set ReadFDs, WriteFDs, ExceptFDs;
+  t_elem * elem;
+  t_d2dbs_connection* it;
+  BOOL	bOK;
+  const char* pcErrorType;
+  struct timeval         tv;
+  int	highest_fd;
+  int	listpurgecount;
+  psock_t_socklen nAddrSize = sizeof(sinRemote);
+
+  listpurgecount=0;
+  while (1) {
 #ifdef DO_DAEMONIZE
-		if (handle_signal()<0) break;
+    if (handle_signal()<0) break;
 #endif
-		dbs_handle_timed_events();
-		highest_fd=dbs_server_setup_fdsets(&ReadFDs, &WriteFDs, &ExceptFDs, lsocket);
+    dbs_handle_timed_events();
+    highest_fd=dbs_server_setup_fdsets(&ReadFDs, &WriteFDs, &ExceptFDs, lsocket);
 
-		tv.tv_sec  = 0;
-		tv.tv_usec = SELECT_TIME_OUT;
-		switch (psock_select(highest_fd+1, &ReadFDs, &WriteFDs, &ExceptFDs, &tv) ) {
-			case -1:
-				eventlog(eventlog_level_error, __FUNCTION__, "psock_select() failed : %s",strerror(psock_errno()));
-				continue;
-			case 0:
-				continue;
-			default:
-				break;
-		}
+    tv.tv_sec  = 0;
+    tv.tv_usec = SELECT_TIME_OUT;
+    switch (psock_select(highest_fd+1, &ReadFDs, &WriteFDs, &ExceptFDs, &tv) ) {
+      case -1:
+	eventlog(eventlog_level_error, __FUNCTION__, "psock_select() failed : %s",strerror(psock_errno()));
+	continue;
+      case 0:
+	continue;
+      default:
+	break;
+    }
 
-		if (PSOCK_FD_ISSET(lsocket, &ReadFDs)) {
-			sd = psock_accept(lsocket, (struct sockaddr*)&sinRemote, &nAddrSize);
-			if (sd == -1) {
-				eventlog(eventlog_level_error, __FUNCTION__, "psock_accept() failed : %s",strerror(psock_errno()));
-				return;
-			}
-			
-			eventlog(eventlog_level_info,  __FUNCTION__, "accepted connection from %s:%d , socket %d .",
-				inet_ntoa(sinRemote.sin_addr) , ntohs(sinRemote.sin_port), sd);
-			eventlog_step(prefs_get_logfile_gs(), eventlog_level_info, __FUNCTION__, "accepted connection from %s:%d , socket %d .",
-				inet_ntoa(sinRemote.sin_addr) , ntohs(sinRemote.sin_port), sd);
-			setsockopt_keepalive(sd);
-			dbs_server_list_add_socket(sd, ntohl(sinRemote.sin_addr.s_addr));
-			if (psock_ctl(sd,PSOCK_NONBLOCK)<0) {
-				eventlog(eventlog_level_error, __FUNCTION__, "could not set TCP socket [%d] to non-blocking mode (closing connection) (psock_ctl: %s)", sd,strerror(psock_errno()));
-				psock_close(sd);
-			}
-		} else if (PSOCK_FD_ISSET(lsocket, &ExceptFDs)) {
-			eventlog(eventlog_level_error, __FUNCTION__, "exception on listening socket");
-			/* FIXME: exceptions are not errors with TCP, they are out-of-band data */
-			return;
-		}
-		
-		LIST_TRAVERSE(dbs_server_connection_list,elem)
-		{
-			bOK = TRUE;
-			pcErrorType = 0;
-			
-			if (!(it=elem_get_data(elem))) continue;
-			if (PSOCK_FD_ISSET(it->sd, &ExceptFDs)) {
-				bOK = FALSE;
-				pcErrorType = "General socket error"; /* FIXME: no no no no no */
-				PSOCK_FD_CLR(it->sd, &ExceptFDs);
-			} else {
-				
-				if (PSOCK_FD_ISSET(it->sd, &ReadFDs)) {
-					bOK = dbs_server_read_data(it);
-					pcErrorType = "Read error";
-					PSOCK_FD_CLR(it->sd, &ReadFDs);
-				}
-				
-				if (PSOCK_FD_ISSET(it->sd, &WriteFDs)) {
-					bOK = dbs_server_write_data(it);
-					pcErrorType = "Write error";
-					PSOCK_FD_CLR(it->sd, &WriteFDs);
-				}
-			}
-			
-			if (!bOK) {
-				int	err;
-				psock_t_socklen	errlen;
-				
-				err = 0;
-				errlen = sizeof(err);
-				if (psock_getsockopt(it->sd, PSOCK_SOL_SOCKET, PSOCK_SO_ERROR, &err, &errlen)==0) {
-					if (errlen && err!=0) {
-						eventlog(eventlog_level_error, __FUNCTION__, "data socket error : %s",strerror(err));
-					}
-				}
-				dbs_server_shutdown_connection(it);
-				list_remove_elem(dbs_server_connection_list,elem);
-				listpurgecount++;
-			} else {
-				if (dbs_packet_handle(it)==-1) {
-					eventlog(eventlog_level_error, __FUNCTION__, "dbs_packet_handle() failed");
-					dbs_server_shutdown_connection(it);
-					list_remove_elem(dbs_server_connection_list,elem);
-					listpurgecount++;
-				}
-			}
-		}
-		if (listpurgecount>100) {
-			list_purge(dbs_server_connection_list);
-			listpurgecount=0;
-		}
+    if (PSOCK_FD_ISSET(lsocket, &ReadFDs)) {
+      sd = psock_accept(lsocket, (struct sockaddr*)&sinRemote, &nAddrSize);
+      if (sd == -1) {
+	eventlog(eventlog_level_error, __FUNCTION__, "psock_accept() failed : %s",strerror(psock_errno()));
+	return;
+      }
+
+      eventlog(eventlog_level_info,  __FUNCTION__, "accepted connection from %s:%d , socket %d .",
+	       inet_ntoa(sinRemote.sin_addr) , ntohs(sinRemote.sin_port), sd);
+      eventlog_step(prefs_get_logfile_gs(), eventlog_level_info, __FUNCTION__, "accepted connection from %s:%d , socket %d .",
+		    inet_ntoa(sinRemote.sin_addr) , ntohs(sinRemote.sin_port), sd);
+      setsockopt_keepalive(sd);
+      dbs_server_list_add_socket(sd, ntohl(sinRemote.sin_addr.s_addr));
+      if (psock_ctl(sd,PSOCK_NONBLOCK)<0) {
+	eventlog(eventlog_level_error, __FUNCTION__, "could not set TCP socket [%d] to non-blocking mode (closing connection) (psock_ctl: %s)", sd,strerror(psock_errno()));
+	psock_close(sd);
+      }
+    } else if (PSOCK_FD_ISSET(lsocket, &ExceptFDs)) {
+      eventlog(eventlog_level_error, __FUNCTION__, "exception on listening socket");
+      /* FIXME: exceptions are not errors with TCP, they are out-of-band data */
+      return;
+    }
+
+    LIST_TRAVERSE(dbs_server_connection_list,elem)
+    {
+      bOK = TRUE;
+      pcErrorType = 0;
+
+      if (!(it=elem_get_data(elem))) continue;
+      if (PSOCK_FD_ISSET(it->sd, &ExceptFDs)) {
+	bOK = FALSE;
+	pcErrorType = "General socket error"; /* FIXME: no no no no no */
+	PSOCK_FD_CLR(it->sd, &ExceptFDs);
+      } else {
+
+	if (PSOCK_FD_ISSET(it->sd, &ReadFDs)) {
+	  bOK = dbs_server_read_data(it);
+	  pcErrorType = "Read error";
+	  PSOCK_FD_CLR(it->sd, &ReadFDs);
 	}
+
+	if (PSOCK_FD_ISSET(it->sd, &WriteFDs)) {
+	  bOK = dbs_server_write_data(it);
+	  pcErrorType = "Write error";
+	  PSOCK_FD_CLR(it->sd, &WriteFDs);
+	}
+      }
+
+      if (!bOK) {
+	int	err;
+	psock_t_socklen	errlen;
+
+	err = 0;
+	errlen = sizeof(err);
+	if (psock_getsockopt(it->sd, PSOCK_SOL_SOCKET, PSOCK_SO_ERROR, &err, &errlen)==0) {
+	  if (errlen && err!=0) {
+	    eventlog(eventlog_level_error, __FUNCTION__, "data socket error : %s",strerror(err));
+	  }
+	}
+	dbs_server_shutdown_connection(it);
+	list_remove_elem(dbs_server_connection_list,elem);
+	listpurgecount++;
+      } else {
+	if (dbs_packet_handle(it)==-1) {
+	  eventlog(eventlog_level_error, __FUNCTION__, "dbs_packet_handle() failed");
+	  dbs_server_shutdown_connection(it);
+	  list_remove_elem(dbs_server_connection_list,elem);
+	  listpurgecount++;
+	}
+      }
+      if (pcErrorType == NULL) {
+	; /* ??? */
+      }
+    }
+    if (listpurgecount>100) {
+      list_purge(dbs_server_connection_list);
+      listpurgecount=0;
+    }
+  }
 }
 
 
@@ -503,7 +509,7 @@ static void dbs_on_exit(void)
 	{
 		t_preset_d2gsid * curr;
 		t_preset_d2gsid * next;
-		
+
 		for (curr=preset_d2gsid_head; curr; curr=next)
 		{
 			next = curr->next;

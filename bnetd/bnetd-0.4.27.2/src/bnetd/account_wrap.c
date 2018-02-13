@@ -53,7 +53,7 @@ extern unsigned int account_get_numattr(t_account * account, char const * key)
 {
     char const * temp;
     unsigned int val;
-    
+
     if (!account)
     {
 #ifdef DEBUG_ACCOUNT
@@ -72,10 +72,10 @@ extern unsigned int account_get_numattr(t_account * account, char const * key)
 #endif
 	return 0;
     }
-    
+
     if (!(temp = account_get_strattr(account,key)))
 	return 0;
-    
+
     if (str_to_uint(temp,&val)<0)
     {
 	eventlog(eventlog_level_error,"account_get_numattr","not a numeric string \"%s\" for key \"%s\"",temp,key);
@@ -83,7 +83,7 @@ extern unsigned int account_get_numattr(t_account * account, char const * key)
 	return 0;
     }
     account_unget_strattr(temp);
-    
+
     return val;
 }
 
@@ -91,7 +91,7 @@ extern unsigned int account_get_numattr(t_account * account, char const * key)
 extern int account_set_numattr(t_account * account, char const * key, unsigned int val)
 {
     char temp[32]; /* should be more than enough room */
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_set_numattr","got NULL account");
@@ -102,7 +102,7 @@ extern int account_set_numattr(t_account * account, char const * key, unsigned i
 	eventlog(eventlog_level_error,"account_set_numattr","got NULL key");
 	return -1;
     }
-    
+
     sprintf(temp,"%u",val);
     return account_set_strattr(account,key,temp);
 }
@@ -115,7 +115,7 @@ extern int account_get_boolattr(t_account * account, char const * key)
 #endif
 {
     char const * temp;
-    
+
     if (!account)
     {
 #ifdef DEBUG_ACCOUNT
@@ -134,10 +134,10 @@ extern int account_get_boolattr(t_account * account, char const * key)
 #endif
 	return -1;
     }
-    
+
     if (!(temp = account_get_strattr(account,key)))
 	return -1;
-    
+
     switch (str_get_bool(temp))
     {
     case 1:
@@ -166,7 +166,7 @@ extern int account_set_boolattr(t_account * account, char const * key, int val)
 	eventlog(eventlog_level_error,"account_set_boolattr","got NULL key");
 	return -1;
     }
-    
+
     return account_set_strattr(account,key,val?"true":"false");
 }
 
@@ -181,7 +181,7 @@ extern char const * account_get_name(t_account * account)
 #endif
 {
     char const * temp;
-        
+
     if (!account)
     {
 #ifdef DEBUG_ACCOUNT
@@ -191,13 +191,13 @@ extern char const * account_get_name(t_account * account)
 #endif
 	return NULL; /* FIXME: places assume this can't fail */
     }
-			    
+
     if (!(temp = account_get_strattr(account,"BNET\\acct\\username")))
         eventlog(eventlog_level_error,"account_get_name","account has no username");
     return temp;
 }
-					
-					
+
+
 #ifdef DEBUG_ACCOUNT
 extern int account_unget_name_real(char const * name, char const * fn, unsigned int ln)
 #else
@@ -213,10 +213,10 @@ extern int account_unget_name(char const * name)
 #endif
         return -1;
     }
-								    
+
     return account_unget_strattr(name);
 }
-								    
+
 
 extern char const * account_get_pass(t_account * account)
 {
@@ -266,10 +266,10 @@ extern int account_get_auth_bnetlogin(t_account * account)
 extern int account_get_auth_operator(t_account * account, char const * channelname)
 {
     char temp[256];
-    
+
     if (!channelname)
 	return account_get_boolattr(account,"BNET\\auth\\operator");
-    
+
     sprintf(temp,"BNET\\auth\\operator\\%.100s",channelname);
     return account_get_boolattr(account,temp);
 }
@@ -331,13 +331,13 @@ extern int account_set_auth_lock(t_account * account, int val)
 extern char const * account_get_sex(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_sex","got NULL account");
 	return NULL;
     }
-    
+
     if (!(temp = account_get_strattr(account,"profile\\sex")))
 	return "";
     return temp;
@@ -353,13 +353,13 @@ extern int account_unget_sex(char const * sex)
 extern char const * account_get_age(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_age","got NULL account");
 	return NULL;
     }
-    
+
     if (!(temp = account_get_strattr(account,"profile\\age")))
 	return "";
     return temp;
@@ -375,13 +375,13 @@ extern int account_unget_age(char const * age)
 extern char const * account_get_loc(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_loc","got NULL account");
 	return NULL;
     }
-    
+
     if (!(temp = account_get_strattr(account,"profile\\location")))
 	return "";
     return temp;
@@ -397,13 +397,13 @@ extern int account_unget_loc(char const * loc)
 extern char const * account_get_desc(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_desc","got NULL account");
 	return NULL;
     }
-    
+
     if (!(temp = account_get_strattr(account,"profile\\description")))
 	return "";
     return temp;
@@ -419,7 +419,7 @@ extern int account_unget_desc(char const * desc)
 extern char const * account_get_watch(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_watch","got NULL account");
@@ -440,7 +440,7 @@ extern int account_unget_watch(char const * watch)
 extern char const * account_get_ignore(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_ignore","got NULL account");
@@ -461,7 +461,7 @@ extern int account_unget_ignore(char const * ignore)
 extern char const * account_get_friends(t_account * account)
 {
     char const * temp;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_get_friends","got NULL account");
@@ -488,14 +488,14 @@ extern int account_check_ignoring(t_account * account, char const * who)
     t_account *		tacc;
     char const *	account_name;
     t_connection *	c;
-    
+
 
     if (!account)
     {
 	eventlog(eventlog_level_error,"account_check_ignoring","got NULL account");
 	return -1;
     }
-    
+
     if (!(account_name = account_get_name(account)))
     {
 	eventlog(eventlog_level_error,"account_check_ignoring","got NULL account_name");
@@ -507,7 +507,7 @@ extern int account_check_ignoring(t_account * account, char const * who)
 	account_unget_name(account_name);
 	return conn_check_ignoring(c,who);
     }
-    
+
     if (!(tignstr = account_get_ignore(account)))
     {
 	eventlog(eventlog_level_error,"account_chceck_ignoring","got NULL tignstr");
@@ -887,7 +887,7 @@ extern int account_set_ll_cdkey(t_account * account, char const * cdkey)
 extern unsigned int account_get_normal_wins(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_wins","got bad clienttag");
@@ -901,7 +901,7 @@ extern unsigned int account_get_normal_wins(t_account * account, char const * cl
 extern int account_inc_normal_wins(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_inc_normal_wins","got bad clienttag");
@@ -915,7 +915,7 @@ extern int account_inc_normal_wins(t_account * account, char const * clienttag)
 extern unsigned int account_get_normal_losses(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_losses","got bad clienttag");
@@ -929,7 +929,7 @@ extern unsigned int account_get_normal_losses(t_account * account, char const * 
 extern int account_inc_normal_losses(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_inc_normal_losses","got bad clienttag");
@@ -943,7 +943,7 @@ extern int account_inc_normal_losses(t_account * account, char const * clienttag
 extern unsigned int account_get_normal_draws(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_draws","got bad clienttag");
@@ -957,7 +957,7 @@ extern unsigned int account_get_normal_draws(t_account * account, char const * c
 extern int account_inc_normal_draws(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_inc_normal_draws","got bad clienttag");
@@ -971,7 +971,7 @@ extern int account_inc_normal_draws(t_account * account, char const * clienttag)
 extern unsigned int account_get_normal_disconnects(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_disconnects","got bad clienttag");
@@ -985,7 +985,7 @@ extern unsigned int account_get_normal_disconnects(t_account * account, char con
 extern int account_inc_normal_disconnects(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_inc_normal_disconnects","got bad clienttag");
@@ -999,7 +999,7 @@ extern int account_inc_normal_disconnects(t_account * account, char const * clie
 extern int account_set_normal_last_time(t_account * account, char const * clienttag, t_bnettime t)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_last_time","got bad clienttag");
@@ -1013,7 +1013,7 @@ extern int account_set_normal_last_time(t_account * account, char const * client
 extern int account_set_normal_last_result(t_account * account, char const * clienttag, char const * result)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_last_result","got bad clienttag");
@@ -1030,7 +1030,7 @@ extern int account_set_normal_last_result(t_account * account, char const * clie
 extern unsigned int account_get_ladder_active_wins(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_wins","got bad clienttag");
@@ -1044,7 +1044,7 @@ extern unsigned int account_get_ladder_active_wins(t_account * account, char con
 extern int account_set_ladder_active_wins(t_account * account, char const * clienttag, t_ladder_id id, unsigned int wins)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_wins","got bad clienttag");
@@ -1058,7 +1058,7 @@ extern int account_set_ladder_active_wins(t_account * account, char const * clie
 extern unsigned int account_get_ladder_active_losses(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_losses","got bad clienttag");
@@ -1072,7 +1072,7 @@ extern unsigned int account_get_ladder_active_losses(t_account * account, char c
 extern int account_set_ladder_active_losses(t_account * account, char const * clienttag, t_ladder_id id, unsigned int losses)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_losses","got bad clienttag");
@@ -1086,7 +1086,7 @@ extern int account_set_ladder_active_losses(t_account * account, char const * cl
 extern unsigned int account_get_ladder_active_draws(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_draws","got bad clienttag");
@@ -1100,7 +1100,7 @@ extern unsigned int account_get_ladder_active_draws(t_account * account, char co
 extern int account_set_ladder_active_draws(t_account * account, char const * clienttag, t_ladder_id id, unsigned int draws)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_draws","got bad clienttag");
@@ -1114,7 +1114,7 @@ extern int account_set_ladder_active_draws(t_account * account, char const * cli
 extern unsigned int account_get_ladder_active_disconnects(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_disconnects","got bad clienttag");
@@ -1128,7 +1128,7 @@ extern unsigned int account_get_ladder_active_disconnects(t_account * account, c
 extern int account_set_ladder_active_disconnects(t_account * account, char const * clienttag, t_ladder_id id, unsigned int disconnects)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_disconnects","got bad clienttag");
@@ -1142,7 +1142,7 @@ extern int account_set_ladder_active_disconnects(t_account * account, char const
 extern unsigned int account_get_ladder_active_rating(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_rating","got bad clienttag");
@@ -1156,7 +1156,7 @@ extern unsigned int account_get_ladder_active_rating(t_account * account, char c
 extern int account_set_ladder_active_rating(t_account * account, char const * clienttag, t_ladder_id id, unsigned int rating)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_rating","got bad clienttag");
@@ -1173,7 +1173,7 @@ extern unsigned int account_get_ladder_active_rank(t_account * account, char con
 
 #ifdef GAMEI_SERVER
     return 0;
-#endif    
+#endif
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_rank","got bad clienttag");
@@ -1187,7 +1187,7 @@ extern unsigned int account_get_ladder_active_rank(t_account * account, char con
 extern int account_set_ladder_active_rank(t_account * account, char const * clienttag, t_ladder_id id, unsigned int rank)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_rank","got bad clienttag");
@@ -1201,7 +1201,7 @@ extern int account_set_ladder_active_rank(t_account * account, char const * clie
 extern char const * account_get_ladder_active_last_time(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_active_last_time","got bad clienttag");
@@ -1215,7 +1215,7 @@ extern char const * account_get_ladder_active_last_time(t_account * account, cha
 extern int account_set_ladder_active_last_time(t_account * account, char const * clienttag, t_ladder_id id, t_bnettime t)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_active_last_time","got bad clienttag");
@@ -1232,7 +1232,7 @@ extern int account_set_ladder_active_last_time(t_account * account, char const *
 extern unsigned int account_get_ladder_wins(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_wins","got bad clienttag");
@@ -1246,7 +1246,7 @@ extern unsigned int account_get_ladder_wins(t_account * account, char const * cl
 extern int account_inc_ladder_wins(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_inc_ladder_wins","got bad clienttag");
@@ -1260,7 +1260,7 @@ extern int account_inc_ladder_wins(t_account * account, char const * clienttag, 
 extern unsigned int account_get_ladder_losses(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_losses","got bad clienttag");
@@ -1274,7 +1274,7 @@ extern unsigned int account_get_ladder_losses(t_account * account, char const * 
 extern int account_inc_ladder_losses(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
        eventlog(eventlog_level_error,"account_inc_ladder_losses","got bad clienttag");
@@ -1288,7 +1288,7 @@ extern int account_inc_ladder_losses(t_account * account, char const * clienttag
 extern unsigned int account_get_ladder_draws(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_draws","got bad clienttag");
@@ -1302,7 +1302,7 @@ extern unsigned int account_get_ladder_draws(t_account * account, char const * c
 extern int account_inc_ladder_draws(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
        eventlog(eventlog_level_error,"account_inc_ladder_draws","got bad clienttag");
@@ -1316,7 +1316,7 @@ extern int account_inc_ladder_draws(t_account * account, char const * clienttag,
 extern unsigned int account_get_ladder_disconnects(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_disconnects","got bad clienttag");
@@ -1330,7 +1330,7 @@ extern unsigned int account_get_ladder_disconnects(t_account * account, char con
 extern int account_inc_ladder_disconnects(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
        eventlog(eventlog_level_error,"account_inc_ladder_disconnects","got bad clienttag");
@@ -1344,7 +1344,7 @@ extern int account_inc_ladder_disconnects(t_account * account, char const * clie
 extern unsigned int account_get_ladder_rating(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_rating","got bad clienttag");
@@ -1361,7 +1361,7 @@ extern int account_adjust_ladder_rating(t_account * account, char const * client
     unsigned int oldrating;
     unsigned int newrating;
     int          retval=0;
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
        eventlog(eventlog_level_error,"account_adjust_ladder_rating","got bad clienttag");
@@ -1376,14 +1376,14 @@ extern int account_adjust_ladder_rating(t_account * account, char const * client
         newrating = oldrating+delta;
     if (account_set_numattr(account,key,newrating)<0)
 	retval = -1;
-    
+
     if (newrating>account_get_ladder_high_rating(account,clienttag,id))
     {
 	sprintf(key,"Record\\%s\\%d\\high rating",clienttag,(int)id);
 	if (account_set_numattr(account,key,newrating)<0)
 	    retval = -1;
     }
-    
+
     return retval;
 }
 
@@ -1394,7 +1394,7 @@ extern unsigned int account_get_ladder_rank(t_account * account, char const * cl
 
 #ifdef GAMEI_SERVER
     return 0;
-#endif    
+#endif
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_rank","got bad clienttag");
@@ -1410,7 +1410,7 @@ extern int account_set_ladder_rank(t_account * account, char const * clienttag, 
     char         key[256];
     unsigned int oldrank;
     int          retval=0;
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
        eventlog(eventlog_level_error,"account_set_ladder_rank","got bad clienttag");
@@ -1421,7 +1421,7 @@ extern int account_set_ladder_rank(t_account * account, char const * clienttag, 
     sprintf(key,"Record\\%s\\%d\\rank",clienttag,(int)id);
     if (account_set_numattr(account,key,rank)<0)
 	retval = -1;
-    
+
     oldrank = account_get_ladder_high_rank(account,clienttag,id);
     if (oldrank==0 || rank<oldrank)
     {
@@ -1429,7 +1429,7 @@ extern int account_set_ladder_rank(t_account * account, char const * clienttag, 
 	if (account_set_numattr(account,key,rank)<0)
 	    retval = -1;
     }
-    
+
     return retval;
 }
 
@@ -1437,7 +1437,7 @@ extern int account_set_ladder_rank(t_account * account, char const * clienttag, 
 extern unsigned int account_get_ladder_high_rating(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_high_rating","got bad clienttag");
@@ -1451,7 +1451,7 @@ extern unsigned int account_get_ladder_high_rating(t_account * account, char con
 extern unsigned int account_get_ladder_high_rank(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_high_rank","got bad clienttag");
@@ -1465,7 +1465,7 @@ extern unsigned int account_get_ladder_high_rank(t_account * account, char const
 extern int account_set_ladder_last_time(t_account * account, char const * clienttag, t_ladder_id id, t_bnettime t)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_last_time","got bad clienttag");
@@ -1479,7 +1479,7 @@ extern int account_set_ladder_last_time(t_account * account, char const * client
 extern char const * account_get_ladder_last_time(t_account * account, char const * clienttag, t_ladder_id id)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_ladder_last_time","got bad clienttag");
@@ -1493,7 +1493,7 @@ extern char const * account_get_ladder_last_time(t_account * account, char const
 extern int account_set_ladder_last_result(t_account * account, char const * clienttag, t_ladder_id id, char const * result)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_ladder_last_result","got bad clienttag");
@@ -1510,7 +1510,7 @@ extern int account_set_ladder_last_result(t_account * account, char const * clie
 extern unsigned int account_get_normal_level(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_level","got bad clienttag");
@@ -1524,7 +1524,7 @@ extern unsigned int account_get_normal_level(t_account * account, char const * c
 extern int account_set_normal_level(t_account * account, char const * clienttag, unsigned int level)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_level","got bad clienttag");
@@ -1538,7 +1538,7 @@ extern int account_set_normal_level(t_account * account, char const * clienttag,
 extern unsigned int account_get_normal_class(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_class","got bad clienttag");
@@ -1552,7 +1552,7 @@ extern unsigned int account_get_normal_class(t_account * account, char const * c
 extern int account_set_normal_class(t_account * account, char const * clienttag, unsigned int class)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_class","got bad clienttag");
@@ -1566,7 +1566,7 @@ extern int account_set_normal_class(t_account * account, char const * clienttag,
 extern unsigned int account_get_normal_diablo_kills(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_diablo_kills","got bad clienttag");
@@ -1580,7 +1580,7 @@ extern unsigned int account_get_normal_diablo_kills(t_account * account, char co
 extern int account_set_normal_diablo_kills(t_account * account, char const * clienttag, unsigned int diablo_kills)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_diablo_kills","got bad clienttag");
@@ -1594,7 +1594,7 @@ extern int account_set_normal_diablo_kills(t_account * account, char const * cli
 extern unsigned int account_get_normal_strength(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_strength","got bad clienttag");
@@ -1608,7 +1608,7 @@ extern unsigned int account_get_normal_strength(t_account * account, char const 
 extern int account_set_normal_strength(t_account * account, char const * clienttag, unsigned int strength)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_strength","got bad clienttag");
@@ -1622,7 +1622,7 @@ extern int account_set_normal_strength(t_account * account, char const * clientt
 extern unsigned int account_get_normal_magic(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_magic","got bad clienttag");
@@ -1636,7 +1636,7 @@ extern unsigned int account_get_normal_magic(t_account * account, char const * c
 extern int account_set_normal_magic(t_account * account, char const * clienttag, unsigned int magic)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_magic","got bad clienttag");
@@ -1650,7 +1650,7 @@ extern int account_set_normal_magic(t_account * account, char const * clienttag,
 extern unsigned int account_get_normal_dexterity(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_dexterity","got bad clienttag");
@@ -1664,7 +1664,7 @@ extern unsigned int account_get_normal_dexterity(t_account * account, char const
 extern int account_set_normal_dexterity(t_account * account, char const * clienttag, unsigned int dexterity)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_dexterity","got bad clienttag");
@@ -1678,7 +1678,7 @@ extern int account_set_normal_dexterity(t_account * account, char const * client
 extern unsigned int account_get_normal_vitality(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_vitality","got bad clienttag");
@@ -1692,7 +1692,7 @@ extern unsigned int account_get_normal_vitality(t_account * account, char const 
 extern int account_set_normal_vitality(t_account * account, char const * clienttag, unsigned int vitality)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_vitality","got bad clienttag");
@@ -1706,7 +1706,7 @@ extern int account_set_normal_vitality(t_account * account, char const * clientt
 extern unsigned int account_get_normal_gold(t_account * account, char const * clienttag)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_get_normal_gold","got bad clienttag");
@@ -1720,7 +1720,7 @@ extern unsigned int account_get_normal_gold(t_account * account, char const * cl
 extern int account_set_normal_gold(t_account * account, char const * clienttag, unsigned int gold)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_normal_gold","got bad clienttag");
@@ -1786,52 +1786,58 @@ extern int account_check_closed_character(t_account * account, char const * clie
 
 	start = next_char + 1;
     }
-    
+
     return 0;
 }
 
 
 extern char const * account_get_closed_characterlist(t_account * account, char const * clienttag, char const * realmname)
 {
-    char realmkey[256];
-    int  realmkeylen;
-    
-    if (!clienttag || strlen(clienttag)!=4)
-    {
-	eventlog(eventlog_level_error,"account_get_closed_characterlist","got bad clienttag");
-	return NULL;
-    }
+  char realmkey[256];
+  int  realmkeylen;
 
-    if (!realmname)
-    {
-        eventlog(eventlog_level_error,"account_get_closed_characterlist","got NULL realmname");
-	return NULL;
-    }
+  if (!clienttag || strlen(clienttag)!=4)
+  {
+    eventlog(eventlog_level_error,"account_get_closed_characterlist","got bad clienttag");
+    return NULL;
+  }
 
-    if (!account)
-    {
-        eventlog(eventlog_level_error,"account_get_closed_characterlist","got NULL account");
-	return NULL;
-    }
+  if (!realmname)
+  {
+    eventlog(eventlog_level_error,"account_get_closed_characterlist","got NULL realmname");
+    return NULL;
+  }
 
-    sprintf(realmkey,"BNET\\CharacterList\\%s\\%s\\0",clienttag,realmname);
-    realmkeylen=strlen(realmkey);
-    eventlog(eventlog_level_debug,"account_get_closed_characterlist","looking for '%s'",realmkey);
+  if (!account)
+  {
+    eventlog(eventlog_level_error,"account_get_closed_characterlist","got NULL account");
+    return NULL;
+  }
 
-    return account_get_strattr(account, realmkey);
+  sprintf(realmkey,"BNET\\CharacterList\\%s\\%s\\0",clienttag,realmname);
+  realmkeylen=strlen(realmkey);
+  if (realmkeylen <= 0) {
+    ; /* ??? */
+  }
+  eventlog(eventlog_level_debug,"account_get_closed_characterlist","looking for '%s'",realmkey);
+
+  return account_get_strattr(account, realmkey);
 }
 
 
 extern int account_unget_closed_characterlist(t_account * account, char const * charlist)
 {
-    return account_unget_strattr(charlist);
+  if (account == NULL) {
+    ; /* ??? */
+  }
+  return account_unget_strattr(charlist);
 }
 
 
 extern int account_set_closed_characterlist(t_account * account, char const * clienttag, char const * charlist)
 {
     char key[256];
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_set_closed_characterlist","got bad clienttag");
@@ -1850,7 +1856,7 @@ extern int account_add_closed_character(t_account * account, char const * client
     char hex_buffer[356];
     char chars_in_realm[256];
     char const * old_list;
-    
+
     if (!clienttag || strlen(clienttag)!=4)
     {
 	eventlog(eventlog_level_error,"account_add_closed_character","got bad clienttag");
@@ -1880,13 +1886,13 @@ extern int account_add_closed_character(t_account * account, char const * client
     account_set_strattr(account, key, chars_in_realm);
 
     sprintf(key,"BNET\\Characters\\%s\\%s\\%s\\0",clienttag,ch->realmname,ch->name);
-    str_to_hex(hex_buffer, ch->data, ch->datalen);
+    str_to_hex(hex_buffer, (char *)ch->data, ch->datalen);
     account_set_strattr(account,key,hex_buffer);
 
-    /*
+#if 0
     eventlog(eventlog_level_debug,"account_add_closed_character","key \"%s\"", key);
     eventlog(eventlog_level_debug,"account_add_closed_character","value \"%s\"", hex_buffer);
-    */
+#endif /* 0 */
 
     return 0;
 }

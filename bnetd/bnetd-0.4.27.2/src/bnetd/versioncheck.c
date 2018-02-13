@@ -85,7 +85,7 @@ extern t_versioncheck * versioncheck_create(char const * archtag, char const * c
     t_elem const *   curr;
     t_versioninfo *  vi;
     t_versioncheck * vc;
-    
+
     LIST_TRAVERSE_CONST(versioninfo_head,curr)
     {
         if (!(vi = elem_get_data(curr))) /* should not happen */
@@ -93,12 +93,12 @@ extern t_versioncheck * versioncheck_create(char const * archtag, char const * c
             eventlog(eventlog_level_error,"versioncheck_create","version list contains NULL item");
             continue;
         }
-	
+
 	if (strcmp(vi->archtag,archtag)!=0)
 	    continue;
 	if (strcmp(vi->clienttag,clienttag)!=0)
 	    continue;
-	
+
 	/* FIXME: randomize the selection if more than one match */
 	if (!(vc = malloc(sizeof(t_versioncheck))))
 	{
@@ -118,10 +118,10 @@ extern t_versioncheck * versioncheck_create(char const * archtag, char const * c
 	    free(vc);
 	    return &dummyvc;
 	}
-	
+
 	return vc;
     }
-    
+
     /*
      * No entries in the file that match, return the dummy because we have to send
      * some equation and auth mpq to the client.  The client is not going to pass the
@@ -138,14 +138,14 @@ extern int versioncheck_destroy(t_versioncheck * vc)
 	eventlog(eventlog_level_error,"versioncheck_destroy","got NULL vc");
 	return -1;
     }
-    
+
     if (vc==&dummyvc)
 	return 0;
-    
+
     free((void *)vc->mpqfile);
     free((void *)vc->eqn);
     free(vc);
-    
+
     return 0;
 }
 
@@ -157,7 +157,7 @@ extern char const * versioncheck_get_mpqfile(t_versioncheck const * vc)
 	eventlog(eventlog_level_error,"versioncheck_get_mpqfile","got NULL vc");
 	return NULL;
     }
-    
+
     return vc->mpqfile;
 }
 
@@ -169,7 +169,7 @@ extern char const * versioncheck_get_eqn(t_versioncheck const * vc)
 	eventlog(eventlog_level_error,"versioncheck_get_mpqfile","got NULL vc");
 	return NULL;
     }
-    
+
     return vc->eqn;
 }
 
@@ -181,15 +181,15 @@ extern char const * versioncheck_get_eqn(t_versioncheck const * vc)
 static int normalize_year(int mangled)
 {
     /* negative -> before 1900
-     * 00-79    -> 2000-2079 
-     * 00-79    -> 2000-2079 
+     * 00-79    -> 2000-2079
+     * 00-79    -> 2000-2079
      * 80-999   -> 1980-2899
      * 1000+    -> unchanged
      */
-    
+
     if (mangled>=0 && mangled<80) /* assume last 2 digits of year in 20xx */
 	return 2000+mangled;
-    
+
     if (mangled<1000) /* assume C-style offset from 1900 */
 	return 1900+mangled;
 
@@ -203,12 +203,12 @@ static int normalize_year(int mangled)
 static int wildcard_casecmp(char const * pattern, char const * str)
 {
     unsigned int i;
-    
+
     for (i=0; i<strlen(pattern); i++)
 	if (pattern[i]!='?' && /* our "don't care" sign */
 	    safe_toupper(pattern[i])!=safe_toupper(str[i]))
 		return 1; /* neq */
-    
+
     return 0; /* ok */
 }
 
@@ -216,7 +216,7 @@ static int wildcard_casecmp(char const * pattern, char const * str)
 static void wildcard_replace(char * pattern, char const * str)
 {
     unsigned int ii;
-    
+
     for (ii=0;; ii++)
     {
 	if (pattern[ii]=='*')
@@ -243,9 +243,9 @@ static int versioncheck_compare_exeinfo(char const * pattern, char const * match
 	eventlog(eventlog_level_error,"versioncheck_compare_exeinfo","got NULL match");
 	return -1; /* neq/fail */
     }
-    
+
     eventlog(eventlog_level_trace,"versioncheck_compare_exeinfo","pattern=\"%s\" match=\"%s\"",pattern,match);
-    
+
     if (strcmp(prefs_get_version_exeinfo_match(),"exact")==0) {
 	return wildcard_casecmp(pattern,match);
     } else if (strcmp(prefs_get_version_exeinfo_match(),"parse")==0) {
@@ -268,11 +268,13 @@ static int versioncheck_compare_exeinfo(char const * pattern, char const * match
 	char         dt2_sec[8];
 	char         format[64];
 	unsigned int size1,size2;
-	
-	sprintf(format,"%%%u[^/]/%%%u[^/]/%%%us %%%u[^:]:%%%u[^:]:%%%us %%u",
-		sizeof(exe1)-1,sizeof(dt1_day)-1,sizeof(dt1_year)-1,
-		sizeof(dt1_hour)-1,sizeof(dt1_min)-1,sizeof(dt1_sec)-1);
-	
+
+	snprintf(format, sizeof(format),
+		 "%%%zu[^/]/%%%zu[^/]/%%%zus %%%zu[^:]:%%%zu[^:]:%%%zus %%zu",
+		 (sizeof(exe1) - 1UL), (sizeof(dt1_day) - 1UL),
+		 (sizeof(dt1_year) - 1UL), (sizeof(dt1_hour) - 1UL),
+		 (sizeof(dt1_min) - 1UL), (sizeof(dt1_sec) - 1UL));
+
 	if (sscanf(pattern,format,exe1,dt1_day,dt1_year,dt1_hour,dt1_min,dt1_sec,&size1)!=7) {
 	    eventlog(eventlog_level_warn,"versioncheck_compare_exeinfo","parser error while parsing pattern \"%s\"",pattern);
 	    return 1; /* neq */
@@ -281,66 +283,66 @@ static int versioncheck_compare_exeinfo(char const * pattern, char const * match
 	    eventlog(eventlog_level_warn,"versioncheck_compare_exeinfo","parser error while parsing match \"%s\"",match);
 	    return 1; /* neq */
 	}
-	
+
 	/* Split the first chunk into filename + month.  This can't be done above because
 	 * the filename can contain just about any characters including spaces.
 	 */
 	{
 	    char * tmp;
-	    
+
 	    if (!(tmp = strrchr(exe1,' ')))
 	    {
 		eventlog(eventlog_level_warn,"versioncheck_compare_exeinfo","parser error while parsing pattern \"%s\"",pattern);
 		return 1; /* neq */
 	    }
-	    
+
 	    strncpy(dt1_mon,&tmp[1],sizeof(dt1_mon));
 	    dt1_mon[sizeof(dt1_mon)-1] = '\0';
-	    
+
 	    *tmp = '\0';
 	    while ((tmp = strrchr(exe1,' ')))
 		*tmp = '\0';
-	    
-	    
+
+
 	    if (!(tmp = strrchr(exe2,' ')))
 	    {
 		eventlog(eventlog_level_warn,"versioncheck_compare_exeinfo","parser error while parsing pattern \"%s\"",pattern);
 		return 1; /* neq */
 	    }
-	    
+
 	    strncpy(dt2_mon,&tmp[1],sizeof(dt2_mon));
 	    dt2_mon[sizeof(dt2_mon)-1] = '\0';
-	    
+
 	    *tmp = '\0';
 	    while ((tmp = strrchr(exe2,' ')))
 		*tmp = '\0';
 	}
-	
+
 	wildcard_replace(dt1_mon,dt2_mon);
 	wildcard_replace(dt1_day,dt2_day);
 	wildcard_replace(dt1_year,dt2_year);
 	wildcard_replace(dt1_hour,dt2_hour);
 	wildcard_replace(dt1_min,dt2_min);
 	wildcard_replace(dt1_sec,dt2_sec);
-	
+
 	/* zero them out in case of any sytem specific extensions */
 	memset(&t1,0,sizeof(t1));
 	memset(&t2,0,sizeof(t2));
-	
+
 	t1.tm_mon = atoi(dt1_mon);
 	t1.tm_mday = atoi(dt1_day);
 	t1.tm_year = normalize_year(atoi(dt1_year))-1900;
 	t1.tm_hour = atoi(dt1_hour);
 	t1.tm_min = atoi(dt1_min);
 	t1.tm_sec = atoi(dt1_sec);
-	
+
 	t2.tm_mon = atoi(dt2_mon);
 	t2.tm_mday = atoi(dt2_day);
 	t2.tm_year = normalize_year(atoi(dt2_year))-1900;
 	t2.tm_hour = atoi(dt2_hour);
 	t2.tm_min = atoi(dt2_min);
 	t2.tm_sec = strtoul(dt2_sec,NULL,10);
-	
+
 	if (wildcard_casecmp(exe1,exe2)!=0)
 	    return 1; /* neq */
 	if (size1!=size2)
@@ -364,13 +366,13 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
     t_elem const *  curr;
     t_versioninfo * vi;
     int             badexe,badcs;
-    
+
     if (!vc)
     {
 	eventlog(eventlog_level_error,"versioncheck_validate","got NULL vc");
 	return -1;
     }
-    
+
     badexe=badcs = 0;
     LIST_TRAVERSE_CONST(versioninfo_head,curr)
     {
@@ -379,7 +381,7 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
 	    eventlog(eventlog_level_error,"versioncheck_validate","version list contains NULL item");
 	    continue;
         }
-	
+
 	if (strcmp(vi->eqn,vc->eqn)!=0)
 	    continue;
 	if (strcmp(vi->mpqfile,vc->mpqfile)!=0)
@@ -388,13 +390,13 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
 	    continue;
 	if (strcmp(vi->clienttag,clienttag)!=0)
 	    continue;
-	
+
 	if (vi->versionid && vi->versionid != versionid)
 	    continue;
-	
+
 	if (vi->gameversion && vi->gameversion != gameversion)
 	    continue;
-	
+
 	if (vi->exeinfo && (versioncheck_compare_exeinfo(vi->exeinfo,exeinfo) != 0))
 	{
 	    /*
@@ -406,7 +408,7 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
 	}
 	else
 	    badexe = 0;
-	
+
 	if (vi->checksum && vi->checksum != checksum)
 	{
 	    /*
@@ -418,12 +420,12 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
 	}
 	else
 	    badcs = 0;
-	
+
 	*versiontag = vi->versiontag;
-	
+
 	if (badexe || badcs)
 	    continue;
-	
+
 	/* Ok, version and checksum matches or exeinfo/checksum are disabled
 	 * anyway we have found a complete match */
 	if (*versiontag)
@@ -432,7 +434,7 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
 	    eventlog(eventlog_level_info,"versioncheck_validate","got a matching entry");
 	return 1;
     }
-    
+
     if (badcs) /* A match was found but the checksum was different */
     {
 	if (*versiontag)
@@ -449,7 +451,7 @@ extern int versioncheck_validate(t_versioncheck const * vc, char const * archtag
 	    eventlog(eventlog_level_info,"versioncheck_validate","bad exeinfo, closest match is: (no versiontag)");
 	return -1;
     }
-    
+
     /* No match in list */
     eventlog(eventlog_level_info,"versioncheck_validate","no match in list");
     *versiontag = NULL;
@@ -474,13 +476,13 @@ extern int versioncheck_load(char const * filename)
     char const *    checksum;
     char const *    versiontag;
     t_versioninfo * vi;
-    
+
     if (!filename)
     {
 	eventlog(eventlog_level_error,"versioncheck_load","got NULL filename");
 	return -1;
     }
-    
+
     if (!(versioninfo_head = list_create()))
     {
 	eventlog(eventlog_level_error,"versioncheck_load","could create list");
@@ -506,7 +508,7 @@ extern int versioncheck_load(char const * filename)
 	{
 	    unsigned int len;
 	    unsigned int endpos;
-	    
+
 	    *temp = '\0';
 	    len = strlen(buff)+1;
 	    for (endpos=len-1;  buff[endpos]=='\t' || buff[endpos]==' '; endpos--);
@@ -565,7 +567,7 @@ extern int versioncheck_load(char const * filename)
 	{
 	    versiontag = NULL;
 	}
-	
+
 	if (!(vi = malloc(sizeof(t_versioninfo))))
 	{
 	    eventlog(eventlog_level_error,"versioncheck_load","could not allocate memory for vi");
@@ -673,9 +675,9 @@ extern int versioncheck_load(char const * filename)
 	}
 	else
 	    vi->versiontag = NULL;
-	
+
 	free(buff);
-	
+
 	if (list_append_data(versioninfo_head,vi)<0)
 	{
 	    eventlog(eventlog_level_error,"versioncheck_load","could not append item");
@@ -690,10 +692,10 @@ extern int versioncheck_load(char const * filename)
 	    continue;
 	}
     }
-    
+
     if (fclose(fp)<0)
 	eventlog(eventlog_level_error,"versioncheck_load","could not close versioncheck file \"%s\" after reading (fclose: %s)",filename,strerror(errno));
-    
+
     return 0;
 }
 
@@ -702,7 +704,7 @@ extern int versioncheck_unload(void)
 {
     t_elem *	    curr;
     t_versioninfo * vi;
-    
+
     if (versioninfo_head)
     {
 	LIST_TRAVERSE(versioninfo_head,curr)
@@ -712,7 +714,7 @@ extern int versioncheck_unload(void)
 		eventlog(eventlog_level_error,"versioncheck_unload","version list contains NULL item");
 		continue;
 	    }
-	    
+
 	    if (list_remove_elem(versioninfo_head,curr)<0)
 		eventlog(eventlog_level_error,"versioncheck_unload","could not remove item from list");
 
@@ -726,12 +728,12 @@ extern int versioncheck_unload(void)
 		free((void *)vi->versiontag); /* avoid warning */
 	    free(vi);
 	}
-	
+
 	if (list_destroy(versioninfo_head)<0)
 	    return -1;
 	versioninfo_head = NULL;
     }
-    
+
     return 0;
 }
 

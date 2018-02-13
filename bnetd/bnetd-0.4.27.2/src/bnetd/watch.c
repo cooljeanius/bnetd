@@ -68,7 +68,7 @@ extern int watchlist_destroy(void)
 {
     t_elem *       curr;
     t_watch_pair * pair;
-    
+
     if (watchlist_head)
     {
 	LIST_TRAVERSE(watchlist_head,curr)
@@ -87,7 +87,7 @@ extern int watchlist_destroy(void)
 	    return -1;
 	watchlist_head = NULL;
     }
-    
+
     return 0;
 }
 
@@ -100,13 +100,13 @@ extern int watchlist_load(t_connection * c)
     char *		watch;
     char const *	twatch;
     char *		ttok;
-    
+
     if (!c)
     {
 		eventlog(eventlog_level_error,"watchlist_load","got NULL connection");
 		return -1;
     }
-    
+
     if (!(owner = conn_get_account(c)))
     {
 		eventlog(eventlog_level_error,"watchlist_load","got NULL owner");
@@ -153,8 +153,8 @@ extern int watchlist_save(t_connection * c)
     char const *   tname;
     int            first;
     char * 	   watchp;
-		
-    
+
+
     if (!c)
     {
         eventlog(eventlog_level_error,"watchlist_save","got null connection");
@@ -183,7 +183,7 @@ extern int watchlist_save(t_connection * c)
 			eventlog(eventlog_level_error,"watchlist_save","could not get account name");
 	        continue;
 	    }
-	    if (first) 
+	    if (first)
 	    {
 			watchp = watch;
 			if (!(watch = realloc(watch,strlen(tname)+1)))
@@ -224,7 +224,7 @@ extern int watchlist_save(t_connection * c)
 
     return 0;
 }
-	    
+
 
 extern int watchlist_notify_event(t_account * who, t_watch_event event)
 {
@@ -232,7 +232,7 @@ extern int watchlist_notify_event(t_account * who, t_watch_event event)
     t_watch_pair * pair;
     char const *   tname;
     char           msgtemp[MAX_MESSAGE_LEN];
-    
+
     if (!who)
     {
 	eventlog(eventlog_level_error,"watchlist_notify_event","got NULL who");
@@ -259,7 +259,7 @@ extern int watchlist_notify_event(t_account * who, t_watch_event event)
 	return -1;
     }
     account_unget_name(tname);
-    
+
     LIST_TRAVERSE_CONST(watchlist_head,curr)
     {
 	pair = elem_get_data(curr);
@@ -271,7 +271,7 @@ extern int watchlist_notify_event(t_account * who, t_watch_event event)
 	if (pair->owner && (pair->who==who || !pair->who))
 	    message_send_text(pair->owner,message_type_info,pair->owner,msgtemp);
     }
-    
+
     return 0;
 }
 
@@ -321,7 +321,7 @@ static int identify_watch_function(char const * funcstr)
     return WATCH_FUNC_UNKNOWN;
 }
 
-	
+
 static int watch_func_add(t_connection * c, char const * nick)
 {
     t_account *  owner;
@@ -333,7 +333,7 @@ static int watch_func_add(t_connection * c, char const * nick)
     t_watch_pair * pair;
     char const * whonick;
     unsigned int counter;
-    
+
     if (!(owner = conn_get_account(c)))
     {
         eventlog(eventlog_level_error,"watch_func_add","got NULL owner");
@@ -345,7 +345,7 @@ static int watch_func_add(t_connection * c, char const * nick)
 	message_send_text(c,message_type_info,c,"People on your watch list:");
 	i = 0;
 	remove_sep = 0;
-	
+
 	counter = 0;
 	LIST_TRAVERSE_CONST(watchlist_head,curr)
 	{
@@ -428,13 +428,13 @@ static int watch_func_add(t_connection * c, char const * nick)
     	sprintf(tmsg,"User %.64s added to your watch list.",nick);
 	message_send_text(c,message_type_info,c,tmsg);
     }
-    
+
     return 0;
 }
 
 
 static int watch_func_add_all(t_connection * c)
-{    
+{
     if (watch_add_pair(c,NULL)<0)
 	message_send_text(c,message_type_error,c,"Add to watch list failed.");
     else
@@ -487,13 +487,13 @@ static int watch_add_pair(t_connection * owner, t_account * who)
 {
     t_elem const * curr;
     t_watch_pair * pair;
-    
+
     if (!owner)
     {
 		eventlog(eventlog_level_error,"watch_add_pair","got NULL owner");
 		return -1;
     }
-    
+
     LIST_TRAVERSE_CONST(watchlist_head,curr)
     {
 		pair = elem_get_data(curr);
@@ -505,7 +505,7 @@ static int watch_add_pair(t_connection * owner, t_account * who)
 		if (pair->owner==owner && pair->who==who)
 		    return 0;
 	    }
-	    
+
 	    if (!(pair = malloc(sizeof(t_watch_pair))))
 	    {
 			eventlog(eventlog_level_error,"watch_add_pair","could not allocate memory for pair");
@@ -513,7 +513,7 @@ static int watch_add_pair(t_connection * owner, t_account * who)
 	    }
 	    pair->owner = owner;
 	    pair->who   = who;
-		
+
 	    if (list_append_data(watchlist_head,pair)<0)
 	    {
 			free(pair);
@@ -524,7 +524,7 @@ static int watch_add_pair(t_connection * owner, t_account * who)
 		eventlog(eventlog_level_debug,"watch_add_pair","incerasing ref");
     	account_inc_ref(who);
 #endif
-    
+
     return 0;
 }
 
@@ -534,13 +534,13 @@ static int watch_del_pair(t_connection * owner, t_account * who)
 {
     t_elem *       curr;
     t_watch_pair * pair;
-    
+
     if (!owner)
     {
 		eventlog(eventlog_level_error,"watch_del_pair","got NULL owner");
 		return -1;
     }
-    
+
     LIST_TRAVERSE(watchlist_head,curr)
     {
 		pair = elem_get_data(curr);
@@ -558,7 +558,7 @@ static int watch_del_pair(t_connection * owner, t_account * who)
 		    }
 		    else
 		        free(pair);
-	    
+
 	    	list_purge(watchlist_head);
 #ifdef ACCT_DYN_UNLOAD
 			eventlog(eventlog_level_debug,"watch_del_pair","decreasing ref");
@@ -567,7 +567,7 @@ static int watch_del_pair(t_connection * owner, t_account * who)
 		    return 0;
 		}
     }
-    
+
     return -1; /* not found */
 }
 
@@ -576,7 +576,7 @@ static int watch_is_pair(t_connection * c, t_account * a)
 {
     t_elem const * curr;
     t_watch_pair * pair;
-    
+
     LIST_TRAVERSE_CONST(watchlist_head,curr)
     {
 	pair = elem_get_data(curr);
@@ -595,42 +595,44 @@ static int watch_is_pair(t_connection * c, t_account * a)
 
 static int watch_del_all(t_connection * c)
 {
-    t_elem *       curr;
-    t_watch_pair * pair;
-	t_account *		who;
+  t_elem *       curr;
+  t_watch_pair * pair;
+  t_account *	   who;
 
-    if (!c)
+  if (!c)
+  {
+    eventlog(eventlog_level_error,"watch_del_all","got NULL c");
+    return -1;
+  }
+
+  LIST_TRAVERSE(watchlist_head,curr)
+  {
+    pair = elem_get_data(curr);
+    if (!pair) /* should not happen */
     {
-		eventlog(eventlog_level_error,"watch_del_all","got NULL c");
-		return -1;
+      eventlog(eventlog_level_error,"watch_del_all","watchlist contains NULL item");
+      return -1;
     }
-
-    LIST_TRAVERSE(watchlist_head,curr)
+    if (pair->owner==c)
     {
-		pair = elem_get_data(curr);
-		if (!pair) /* should not happen */
-		{
-		    eventlog(eventlog_level_error,"watch_del_all","watchlist contains NULL item");
-		    return -1;
-		}
-		if (pair->owner==c)
-		{
-			who = pair->who;
-		    if (list_remove_elem(watchlist_head,curr)<0)
-		    {
-				eventlog(eventlog_level_error,"watch_del_all","could not remove item");
-				pair->owner = NULL;
-		    }
-		    else
-				free(pair);
+      who = pair->who;
+      if (list_remove_elem(watchlist_head,curr)<0)
+      {
+	eventlog(eventlog_level_error,"watch_del_all","could not remove item");
+	pair->owner = NULL;
+      }
+      else
+	free(pair);
 #ifdef ACCT_DYN_UNLOAD
-		    account_dec_ref(who);
+      account_dec_ref(who);
+#else
+      (void)who;
 #endif
-		}
     }
-    list_purge(watchlist_head);
+  }
+  list_purge(watchlist_head);
 
-    return 0;
+  return 0;
 }
 
 #ifdef ACCT_DYN_UNLOAD
@@ -639,13 +641,13 @@ extern unsigned int watch_count_acc_ref(t_account const * account)
     t_watch_pair * pair;
 	t_elem const * curr;
 	unsigned int   counter;
-			
+
 	if (!account)
 	{
 		eventlog(eventlog_level_error,"watch_count_acc_ref","got NULL account");
 		return 0;
 	}
-	
+
 	counter = 0;
 	LIST_TRAVERSE_CONST(watchlist_head,curr)
 	{

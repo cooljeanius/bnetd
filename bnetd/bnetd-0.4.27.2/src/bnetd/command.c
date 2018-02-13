@@ -134,8 +134,8 @@ static void do_whisper(t_connection * user_c, char const * dest, char const * te
     char           temp[MAX_MESSAGE_LEN];
     char const *   tname;
     char const *   dest_name;
-    
-    
+
+
     if (!(dest_c = connlist_find_connection_by_name(dest,conn_get_realmname(user_c)))) /* Yoss: could here be conn_get_username()? */
                                                                                        /* JEBs: No, D2 needs a whisper via Charname ! */
     {
@@ -148,38 +148,38 @@ static void do_whisper(t_connection * user_c, char const * dest, char const * te
 	return;
 #endif
     }
-    
+
     dest_name = conn_get_username(dest_c);
     if (conn_get_dndstr(dest_c))
     {
-        sprintf(temp,"%.64s is unavailable (%.128s)",dest_name,conn_get_dndstr(dest_c));
+        snprintf(temp, sizeof(temp), "%.64s is unavailable (%.128s)",dest_name,conn_get_dndstr(dest_c));
 	conn_unget_username(dest_c,dest_name);
         message_send_text(user_c,message_type_info,user_c,temp);
         return;
     }
-    
+
     message_send_text(user_c,message_type_whisperack,dest_c,text);
-    
+
     if (conn_get_awaystr(dest_c))
     {
-        sprintf(temp,"%.64s is away (%.128s)",dest_name,conn_get_awaystr(dest_c));
+        snprintf(temp, sizeof(temp), "%.64s is away (%.128s)",dest_name,conn_get_awaystr(dest_c));
         message_send_text(user_c,message_type_info,user_c,temp);
     }
     if (conn_check_ignoring(dest_c,(tname = conn_get_username(user_c))))
     {
-	sprintf(temp,"%.64s ignores you.",dest_name);
+	snprintf(temp, sizeof(temp), "%.64s ignores you.",dest_name);
 	conn_unget_username(user_c,tname);
 	conn_unget_username(dest_c,dest_name);
 	message_send_text(user_c,message_type_info,user_c,temp);
 	return;
     }
-    
+
     message_send_text(dest_c,message_type_whisper,user_c,text);
-    
+
     if ((tname = conn_get_username(user_c)))
     {
         char username[1+MAX_USER_NAME]; /* '*' + username (including NULL) */
-	
+
 	if (strlen(tname)<MAX_USER_NAME)
 	{
             sprintf(username,"*%s",tname);
@@ -199,13 +199,13 @@ static void do_whois(t_connection * c, char const * dest)
     char const *      verb;
     t_game const *    game;
     t_channel const * channel;
-    
+
     if (!(dest_c = connlist_find_connection_by_name(dest,conn_get_realmname(c))))
     {
 	message_send_text(c,message_type_error,c,"That user is not logged on.");
 	return;
     }
-    
+
     if (c==dest_c)
     {
 	strcpy(namepart,"You");
@@ -214,23 +214,23 @@ static void do_whois(t_connection * c, char const * dest)
     else
     {
 	char const * tname;
-	
+
 	sprintf(namepart,"%.64s",(tname = conn_get_username(dest_c)));
 	conn_unget_username(dest_c,tname);
 	verb = "is";
     }
-    
+
     if ((game = conn_get_game(dest_c)))
     {
 	if (strcmp(game_get_pass(game),"")==0)
 #ifdef ACCT_DYN_LOAD
-	    sprintf(temp,"%s %s currently in game \"%.64s\".",
+	    snprintf(temp, sizeof(temp), "%s %s currently in game \"%.64s\".",
 		    namepart,
 		    verb,
 		    game_get_name(game));
 #else
 
-	    sprintf(temp,"%s %s logged on from account "UID_FORMAT", and %s currently in game \"%.64s\".",
+	    snprintf(temp, sizeof(temp), "%s %s logged on from account "UID_FORMAT", and %s currently in game \"%.49s\".",
 		    namepart,
 		    verb,
 		    conn_get_userid(dest_c),
@@ -239,12 +239,12 @@ static void do_whois(t_connection * c, char const * dest)
 #endif
 	else
 #ifdef ACCT_DYN_LOAD
-	    sprintf(temp,"%s %s currently in private game \"%.64s\".",
+	    snprintf(temp, sizeof(temp), "%s %s currently in private game \"%.64s\".",
 		    namepart,
 		    verb,
 		    game_get_name(game));
 #else
-	    sprintf(temp,"%s %s logged on from account "UID_FORMAT", and %s currently in private game \"%.64s\".",
+	    snprintf(temp, sizeof(temp), "%s %s logged on from account "UID_FORMAT", and %s currently in private game \"%.41s\".",
 		    namepart,
 		    verb,
 		    conn_get_userid(dest_c),
@@ -256,12 +256,12 @@ static void do_whois(t_connection * c, char const * dest)
     {
 	if (channel_get_permanent(channel)==1)
 #ifdef ACCT_DYN_LOAD
-            sprintf(temp,"%s %s currently in channel \"%.64s\".",
+            snprintf(temp, sizeof(temp), "%s %s currently in channel \"%.64s\".",
 		    namepart,
 		    verb,
 		    channel_get_name(channel));
 #else
-	    sprintf(temp,"%s %s logged on from account "UID_FORMAT", and %s currently in channel \"%.64s\".",
+	    snprintf(temp, sizeof(temp), "%s %s logged on from account "UID_FORMAT", and %s currently in channel \"%.38s\".",
 		    namepart,
 		    verb,
 		    conn_get_userid(dest_c),
@@ -270,12 +270,12 @@ static void do_whois(t_connection * c, char const * dest)
 #endif
 	else
 #ifdef ACCT_DYN_LOAD
-            sprintf(temp,"%s %s currently in private channel \"%.64s\".",
+            snprintf(temp, sizeof(temp), "%s %s currently in private channel \"%.64s\".",
 		    namepart,
 		    verb,
 		    channel_get_name(channel));
 #else
-	    sprintf(temp,"%s %s logged on from account "UID_FORMAT", and %s currently in private channel \"%.64s\".",
+	    snprintf(temp, sizeof(temp), "%s %s logged on from account "UID_FORMAT", and %s currently in private channel \"%.38s\".",
 		    namepart,
 		    verb,
 		    conn_get_userid(dest_c),
@@ -285,11 +285,11 @@ static void do_whois(t_connection * c, char const * dest)
     }
     else
 #ifdef ACCT_DYN_LOAD
-	sprintf(temp,"%s %s logged on.",
+	snprintf(temp, sizeof(temp), "%s %s logged on.",
 		namepart,
 		verb);
 #else
-	sprintf(temp,"%s %s logged on from account "UID_FORMAT".",
+	snprintf(temp, sizeof(temp), "%s %s logged on from account "UID_FORMAT".",
 		namepart,
 		verb,
 		conn_get_userid(dest_c));
@@ -297,10 +297,10 @@ static void do_whois(t_connection * c, char const * dest)
     message_send_text(c,message_type_info,c,temp);
     if (game && strcmp(game_get_pass(game),"")!=0)
 	message_send_text(c,message_type_info,c,"(This game is password protected.)");
-    
+
     if (conn_get_dndstr(dest_c))
     {
-        sprintf(temp,"%s %s refusing messages (%.128s)",
+        snprintf(temp, sizeof(temp), "%s %s refusing messages (%.94s)",
 		namepart,
 		verb,
 		conn_get_dndstr(dest_c));
@@ -309,7 +309,7 @@ static void do_whois(t_connection * c, char const * dest)
     else
         if (conn_get_awaystr(dest_c))
         {
-            sprintf(temp,"%s away (%.128s)",
+            snprintf(temp, sizeof(temp), "%s away (%.111s)",
 		    namepart,
 		    conn_get_awaystr(dest_c));
 	    message_send_text(c,message_type_info,c,temp);
@@ -329,7 +329,7 @@ static void user_timer_cb(t_connection * c, time_t now, t_timer_data str)
 	eventlog(eventlog_level_error,"user_timer_cb","got NULL str");
 	return;
     }
-    
+
     if (now!=(time_t)0) /* zero means user logged out before expiration */
 	message_send_text(c,message_type_info,c,str.p);
     free(str.p);
@@ -343,15 +343,15 @@ extern int handle_command(t_connection * c,  char const * text)
     {
         unsigned int i;
 	t_bnettime   bnt;
-	
+
         for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
         for (; text[i]==' '; i++); /* skip spaces */
-	
+
 	bnettime_set_str(&bnt,&text[i]);
         message_send_text(c,message_type_info,c,&text[i]);
-	
+
 	account_set_normal_last_time(conn_get_account(c),conn_get_clienttag(c),bnt);
-	
+
         return 0;
     }
 #endif
@@ -359,16 +359,16 @@ extern int handle_command(t_connection * c,  char const * text)
     {
 	t_channel const * channel;
 	unsigned int      i;
-	
+
         if (!(channel = conn_get_channel(c)))
 	{
 	    message_send_text(c,message_type_error,c,"You are not in a channel.");
 	    return 0;
 	}
-        
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++); /* skip spaces */
-	
+
 	if (!conn_quota_exceeded(c,&text[i]))
 	    channel_message_send(channel,message_type_emote,c,&text[i]);
 	return 0;
@@ -380,34 +380,34 @@ extern int handle_command(t_connection * c,  char const * text)
     {
 	char         dest[MAX_NICK_LEN];
 	unsigned int i,j;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"What do you want to say?");
 	    return 0;
 	}
-	
+
 	do_whisper(c,dest,&text[i]);
-	
+
 	return 0;
     }
     if (strstart(text,"/status")==0 || strstart(text,"/users")==0)
     {
 	char msgtemp[MAX_MESSAGE_LEN];
-	
-	sprintf(msgtemp,"There are currently %d users online, in %d games and %d channels.",
+
+	snprintf(msgtemp, sizeof(msgtemp), "There are currently %d users online, in %d games and %d channels.",
 		connlist_login_get_length(),
 		gamelist_get_length(),
 		channellist_get_length());
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	return 0;
     }
     if (strstart(text,"/who")==0)
@@ -423,10 +423,10 @@ extern int handle_command(t_connection * c,  char const * text)
 #ifndef WITH_BITS
 	char const *         tname;
 #endif
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (!(channel = channellist_find_channel_by_name(&text[i],conn_get_country(c),conn_get_realmname(c))))
 	{
 	    message_send_text(c,message_type_error,c,"That channel does not exist.");
@@ -438,8 +438,8 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"You are banned from that channel.");
 	    return 0;
 	}
-	
-	sprintf(msgtemp,"Users in channel %.64s:",&text[i]);
+
+	snprintf(msgtemp, sizeof(msgtemp), "Users in channel %.64s:",&text[i]);
 	i = strlen(msgtemp);
 	for (conn=channel_get_first(channel); conn; conn=channel_get_next())
 	{
@@ -454,7 +454,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    i += strlen(&msgtemp[i]);
 #else
 	    char const * name = bits_loginlist_get_name_bysessionid(conn->sessionid);
-	    
+
 	    if (!name) {
 		eventlog(eventlog_level_error,"handle_command","FIXME: user without name");
 		continue;
@@ -470,33 +470,33 @@ extern int handle_command(t_connection * c,  char const * text)
 	}
 	if (i>0)
 	    message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	return 0;
     }
     if (strstart(text,"/whois")==0 || strstart(text,"/whereis")==0 || strstart(text,"/where")==0)
     {
 	unsigned int i;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	do_whois(c,&text[i]);
-	
+
 	return 0;
     }
     if (strstart(text,"/whoami")==0)
     {
 	char const * tname;
-	
+
 	if (!(tname = conn_get_username(c)))
 	{
 	    message_send_text(c,message_type_error,c,"Unable to obtain your account name.");
 	    return 0;
 	}
-	
+
 	do_whois(c,tname);
 	conn_unget_username(c,tname);
-	
+
 	return 0;
     }
     if (strstart(text,"/announce")==0)
@@ -505,18 +505,18 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int i;
 	char const * tname;
 	t_message *  message;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1 && /* default to false */
 	    account_get_auth_announce(conn_get_account(c))!=1) /* default to false */
 	{
 	    message_send_text(c,message_type_info,c,"You do not have permission to use this command.");
 	    return 0;
 	}
-	
-	sprintf(msgtemp,"Announcement from %.64s: %.128s",(tname = conn_get_username(c)),&text[i]);
+
+	snprintf(msgtemp, sizeof(msgtemp), "Announcement from %.64s: %.128s",(tname = conn_get_username(c)),&text[i]);
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s announced: %.128s", conn_get_socket(c), tname,&text[i]);
 	conn_unget_username(c,tname);
 	if (!(message = message_create(message_type_broadcast,c,NULL,msgtemp)))
@@ -527,7 +527,7 @@ extern int handle_command(t_connection * c,  char const * text)
 		message_send_text(c,message_type_info,c,"Could not broadcast message.");
 	    message_destroy(message);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/beep")==0)
@@ -543,7 +543,7 @@ extern int handle_command(t_connection * c,  char const * text)
     if (strstart(text,"/version")==0)
     {
 	message_send_text(c,message_type_info,c,"BNETD "BNETD_VERSION);
-	
+
 	return 0;
     }
     if (strstart(text,"/copyright")==0 || strstart(text,"/warranty")==0 || strstart(text,"/license")==0)
@@ -568,19 +568,19 @@ extern int handle_command(t_connection * c,  char const * text)
 	    NULL
 	};
 	unsigned int i;
-	
+
 	for (i=0; info[i]; i++)
 		message_send_text(c,message_type_info,c,info[i]);
-	
+
 	return 0;
     }
     if (strstart(text,"/uptime")==0)
     {
 	char msgtemp[MAX_MESSAGE_LEN];
-	
-	sprintf(msgtemp,"Uptime: %s",seconds_to_timestr(server_get_uptime()));
+
+	snprintf(msgtemp, sizeof(msgtemp), "Uptime: %s",seconds_to_timestr(server_get_uptime()));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	return 0;
     }
     if (strstart(text,"/stats")==0 || strstart(text,"/astat")==0)
@@ -591,25 +591,25 @@ extern int handle_command(t_connection * c,  char const * text)
 	t_account *  account;
 	char const * clienttag;
 	char const * tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (dest[0]=='\0') /* if no argument, stat ourself */
 	{
 	    strcpy(dest,(tname = conn_get_username(c)));
 	    conn_unget_username(c,tname);
 	}
-	
+
 #ifdef WITH_BITS
 	if (bits_va_command_with_account_name(c,text,dest))
 	    return 0;
 #endif
-	
+
 	if (!(account = accountlist_find_account(dest)))
 	{
 	    message_send_text(c,message_type_error,c,"Invalid user.");
@@ -621,7 +621,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    return 0;
 	}
 #endif
-	
+
 	if (text[i]!='\0')
 	    clienttag = &text[i];
 	else if (!(clienttag = conn_get_clienttag(c)))
@@ -629,15 +629,15 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"Unable to determine client game.");
 	    return 0;
 	}
-	
+
 	if (strlen(clienttag)!=4)
 	{
-	    sprintf(msgtemp,"You must supply a user name and a valid program ID. (Program ID \"%.32s\" is invalid.)",clienttag);
+	    snprintf(msgtemp, sizeof(msgtemp), "You must supply a user name and a valid program ID. (Program ID \"%.32s\" is invalid.)",clienttag);
 	    message_send_text(c,message_type_error,c,msgtemp);
 	    message_send_text(c,message_type_error,c,"Example: /stats joe STAR");
 	    return 0;
 	}
-	
+
 	if (strcasecmp(clienttag,CLIENTTAG_BNCHATBOT)==0)
 	{
 	    message_send_text(c,message_type_error,c,"This game does not support win/loss records.");
@@ -648,52 +648,52 @@ extern int handle_command(t_connection * c,  char const * text)
 	else if (strcasecmp(clienttag,CLIENTTAG_DIABLORTL)==0 ||
 	         strcasecmp(clienttag,CLIENTTAG_DIABLOSHR)==0)
 	{
-	    sprintf(msgtemp,"%.64s's record:",(tname = account_get_name(account)));
+	    snprintf(msgtemp, sizeof(msgtemp), "%.64s's record:",(tname = account_get_name(account)));
 	    account_unget_name(tname);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
-	    sprintf(msgtemp,"level: %u",account_get_normal_level(account,clienttag));
+
+	    snprintf(msgtemp, sizeof(msgtemp), "level: %u",account_get_normal_level(account,clienttag));
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
-	    sprintf(msgtemp,"class: %.16s",bnclass_get_str(account_get_normal_class(account,clienttag)));
-	    
+
+	    snprintf(msgtemp, sizeof(msgtemp), "class: %.16s",bnclass_get_str(account_get_normal_class(account,clienttag)));
+
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
-	    sprintf(msgtemp,"stats: %u str  %u mag  %u dex  %u vit  %u gld",
+
+	    snprintf(msgtemp, sizeof(msgtemp), "stats: %u str  %u mag  %u dex  %u vit  %u gld",
 		    account_get_normal_strength(account,clienttag),
 		    account_get_normal_magic(account,clienttag),
 		    account_get_normal_dexterity(account,clienttag),
 		    account_get_normal_vitality(account,clienttag),
 		    account_get_normal_gold(account,clienttag));
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
-	    sprintf(msgtemp,"Diablo kills: %u",account_get_normal_diablo_kills(account,clienttag));
+
+	    snprintf(msgtemp, sizeof(msgtemp), "Diablo kills: %u",account_get_normal_diablo_kills(account,clienttag));
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
 	else if (strcasecmp(clienttag,CLIENTTAG_WARCIIBNE)==0)
 	{
-	    sprintf(msgtemp,"%.64s's record:",(tname = account_get_name(account)));
+	    snprintf(msgtemp, sizeof(msgtemp), "%.64s's record:",(tname = account_get_name(account)));
 	    account_unget_name(tname);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 #ifdef GAMEI_SERVER
 	    if (account_get_ladder_rating(account,clienttag,ladder_id_normal)>0)
-	    sprintf(msgtemp,"%u points (%u-%u-%u)",
+	    snprintf(msgtemp, sizeof(msgtemp), "%u points (%u-%u-%u)",
 		account_get_ladder_rating(account,clienttag,ladder_id_ironman),
 	        account_get_ladder_wins(account,clienttag,ladder_id_ironman),
 	        account_get_ladder_losses(account,clienttag,ladder_id_ironman),
 	        account_get_ladder_disconnects(account,clienttag,ladder_id_normal));
 	    else
 		strcpy(msgtemp,"1000 points (0-0-0)");
-		
+
 #else
-	    sprintf(msgtemp,"Normal games: %u-%u-%u",
+	    snprintf(msgtemp, sizeof(msgtemp), "Normal games: %u-%u-%u",
 		    account_get_normal_wins(account,clienttag),
 		    account_get_normal_losses(account,clienttag),
 		    account_get_normal_disconnects(account,clienttag));
 	    message_send_text(c,message_type_info,c,msgtemp);
 	    if (account_get_ladder_rating(account,clienttag,ladder_id_normal)>0)
-		sprintf(msgtemp,"Ladder games: %u-%u-%u (rating %u)",
+		snprintf(msgtemp, sizeof(msgtemp), "Ladder games: %u-%u-%u (rating %u)",
 			account_get_ladder_wins(account,clienttag,ladder_id_normal),
 			account_get_ladder_losses(account,clienttag,ladder_id_normal),
 			account_get_ladder_disconnects(account,clienttag,ladder_id_normal),
@@ -702,9 +702,9 @@ extern int handle_command(t_connection * c,  char const * text)
 		strcpy(msgtemp,"Ladder games: 0-0-0");
 #endif
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if (account_get_ladder_rating(account,clienttag,ladder_id_ironman)>0)
-		sprintf(msgtemp,"IronMan games: %u-%u-%u (rating %u)",
+		snprintf(msgtemp, sizeof(msgtemp), "IronMan games: %u-%u-%u (rating %u)",
 			account_get_ladder_wins(account,clienttag,ladder_id_ironman),
 			account_get_ladder_losses(account,clienttag,ladder_id_ironman),
 			account_get_ladder_disconnects(account,clienttag,ladder_id_ironman),
@@ -715,13 +715,13 @@ extern int handle_command(t_connection * c,  char const * text)
 	}
 	else
 	{
-	    sprintf(msgtemp,"%.64s's record:",(tname = account_get_name(account)));
+	    snprintf(msgtemp, sizeof(msgtemp), "%.64s's record:",(tname = account_get_name(account)));
 	    account_unget_name(tname);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 #ifdef GAMEI_SERVER
 	    if (account_get_ladder_rating(account,clienttag,ladder_id_normal)>0)
-	    sprintf(msgtemp,"%u points (%u wins %u losses %u disconnects)",
+	    snprintf(msgtemp, sizeof(msgtemp), "%u points (%u wins %u losses %u disconnects)",
 		account_get_ladder_rating(account,clienttag,ladder_id_normal),
 		account_get_ladder_wins(account,clienttag,ladder_id_normal),
     		account_get_ladder_losses(account,clienttag,ladder_id_normal),
@@ -729,14 +729,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	    else
 		strcpy(msgtemp,"1000 points (0-0-0)");
 #else
-	    sprintf(msgtemp,"Normal games: %u-%u-%u",
+	    snprintf(msgtemp, sizeof(msgtemp), "Normal games: %u-%u-%u",
 		    account_get_normal_wins(account,clienttag),
 		    account_get_normal_losses(account,clienttag),
 		    account_get_normal_disconnects(account,clienttag));
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if (account_get_ladder_rating(account,clienttag,ladder_id_normal)>0)
-		sprintf(msgtemp,"Ladder games: %u-%u-%u (rating %u)",
+		snprintf(msgtemp, sizeof(msgtemp), "Ladder games: %u-%u-%u (rating %u)",
 			account_get_ladder_wins(account,clienttag,ladder_id_normal),
 			account_get_ladder_losses(account,clienttag,ladder_id_normal),
 			account_get_ladder_disconnects(account,clienttag,ladder_id_normal),
@@ -746,7 +746,7 @@ extern int handle_command(t_connection * c,  char const * text)
 #endif
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/time")==0)
@@ -756,7 +756,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	t_bnettime  btlocal;
 	time_t      now;
 	struct tm * tmnow;
-	
+
 	/* Battle.net time: Wed Jun 23 15:15:29 */
 	now = time(NULL);
 	if (!(tmnow = localtime(&now)))
@@ -776,14 +776,14 @@ extern int handle_command(t_connection * c,  char const * text)
 		strftime(msgtemp,sizeof(msgtemp),"Your local time: %a %b %d %H:%M:%S",tmnow);
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/channel")==0 || strstart(text,"/join")==0)
     {
     	unsigned int i;
-    
-	    for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
+
+	    for (i=0; text[i]!=' ' && text[i]!='\0'; i++) /* skip command */
         	for (; text[i]==' '; i++);
 
         if (text[i]=='\0')
@@ -794,7 +794,7 @@ extern int handle_command(t_connection * c,  char const * text)
 
         if (conn_set_channel(c,&text[i],NULL)<0)
             conn_set_channel(c,CHANNEL_NAME_BANNED,NULL); /* should not fail */
-        
+
     	return 0;
     }
     if (strstart(text,"/pchannel")==0 || strstart(text,"/pjoin")==0)
@@ -802,7 +802,7 @@ extern int handle_command(t_connection * c,  char const * text)
     	char         channelname[strlen(text)]; /* There's nothing like an max_channel_name_len, so this kind is safe */
 	    unsigned int i,j;
 
-    	for (i=0; text[i]!=' ' && text[i]!='\0'; i++);  /* skip command */
+    	for (i=0; text[i]!=' ' && text[i]!='\0'; i++)  /* skip command */
 	    for (; text[i]==' '; i++);
     	for (j=0; text[i]!=' ' && text[i]!='\0'; i++)   /* get channelname */
 	        if (j<sizeof(channelname)-1) channelname[j++] = text[i];
@@ -828,20 +828,20 @@ extern int handle_command(t_connection * c,  char const * text)
     }
     if (strstart(text,"/rejoin")==0)
     {
-    	t_channel const * channel;
-	    char const *      temp;
-    	char const *      chname;
-        char const *      chpasswd;
-	
+    	const t_channel * channel;
+	const char *temp;
+    	const char *chname;
+        const char *chpasswd = NULL;
+
         if (!(channel = conn_get_channel(c)))
     	{
 	        message_send_text(c,message_type_error,c,"You are not in a channel.");
 	        return 0;
     	}
-        
+
 	    if (!(temp = channel_get_name(channel)))
 	        return 0;
-	
+
     	/* we need to copy the channel name (and password) because we might remove the
 	       last person (ourself) from the channel and cause the string
     	   to be freed in destroy_channel() */
@@ -857,22 +857,22 @@ extern int handle_command(t_connection * c,  char const * text)
             	eventlog(eventlog_level_error,__FUNCTION__,"malloc error while trying to duplicate channelpassword");
 	            return 0;
             }
-              
-        if (conn_set_channel(c,chname,chpasswd)<0)
-            conn_set_channel(c,CHANNEL_NAME_BANNED,NULL); /* should not fail */
+
+        if (conn_set_channel(c, chname, chpasswd) < 0)
+            conn_set_channel(c, CHANNEL_NAME_BANNED, NULL); /* should not fail */
 
         free((void *)chname); /* avoid warning */
    	    free((void *)chpasswd); /* avoid warning */
-	
+
     	return 0;
     }
     if (strstart(text,"/away")==0)
     {
 	unsigned int i;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0') /* back to normal */
 	{
 	    message_send_text(c,message_type_info,c,"You are no longer marked as away.");
@@ -883,16 +883,16 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"You are now marked as being away.");
 	    conn_set_awaystr(c,&text[i]);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/dnd")==0)
     {
 	unsigned int i;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0') /* back to normal */
 	{
 	    message_send_text(c,message_type_info,c,"Do Not Disturb mode cancelled.");
@@ -903,7 +903,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"Do Not Disturb mode engaged.");
 	    conn_set_dndstr(c,&text[i]);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/ignore")==0 || strstart(text,"/squelch")==0)
@@ -911,7 +911,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	char         tmsg[MAX_MESSAGE_LEN];
 	unsigned int i;
 	t_account *  account;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 
@@ -935,7 +935,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"You can't squelch yourself.");
 	    return 0;
 	}
-	if (conn_check_ignoring(c,&text[i])==1)	
+	if (conn_check_ignoring(c,&text[i])==1)
 	{
 	    sprintf(tmsg,"You are already ignoring %.64s.",&text[i]);
 	    message_send_text(c,message_type_info,c,tmsg);
@@ -946,19 +946,19 @@ extern int handle_command(t_connection * c,  char const * text)
 	else
 	{
 	    char const * tname;
-	    
+
 	    sprintf(tmsg,"%-.20s has been squelched.",(tname = account_get_name(account)));
 	    account_unget_name(tname);
 	    message_send_text(c,message_type_info,c,tmsg);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/unignore")==0 || strstart(text,"/unsquelch")==0)
     {
 	unsigned int      i;
         t_account const * account;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 
@@ -972,18 +972,18 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"Who don't you want to ignore?");
 	    return 0;
 	}
-	
+
         if (!(account = accountlist_find_account(&text[i])))
 	{
 	    message_send_text(c,message_type_info,c,"No such user.");
 	    return 0;
 	}
-	
+
 	if (conn_del_ignore(c,account)<0)
 	    message_send_text(c,message_type_info,c,"User was not being ignored.");
 	else
 	    message_send_text(c,message_type_info,c,"No longer ignoring.");
-	
+
 	return 0;
     }
     if (strstart(text,"/designate")==0)
@@ -992,10 +992,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int   i;
 	t_channel *    channel;
         t_connection * noc;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
         if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
@@ -1012,7 +1012,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"Who do you want to designate?");
 	    return 0;
 	}
-	
+
         if (!(noc = connlist_find_connection_by_accountname(&text[i])))
         {
             message_send_text(c,message_type_error,c,"That user is not logged in.");
@@ -1023,24 +1023,24 @@ extern int handle_command(t_connection * c,  char const * text)
             message_send_text(c,message_type_error,c,"That user is not in this channel.");
             return 0;
         }
-        
+
         if (channel_set_next_operator(channel,noc)<0)
             message_send_text(c,message_type_error,c,"Unable to designate that user.");
         else
         {
 	    char const * tname;
-	    
-            sprintf(msgtemp,"%s will be the new operator when you resign.",(tname = conn_get_username(noc)));
+
+            snprintf(msgtemp, sizeof(msgtemp), "%s will be the new operator when you resign.",(tname = conn_get_username(noc)));
 	    conn_unget_username(noc,tname);
             message_send_text(c,message_type_info,c,msgtemp);
         }
-	
+
         return 0;
     }
     if (strstart(text,"/resign")==0)
     {
 	t_channel *    channel;
-	
+
         if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
@@ -1051,12 +1051,12 @@ extern int handle_command(t_connection * c,  char const * text)
             message_send_text(c,message_type_error,c,"This command is reserved for channel operators.");
 	    return 0;
         }
-        
+
         if (channel_choose_operator(channel,NULL)<0)
             message_send_text(c,message_type_error,c,"You are unable to resign.");
         else
             message_send_text(c,message_type_info,c,"You are no longer the operator.");
-        
+
 	return 0;
     }
     if (strstart(text,"/kick")==0)
@@ -1066,14 +1066,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int      i,j;
 	t_channel const * channel;
         t_connection *    kuc;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
         if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
@@ -1090,7 +1090,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"Who do you want to kick off the channel?");
 	    return 0;
 	}
-	
+
         if (!(kuc = connlist_find_connection_by_accountname(dest)))
         {
             message_send_text(c,message_type_error,c,"That user is not logged in.");
@@ -1106,17 +1106,17 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"You cannot kick administrators.");
 	    return 0;
 	}
-	
+
         {
 	    char const * tname1;
 	    char const * tname2;
-	    
+
 	    tname1 = account_get_name(conn_get_account(kuc));
 	    tname2 = account_get_name(conn_get_account(c));
 	    if (text[i]!='\0')
-        	sprintf(msgtemp,"%-.20s has been kicked by %-.20s (%s).",tname1,tname2?tname2:"unknown",&text[i]);
+        	snprintf(msgtemp, sizeof(msgtemp), "%-.20s has been kicked by %-.20s (%s).",tname1,tname2?tname2:"unknown",&text[i]);
 	    else
-        	sprintf(msgtemp,"%-.20s has been kicked by %-.20s.",tname1,tname2?tname2:"unknown");
+        	snprintf(msgtemp, sizeof(msgtemp), "%-.20s has been kicked by %-.20s.",tname1,tname2?tname2:"unknown");
 	    if (tname2)
 		account_unget_name(tname2);
 	    if (tname1)
@@ -1131,7 +1131,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    }
         }
         conn_set_channel(kuc,CHANNEL_NAME_KICKED,NULL); /* should not fail */
-        
+
         return 0;
     }
     if (strstart(text,"/ban")==0)
@@ -1141,14 +1141,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int   i,j;
 	t_channel *    channel;
         t_connection * buc;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
         if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
@@ -1165,10 +1165,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"Who do you want to ban from the channel?");
 	    return 0;
 	}
-	
+
 	{
 	    t_account * account;
-	    
+
 	    if (!(account = accountlist_find_account(dest)))
 		message_send_text(c,message_type_info,c,"That account doesn't currently exist, banning anyway.");
 	    else
@@ -1178,21 +1178,21 @@ extern int handle_command(t_connection * c,  char const * text)
 	 	    return 0;
        	 	}
 	}
-	
+
         if (channel_ban_user(channel,dest)<0)
 	{
-            sprintf(msgtemp,"Unable to ban %-.20s.",dest);
+            snprintf(msgtemp, sizeof(msgtemp), "Unable to ban %-.20s.",dest);
             message_send_text(c,message_type_error,c,msgtemp);
 	}
         else
         {
 	    char const * tname;
-	    
+
 	    tname = account_get_name(conn_get_account(c));
 	    if (text[i]!='\0')
-        	sprintf(msgtemp,"%-.20s has been banned by %-.20s (%s).",dest,tname?tname:"unknown",&text[i]);
+        	snprintf(msgtemp, sizeof(msgtemp), "%-.20s has been banned by %-.20s (%s).",dest,tname?tname:"unknown",&text[i]);
 	    else
-        	sprintf(msgtemp,"%-.20s has been banned by %-.20s.",dest,tname?tname:"unknown");
+        	snprintf(msgtemp, sizeof(msgtemp), "%-.20s has been banned by %-.20s.",dest,tname?tname:"unknown");
 	    if (tname)
 		account_unget_name(tname);
     	    channel_message_log(channel,channel_loglevel_command,c,0,msgtemp);
@@ -1201,7 +1201,7 @@ extern int handle_command(t_connection * c,  char const * text)
         if ((buc = connlist_find_connection_by_accountname(dest)) &&
             conn_get_channel(buc)==channel)
             conn_set_channel(buc,CHANNEL_NAME_BANNED,NULL);
-	
+
         return 0;
     }
     if (strstart(text,"/unban")==0)
@@ -1209,10 +1209,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	char         msgtemp[MAX_MESSAGE_LEN];
 	t_channel *  channel;
 	unsigned int i;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
         if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
@@ -1229,15 +1229,15 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"Who do you want to unban from the channel?");
 	    return 0;
 	}
-        
+
         if (channel_unban_user(channel,&text[i])<0)
             message_send_text(c,message_type_error,c,"That user is not banned.");
         else
         {
-            sprintf(msgtemp,"%s is no longer banned from this channel.",&text[i]);
+            snprintf(msgtemp, sizeof(msgtemp), "%s is no longer banned from this channel.",&text[i]);
             message_send_text(c,message_type_info,c,msgtemp);
         }
-	
+
         return 0;
     }
     if ((strstart(text,"/friends")==0) ||
@@ -1246,30 +1246,30 @@ extern int handle_command(t_connection * c,  char const * text)
 	handle_friends_command(c,text);
 	return 0;
     }
-    
+
     if (prefs_get_extra_commands()==0)
     {
 	message_send_text(c,message_type_error,c,"Unknown command.");
 	eventlog(eventlog_level_debug,"handle_command","got unknown standard command \"%s\"",text);
 	return 0;
     }
-    
+
     /*******************************************************************/
-    
+
     if (strstart(text,"/reply")==0 || strstart(text,"/r")==0)
     {
 	unsigned int i;
 	char const * dest;
-	
+
 	if (!(dest = conn_get_lastsender(c)))
         {
             message_send_text(c,message_type_error,c,"No one messaged you, use /m instead");
             return 0;
 	}
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0')
 	{
             message_send_text(c,message_type_error,c,"What do you want to reply?");
@@ -1284,18 +1284,18 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int i;
 	char const * tname;
 	t_message *  message;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1 && /* default to false */
 	    account_get_auth_announce(conn_get_account(c))!=1) /* default to false */
 	{
 	    message_send_text(c,message_type_info,c,"You do not have permission to use this command.");
 	    return 0;
 	}
-	
-	sprintf(msgtemp,"Announcement from %.64s: %.128s",(tname = conn_get_username(c)),&text[i]);
+
+	snprintf(msgtemp, sizeof(msgtemp), "Announcement from %.64s: %.128s",(tname = conn_get_username(c)),&text[i]);
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s announced: %.128s", conn_get_socket(c), tname,&text[i]); /* KWS */
 	conn_unget_username(c,tname);
 	if (!(message = message_create(message_type_broadcast,c,NULL,msgtemp)))
@@ -1306,7 +1306,7 @@ extern int handle_command(t_connection * c,  char const * text)
 		message_send_text(c,message_type_info,c,"Could not broadcast message.");
 	    message_destroy(message);
 	}
-	
+
 	return 0;
     }
      if (strstart(text,"/realmann")==0)
@@ -1331,7 +1331,7 @@ extern int handle_command(t_connection * c,  char const * text)
         if (!(realmname=conn_get_realmname(c))) {
             message_send_text(c,message_type_info,c,"You must join a realm first");
         }
-        sprintf(msgtemp,"Announcement from %.32s@%.32s: %.128s",(tname = conn_get_username(c)),realmname,&text[i]);
+        snprintf(msgtemp, sizeof(msgtemp), "Announcement from %.32s@%.32s: %.128s",(tname = conn_get_username(c)),realmname,&text[i]);
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s announced: %.128s", conn_get_socket(c), tname,&text[i]); /* KWS */
         conn_unget_username(c,tname);
         if (!(message = message_create(message_type_broadcast,c,NULL,msgtemp)))
@@ -1380,13 +1380,13 @@ extern int handle_command(t_connection * c,  char const * text)
         t_elem const * curr;
 	char const *   banned;
 	unsigned int   i;
-	
+
 	if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
 	    return 0;
         }
-	
+
 	strcpy(msgtemp,"Banned users:");
 	i = strlen(msgtemp);
 	LIST_TRAVERSE_CONST(channel_get_banlist(channel),curr)
@@ -1402,14 +1402,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	}
 	if (i>0)
 	    message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	return 0;
     }
     if (strstart(text,"/news")==0)
     {
 	char const * filename;
 	FILE *       fp;
-	
+
 	if ((filename = prefs_get_newsfile()))
 	    if ((fp = fopen(filename,"r")))
 	    {
@@ -1424,7 +1424,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    }
 	else
             message_send_text(c,message_type_info,c,"No news today.");
-	
+
 	return 0;
     }
     if (strstart(text,"/games")==0)
@@ -1438,10 +1438,10 @@ extern int handle_command(t_connection * c,  char const * text)
         t_bits_game const * bgame;
 #endif
 	char const *   tag;
-        
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0')
 	{
 	    tag = conn_get_clienttag(c);
@@ -1457,11 +1457,11 @@ extern int handle_command(t_connection * c,  char const * text)
 	    tag = &text[i];
 	    message_send_text(c,message_type_info,c,"Current games of that type:");
 	}
-	
+
 	if (prefs_get_hide_addr() && account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
-	    sprintf(msgtemp," ------name------ p -status- --------type--------- count");
+	    snprintf(msgtemp, sizeof(msgtemp), " ------name------ p -status- --------type--------- count");
 	else
-	    sprintf(msgtemp," ------name------ p -status- --------type--------- count --------addr--------");
+	    snprintf(msgtemp, sizeof(msgtemp), " ------name------ p -status- --------type--------- count --------addr--------");
 	message_send_text(c,message_type_info,c,msgtemp);
 #ifndef WITH_BITS
         LIST_TRAVERSE_CONST(gamelist(),curr)
@@ -1481,14 +1481,14 @@ extern int handle_command(t_connection * c,  char const * text)
 		(!tag || strcasecmp(game_get_clienttag(game),tag)==0))
 		{
 		    if (prefs_get_hide_addr() && account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
-        	        sprintf(msgtemp," %-16.16s %1.1s %-8.8s %-21.21s %5u",
+        	        snprintf(msgtemp, sizeof(msgtemp), " %-16.16s %1.1s %-8.8s %-21.21s %5u",
 				game_get_name(game),
 				strcmp(game_get_pass(game),"")==0 ? "n":"y",
 				game_status_get_str(game_get_status(game)),
 				game_type_get_str(game_get_type(game)),
 				game_get_ref(game));
 		    else
-        	        sprintf(msgtemp," %-16.16s %1.1s %-8.8s %-21.21s %5u %s",
+        	        snprintf(msgtemp, sizeof(msgtemp), " %-16.16s %1.1s %-8.8s %-21.21s %5u %s",
 				game_get_name(game),
 				strcmp(game_get_pass(game),"")==0 ? "n":"y",
 				game_status_get_str(game_get_status(game)),
@@ -1501,7 +1501,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    bits_game_destroy_temp(game);
 #endif
 	}
-        
+
 	return 0;
     }
     if (strstart(text,"/channels")==0 || strstart(text,"/chs")==0)
@@ -1513,10 +1513,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	t_connection *    opr;
 	char const *      oprname;
 	char const *      tag;
-        
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0')
 	{
 	    tag = conn_get_clienttag(c);
@@ -1532,8 +1532,8 @@ extern int handle_command(t_connection * c,  char const * text)
 	    tag = &text[i];
 	    message_send_text(c,message_type_info,c,"Current channels of that type:");
 	}
-	
-	sprintf(msgtemp," ----------name---------- users ----operator----");
+
+	snprintf(msgtemp, sizeof(msgtemp), " ----------name---------- users ----operator----");
 	message_send_text(c,message_type_info,c,msgtemp);
 	LIST_TRAVERSE_CONST(channellist(),curr)
 	{
@@ -1546,7 +1546,7 @@ extern int handle_command(t_connection * c,  char const * text)
 		    oprname = conn_get_username(opr);
 		else
 		    oprname = NULL;
-        	sprintf(msgtemp," %-24.24s %5u %-16.16s",
+        	snprintf(msgtemp, sizeof(msgtemp), " %-24.24s %5u %-16.16s",
 			channel_get_name(channel),
 			channel_get_length(channel),
 			oprname?oprname:"");
@@ -1555,7 +1555,7 @@ extern int handle_command(t_connection * c,  char const * text)
         	message_send_text(c,message_type_info,c,msgtemp);
             }
 	}
-        
+
 	return 0;
     }
     if (strstart(text,"/addacct")==0)
@@ -1567,46 +1567,46 @@ extern int handle_command(t_connection * c,  char const * text)
 	char         msgtemp[MAX_MESSAGE_LEN];
 	char         pass[256];
 	char const * tname;
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
 	{
 	    message_send_text(c,message_type_error,c,"This command is only enabled for admins.");
 	    return 0;
 	}
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++);
 	for (; text[i]==' '; i++);
-	
+
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get username */
     	if (j<sizeof(username)-1) username[j++] = text[i];
 	username[j] = '\0';
-	
+
 	for (; text[i]==' '; i++); /* skip spaces */
 	for (j=0; text[i]!='\0'; i++) /* get pass (spaces are allowed) */
 	    if (j<sizeof(pass)-1) pass[j++] = text[i];
 	pass[j] = '\0';
-	
+
 	if (username[0]=='\0' || pass[0]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"Command requires USER and PASS as arguments.");
 	    return 0;
 	}
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s addacct: username=%s, pass=%s", conn_get_socket(c), (tname = conn_get_username(c)),username,pass); /* KWS */
 	conn_unget_username(c,tname);
-	
+
 	/* FIXME: truncate or err on too long password */
 	for (i=0; i<strlen(pass); i++)
 	    if (isupper((int)pass[i])) pass[i] = tolower((int)pass[i]);
-	
+
 	bnet_hash(&passhash,strlen(pass),pass);
-	
-	sprintf(msgtemp,"Trying to add account \"%s\" with password \"%s\"",username,pass);
+
+	snprintf(msgtemp, sizeof(msgtemp), "Trying to add account \"%s\" with password \"%s\"",username,pass);
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-	sprintf(msgtemp,"Hash is: %s",hash_get_str(passhash));
+
+	snprintf(msgtemp, sizeof(msgtemp), "Hash is: %s",hash_get_str(passhash));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	if (!(temp = account_create(username,hash_get_str(passhash))))
 	{
 	    message_send_text(c,message_type_error,c,"Failed to create account!");
@@ -1622,9 +1622,9 @@ extern int handle_command(t_connection * c,  char const * text)
         else
 	{
 #ifdef ACCT_DYN_LOAD
-	    sprintf(msgtemp,"Account for %s created.",username);
+	    snprintf(msgtemp, sizeof(msgtemp), "Account for %s created.",username);
 #else
-	    sprintf(msgtemp,"Account "UID_FORMAT" created.",account_get_uid(temp));
+	    snprintf(msgtemp, sizeof(msgtemp), "Account "UID_FORMAT" created.",account_get_uid(temp));
 #endif
 	    message_send_text(c,message_type_info,c,msgtemp);
 	    eventlog(eventlog_level_info,"handle_command","[%d] account \"%s\" created by admin",conn_get_socket(c),username);
@@ -1643,19 +1643,19 @@ extern int handle_command(t_connection * c,  char const * text)
 	char const * username;
 	char *       pass;
 	char const * tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++);
 	for (; text[i]==' '; i++);
-	
+
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get username/pass */
     	if (j<sizeof(arg1)-1) arg1[j++] = text[i];
 	arg1[j] = '\0';
-	
+
 	for (; text[i]==' '; i++); /* skip spaces */
 	for (j=0; text[i]!='\0'; i++) /* get pass (spaces are allowed) */
 	    if (j<sizeof(arg2)-1) arg2[j++] = text[i];
 	arg2[j] = '\0';
-	
+
 	if (arg2[0]=='\0')
 	{
 	    username = conn_get_username(c);
@@ -1666,28 +1666,28 @@ extern int handle_command(t_connection * c,  char const * text)
 	    username = arg1;
 	    pass     = arg2;
 	}
-	
+
 	if (pass[0]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"Command requires PASS argument.");
 	    return 0;
 	}
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s chpass: username=%s", conn_get_socket(c), (tname = conn_get_username(c)),username); /* KWS */
 	conn_unget_username(c,tname);
-	
+
 	/* FIXME: truncate or err on too long password */
 	for (i=0; i<strlen(pass); i++)
 	    if (isupper((int)pass[i])) pass[i] = tolower((int)pass[i]);
-	
+
 	bnet_hash(&passhash,strlen(pass),pass);
-	
-	sprintf(msgtemp,"Trying to change password for account \"%s\" to \"%s\"",username,pass);
+
+	snprintf(msgtemp, sizeof(msgtemp), "Trying to change password for account \"%s\" to \"%s\"",username,pass);
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-	sprintf(msgtemp,"Hash is: %s",hash_get_str(passhash));
+
+	snprintf(msgtemp, sizeof(msgtemp), "Hash is: %s",hash_get_str(passhash));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	if (!(temp = accountlist_find_account(username)))
 	{
 	    message_send_text(c,message_type_error,c,"Account does not exist.");
@@ -1695,9 +1695,9 @@ extern int handle_command(t_connection * c,  char const * text)
 		conn_unget_username(c,username);
 	    return 0;
 	}
-	
+
 	account = conn_get_account(c);
-	
+
 	if ((temp==account && account_get_auth_changepass(account)==0) || /* default to true */
 	    (temp!=account && account_get_auth_admin(account)!=1)) /* default to false */
 	{
@@ -1707,20 +1707,20 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"Only admins may change passwords for other accounts.");
 	    return 0;
 	}
-	
+
 	if (username!=arg1)
 	    conn_unget_username(c,username);
-	
+
 	if (account_set_pass(temp,hash_get_str(passhash))<0)
 	{
 	    message_send_text(c,message_type_error,c,"Unable to set password.");
 	    return 0;
 	}
-	
+
 #ifdef ACCT_DYN_LOAD
-	sprintf(msgtemp,"Password for %s updated.",username);
+	snprintf(msgtemp, sizeof(msgtemp), "Password for %s updated.",username);
 #else
-	sprintf(msgtemp,"Password for account "UID_FORMAT" updated.",account_get_uid(temp));
+	snprintf(msgtemp, sizeof(msgtemp), "Password for account "UID_FORMAT" updated.",account_get_uid(temp));
 #endif
 	message_send_text(c,message_type_info,c,msgtemp);
         return 0;
@@ -1734,30 +1734,30 @@ extern int handle_command(t_connection * c,  char const * text)
         unsigned int   i; /* for loop */
         char const *   channel_name;
         char const *   game_name;
-        
+
 	if (!prefs_get_enable_conn_all() && account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is only enabled for admins.");
 	    return 0;
         }
-	
+
         message_send_text(c,message_type_info,c,"Current connections:");
         /* addon */
         for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
-        for (; text[i]==' '; i++); 
+        for (; text[i]==' '; i++);
 
 	if (text[i]=='\0')
 	{
-	    sprintf(msgtemp," -class -tag -----name------ -lat(ms)- ----channel---- --game--");
+	    snprintf(msgtemp, sizeof(msgtemp), " -class -tag -----name------ -lat(ms)- ----channel---- --game--");
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
 	else
 	    if (strcmp(&text[i],"all")==0) /* print extended info */
 	    {
 	        if (prefs_get_hide_addr() && account_get_auth_admin(conn_get_account(c))!=1)
-                    sprintf(msgtemp," -#- -class ----state--- -tag -----name------ -session-- -flag- -lat(ms)- ----channel---- --game--");
+                    snprintf(msgtemp, sizeof(msgtemp), " -#- -class ----state--- -tag -----name------ -session-- -flag- -lat(ms)- ----channel---- --game--");
                 else
-	            sprintf(msgtemp," -#- -class ----state--- -tag -----name------ -session-- -flag- -lat(ms)- ----channel---- --game-- ---------addr--------");
+	            snprintf(msgtemp, sizeof(msgtemp), " -#- -class ----state--- -tag -----name------ -session-- -flag- -lat(ms)- ----channel---- --game-- ---------addr--------");
 		message_send_text(c,message_type_info,c,msgtemp);
 	    }
 	    else
@@ -1765,20 +1765,20 @@ extern int handle_command(t_connection * c,  char const * text)
                 message_send_text(c,message_type_error,c,"Unknown option.");
 		return 0;
 	    }
-	
+
         LIST_TRAVERSE_CONST(connlist(),curr)
         {
 	    conn = elem_get_data(curr);
 	    if (conn_get_account(conn))
 	    {
 		char const * tname;
-		
+
 		sprintf(name,"\"%.16s\"",(tname = conn_get_username(conn)));
 		conn_unget_username(conn,tname);
 	    }
 	    else
 		strcpy(name,"(none)");
-	    
+
 	    if (conn_get_channel(conn)!=NULL)
                 channel_name = channel_get_name(conn_get_channel(conn));
             else channel_name = "none";
@@ -1787,18 +1787,18 @@ extern int handle_command(t_connection * c,  char const * text)
             else game_name = "none";
 
             if (text[i]=='\0')
-                sprintf(msgtemp," %-6.6s %4.4s %-16.16s %9u %-16.16s %-8.8s",
+                snprintf(msgtemp, sizeof(msgtemp), " %-6.6s %4.4s %-16.16s %9u %-16.16s %-8.8s",
                         conn_class_get_str(conn_get_class(conn)),
                         conn_get_fake_clienttag(conn),
-                        name, 
-                        conn_get_latency(conn), 
+                        name,
+                        conn_get_latency(conn),
                         channel_name,
                         game_name);
             else
 	        if (prefs_get_hide_addr() && account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
-                    sprintf(msgtemp," %3d %-6.6s %-12.12s %4.4s %-16.16s 0x%08x 0x%04x %9u %-16.16s %-8.8s", 
+                    snprintf(msgtemp, sizeof(msgtemp), " %3d %-6.6s %-12.12s %4.4s %-16.16s 0x%08x 0x%04x %9u %-16.16s %-8.8s",
                             conn_get_socket(conn),
-                            conn_class_get_str(conn_get_class(conn)), 
+                            conn_class_get_str(conn_get_class(conn)),
                             conn_state_get_str(conn_get_state(conn)),
                             conn_get_fake_clienttag(conn),
                             name,
@@ -1808,7 +1808,7 @@ extern int handle_command(t_connection * c,  char const * text)
                             channel_name,
                             game_name);
   	        else
-                    sprintf(msgtemp," %3d %-6.6s %-12.12s %4.4s %-16.16s 0x%08x 0x%04x %9u %-16.16s %-8.8s %s",
+                    snprintf(msgtemp, sizeof(msgtemp), " %3d %-6.6s %-12.12s %4.4s %-16.16s 0x%08x 0x%04x %9u %-16.16s %-8.8s %s",
 			    conn_get_socket(conn),
 			    conn_class_get_str(conn_get_class(conn)),
 			    conn_state_get_str(conn_get_state(conn)),
@@ -1820,10 +1820,10 @@ extern int handle_command(t_connection * c,  char const * text)
                             channel_name,
                             game_name,
 			    addr_num_to_addr_str(conn_get_addr(conn),conn_get_port(conn)));
-	    
+
             message_send_text(c,message_type_info,c,msgtemp);
         }
-        
+
 	return 0;
     }
     if (strstart(text,"/finger")==0)
@@ -1841,7 +1841,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	char const *   tage;
 	char const *   thost;
 	char const *   tdesc;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
@@ -1853,7 +1853,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	if (bits_va_command_with_account_name(c,text,dest))
 	    return 0;
 #endif
-	
+
 	if (!(account = accountlist_find_account(dest)))
 	{
 	    message_send_text(c,message_type_error,c,"Invalid user.");
@@ -1866,11 +1866,11 @@ extern int handle_command(t_connection * c,  char const * text)
 	}
 #endif
 #ifdef ACCT_DYN_LOAD
-        sprintf(msgtemp,"Login: %-16.16s           Sex: %.14s",
+        snprintf(msgtemp, sizeof(msgtemp), "Login: %-16.16s           Sex: %.14s",
 		(tname = account_get_name(account)),
 		(tsex = account_get_sex(account)));
 #else
-	sprintf(msgtemp,"Login: %-16.16s "UID_FORMAT" Sex: %.14s",
+	snprintf(msgtemp, sizeof(msgtemp), "Login: %-16.16s "UID_FORMAT" Sex: %.14s",
 		(tname = account_get_name(account)),
 		account_get_uid(account),
 		(tsex = account_get_sex(account)));
@@ -1878,22 +1878,22 @@ extern int handle_command(t_connection * c,  char const * text)
 	account_unget_name(tname);
 	account_unget_sex(tsex);
         message_send_text(c,message_type_info,c,msgtemp);
-	
-        sprintf(msgtemp,"Location: %-23.23s Age: %.14s",
+
+        snprintf(msgtemp, sizeof(msgtemp), "Location: %-23.23s Age: %.14s",
 		(tloc = account_get_loc(account)),
 		(tage = account_get_age(account)));
 	account_unget_loc(tloc);
 	account_unget_age(tage);
         message_send_text(c,message_type_info,c,msgtemp);
-	
+
         if (!(host = thost = account_get_ll_host(account)) ||
 	    account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
 	    host = "unknown";
-	
+
         {
             time_t      then;
 	    struct tm * tmthen;
-            
+
             then = account_get_ll_time(account);
 	    tmthen = localtime(&then); /* FIXME: determine user's timezone */
 	    if (!(conn = connlist_find_connection_by_accountname(dest)))
@@ -1914,29 +1914,30 @@ extern int handle_command(t_connection * c,  char const * text)
 	if (account_get_auth_admin(conn_get_account(c))==1 || prefs_get_hide_addr()==0)
 	{
 	    if (conn)
-		sprintf(msgtemp,"%s (%s)",msgtemp,addr_num_to_ip_str(conn_get_addr(conn)));
+		snprintf(msgtemp, sizeof(msgtemp), "%s (%s)",msgtemp,addr_num_to_ip_str(conn_get_addr(conn)));
 	    else
 	    {
-		tname = tname = account_get_ll_ip(account);
-		sprintf(msgtemp,"%s (%s)",msgtemp,tname ? tname : "unknown");
-		account_unget_ll_ip(tname);
+	      tname = account_get_ll_ip(account);
+	      tname = tname;
+	      snprintf(msgtemp, sizeof(msgtemp), "%s (%s)",msgtemp,tname ? tname : "unknown");
+	      account_unget_ll_ip(tname);
 	    }
 	}
 	message_send_text(c,message_type_info,c,msgtemp);
 
 	if (conn)
 	{
-	    sprintf(msgtemp,"Idle %s",seconds_to_timestr(conn_get_idletime(conn)));
+	    snprintf(msgtemp, sizeof(msgtemp), "Idle %s",seconds_to_timestr(conn_get_idletime(conn)));
  	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-        
+
         strncpy(msgtemp,(tdesc = account_get_desc(account)),sizeof(msgtemp));
 	msgtemp[sizeof(msgtemp)-1] = '\0';
 	account_unget_desc(tdesc);
         for (tok=strtok(msgtemp,"\r\n"); tok; tok=strtok(NULL,"\r\n"))
 	    message_send_text(c,message_type_info,c,tok);
         message_send_text(c,message_type_info,c,"");
-        
+
 	return 0;
     }
     if (strstart(text,"/operator")==0 || strstart(text,"/op")==0)
@@ -1944,20 +1945,20 @@ extern int handle_command(t_connection * c,  char const * text)
 	char                 msgtemp[MAX_MESSAGE_LEN];
 	t_connection const * opr;
 	t_channel const *    channel;
-	
+
         if (!(channel = conn_get_channel(c)))
         {
             message_send_text(c,message_type_error,c,"This command can only be used inside a channel.");
 	    return 0;
         }
-	
+
 	if (!(opr = channel_get_operator(channel)))
 	    strcpy(msgtemp,"There is no operator.");
 	else
 	{
 	    char const * tname;
-	    
-	    sprintf(msgtemp,"%.64s is the operator.",(tname = conn_get_username(opr)));
+
+	    snprintf(msgtemp, sizeof(msgtemp), "%.64s is the operator.",(tname = conn_get_username(opr)));
 	    conn_unget_username(opr,tname);
 	}
         message_send_text(c,message_type_info,c,msgtemp);
@@ -1971,7 +1972,7 @@ extern int handle_command(t_connection * c,  char const * text)
        t_connection *  tc;
        char const *    nick;
        int             remove_sep;
-       
+
        strcpy(msgtemp,"Currently logged on Administrators: ");
        i = strlen(msgtemp);
        remove_sep = 0;
@@ -2020,7 +2021,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	char		usernick[MAX_NICK_LEN];
 	char		timestr[MAX_TIME_STR];
 	char		reason[MAX_REASON_LEN];
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get nick */
@@ -2044,7 +2045,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	reason[j] = '\0';
 	if (strcasecmp(reason,"") == 0)
 	    sprintf(reason,"not given");
-											
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
@@ -2098,7 +2099,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	reason[j] = '\0';
 	if (strcasecmp(reason,"") == 0)
 	    sprintf(reason,"not given");
-												
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
@@ -2129,10 +2130,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int   i;
 	char           msgtemp[MAX_MESSAGE_LEN];
 	t_game const * game;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (text[i]=='\0')
 	{
 	    if (!(game = conn_get_game(c)))
@@ -2147,15 +2148,15 @@ extern int handle_command(t_connection * c,  char const * text)
 		message_send_text(c,message_type_error,c,"That game does not exist.");
 		return 0;
 	    }
-	
-        sprintf(msgtemp,"Name: %-20.20s    ID: "GAMEID_FORMAT" (%s)",game_get_name(game),game_get_id(game),strcmp(game_get_pass(game),"")==0?"public":"private");
+
+        snprintf(msgtemp, sizeof(msgtemp), "Name: %-20.20s    ID: "GAMEID_FORMAT" (%s)",game_get_name(game),game_get_id(game),strcmp(game_get_pass(game),"")==0?"public":"private");
         message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	{
 	    t_account *  owner;
 	    char const * tname;
 	    char const * namestr;
-	    
+
 	    if (!(owner = conn_get_account(game_get_owner(game))))
 	    {
 		tname = NULL;
@@ -2166,49 +2167,49 @@ extern int handle_command(t_connection * c,  char const * text)
 		    namestr = "unknown";
 		else
 		    namestr = tname;
-	    
-            sprintf(msgtemp,"Owner: %-20.20s",namestr);
-	    
+
+            snprintf(msgtemp, sizeof(msgtemp), "Owner: %-20.20s",namestr);
+
             if (tname)
 		account_unget_name(tname);
 	}
         message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	if (!prefs_get_hide_addr() || account_get_auth_admin(conn_get_account(c))==1) /* default to false */
 	{
 	    unsigned int   addr;
 	    unsigned short port;
 	    unsigned int   taddr;
 	    unsigned short tport;
-	    
+
 	    taddr=addr = game_get_addr(game);
 	    tport=port = game_get_port(game);
 	    gametrans_net(conn_get_addr(c),conn_get_port(c),conn_get_local_addr(c),conn_get_local_port(c),&taddr,&tport);
-	    
+
 	    if (taddr==addr && tport==port)
-        	sprintf(msgtemp,"Address: %s",
+        	snprintf(msgtemp, sizeof(msgtemp), "Address: %s",
 		    addr_num_to_addr_str(addr,port));
 	    else
-        	sprintf(msgtemp,"Address: %s (trans %s)",
+        	snprintf(msgtemp, sizeof(msgtemp), "Address: %s (trans %s)",
 		    addr_num_to_addr_str(addr,port),
 		    addr_num_to_addr_str(taddr,tport));
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
-        sprintf(msgtemp,"Client: %4s (version %s, startver %u)",game_get_clienttag(game),vernum_to_verstr(game_get_version(game)),game_get_startver(game));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Client: %4s (version %s, startver %u)",game_get_clienttag(game),vernum_to_verstr(game_get_version(game)),game_get_startver(game));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	{
 	    time_t      gametime;
 	    struct tm * gmgametime;
-	    
+
 	    gametime = game_get_create_time(game);
 	    if (!(gmgametime = gmtime(&gametime)))
 		strcpy(msgtemp,"Created: ?");
 	    else
 		strftime(msgtemp,sizeof(msgtemp),"Created: "GAME_TIME_FORMAT,gmgametime);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    gametime = game_get_start_time(game);
 	    if (gametime!=(time_t)0)
 	    {
@@ -2221,72 +2222,72 @@ extern int handle_command(t_connection * c,  char const * text)
 		strcpy(msgtemp,"Started: ");
             message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
-	sprintf(msgtemp,"Status: %s",game_status_get_str(game_get_status(game)));
+
+	snprintf(msgtemp, sizeof(msgtemp), "Status: %s",game_status_get_str(game_get_status(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-        sprintf(msgtemp,"Type: %-20.20s",game_type_get_str(game_get_type(game)));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Type: %-20.20s",game_type_get_str(game_get_type(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-        sprintf(msgtemp,"Speed: %s",game_speed_get_str(game_get_speed(game)));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Speed: %s",game_speed_get_str(game_get_speed(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-        sprintf(msgtemp,"Difficulty: %s",game_difficulty_get_str(game_get_difficulty(game)));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Difficulty: %s",game_difficulty_get_str(game_get_difficulty(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-        sprintf(msgtemp,"Option: %s",game_option_get_str(game_get_option(game)));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Option: %s",game_option_get_str(game_get_option(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	{
 	    char const * mapname;
-	    
+
 	    if (!(mapname = game_get_mapname(game)))
 		mapname = "unknown";
-            sprintf(msgtemp,"Map: %-20.20s",mapname);
+            snprintf(msgtemp, sizeof(msgtemp), "Map: %-20.20s",mapname);
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
-        sprintf(msgtemp,"Map Size: %ux%u",game_get_mapsize_x(game),game_get_mapsize_y(game));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Map Size: %ux%u",game_get_mapsize_x(game),game_get_mapsize_y(game));
 	message_send_text(c,message_type_info,c,msgtemp);
-        sprintf(msgtemp,"Map Tileset: %s",game_tileset_get_str(game_get_tileset(game)));
+        snprintf(msgtemp, sizeof(msgtemp), "Map Tileset: %s",game_tileset_get_str(game_get_tileset(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-        sprintf(msgtemp,"Map Type: %s",game_maptype_get_str(game_get_maptype(game)));
+        snprintf(msgtemp, sizeof(msgtemp), "Map Type: %s",game_maptype_get_str(game_get_maptype(game)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
-        sprintf(msgtemp,"Players: %u current, %u total, %u max",game_get_ref(game),game_get_count(game),game_get_maxplayers(game));
+
+        snprintf(msgtemp, sizeof(msgtemp), "Players: %u current, %u total, %u max",game_get_ref(game),game_get_count(game),game_get_maxplayers(game));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	{
 	    char const * description;
-	    
+
 	    if (!(description = game_get_description(game)))
 		description = "";
-	    sprintf(msgtemp,"Description: %-20.20s",description);
+	    snprintf(msgtemp, sizeof(msgtemp), "Description: %-20.20s",description);
 	}
-	
+
 	{
 	    char const * tplayers;
-	    
-	    sprintf(msgtemp,"Currently in game:%s",(tplayers = game_get_players(game)));
+
+	    snprintf(msgtemp, sizeof(msgtemp), "Currently in game:%s",(tplayers = game_get_players(game)));
 	    game_unget_players(tplayers);
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/ladderactivate")==0)
     {
 	char const * tname;
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
 	    return 0;
         }
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s ladderactivate", conn_get_socket(c), (tname = conn_get_username(c)));
 	conn_unget_username(c,tname);
-	
+
 	ladderlist_make_all_active();
 	message_send_text(c,message_type_info,c,"Copied current scores to active scores on all ladders.");
 	return 0;
@@ -2297,20 +2298,20 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int i,j;
 	unsigned int delay;
 	char const * tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
 	    return 0;
         }
-	
+
 	if (dest[0]=='\0')
 	    delay = prefs_get_shutdown_delay();
 	else
@@ -2319,9 +2320,9 @@ extern int handle_command(t_connection * c,  char const * text)
 		message_send_text(c,message_type_error,c,"Invalid delay.");
 		return 0;
 	    }
-	
+
 	server_quit_delay(delay);
-	
+
 	if (delay)
 	{
 	    message_send_text(c,message_type_info,c,"You initialized the shutdown sequence.");
@@ -2333,7 +2334,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    eventlog(eventlog_level_command,"handle_command","[%d] %.64s shutdown: canseled", conn_get_socket(c), (tname = conn_get_username(c)));
 	}
 	conn_unget_username(c,tname);
-	
+
 	return 0;
     }
     if (strstart(text,"/ladderinfo")==0)
@@ -2345,14 +2346,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	t_account *  account;
 	char const * clienttag;
 	char const * tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (dest[0]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"Which rank do you want ladder info for?");
@@ -2363,7 +2364,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"Invalid rank.");
 	    return 0;
 	}
-	
+
 	if (text[i]!='\0')
 	    clienttag = &text[i];
 	else if (!(clienttag = conn_get_clienttag(c)))
@@ -2371,20 +2372,20 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"Unable to determine client game.");
 	    return 0;
 	}
-	
+
 	if (strlen(clienttag)!=4)
 	{
-	    sprintf(msgtemp,"You must supply a rank and a valid program ID. (Program ID \"%.32s\" is invalid.)",clienttag);
+	    snprintf(msgtemp, sizeof(msgtemp), "You must supply a rank and a valid program ID. (Program ID \"%.32s\" is invalid.)",clienttag);
 	    message_send_text(c,message_type_error,c,msgtemp);
 	    message_send_text(c,message_type_error,c,"Example: /ladderinfo 1 STAR");
 	    return 0;
 	}
-	
+
 	if (strcasecmp(clienttag,CLIENTTAG_STARCRAFT)==0)
 	{
             if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_active,CLIENTTAG_STARCRAFT,ladder_id_normal)))
 	    {
-		sprintf(msgtemp,"Starcraft active  %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Starcraft active  %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_active_wins(account,CLIENTTAG_STARCRAFT,ladder_id_normal),
@@ -2394,12 +2395,12 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Starcraft active  %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Starcraft active  %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_current,CLIENTTAG_STARCRAFT,ladder_id_normal)))
 	    {
-		sprintf(msgtemp,"Starcraft current %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Starcraft current %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_wins(account,CLIENTTAG_STARCRAFT,ladder_id_normal),
@@ -2409,14 +2410,14 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Starcraft current %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Starcraft current %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
 	else if (strcasecmp(clienttag,CLIENTTAG_BROODWARS)==0)
 	{
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_active,CLIENTTAG_BROODWARS,ladder_id_normal)))
 	    {
-		sprintf(msgtemp,"Brood War active  %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Brood War active  %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_active_wins(account,CLIENTTAG_BROODWARS,ladder_id_normal),
@@ -2426,12 +2427,12 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Brood War active  %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Brood War active  %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_current,CLIENTTAG_BROODWARS,ladder_id_normal)))
 	    {
-		sprintf(msgtemp,"Brood War current %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Brood War current %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_wins(account,CLIENTTAG_BROODWARS,ladder_id_normal),
@@ -2441,14 +2442,14 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Brood War current %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Brood War current %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
 	else if (strcasecmp(clienttag,CLIENTTAG_WARCIIBNE)==0)
 	{
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_active,CLIENTTAG_WARCIIBNE,ladder_id_normal)))
 	    {
-		sprintf(msgtemp,"Warcraft II standard active  %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II standard active  %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_active_wins(account,CLIENTTAG_WARCIIBNE,ladder_id_normal),
@@ -2458,12 +2459,12 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Warcraft II standard active  %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II standard active  %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_active,CLIENTTAG_WARCIIBNE,ladder_id_ironman)))
 	    {
-		sprintf(msgtemp,"Warcraft II IronMan active   %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II IronMan active   %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_active_wins(account,CLIENTTAG_WARCIIBNE,ladder_id_ironman),
@@ -2473,12 +2474,12 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Warcraft II IronMan active   %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II IronMan active   %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_current,CLIENTTAG_WARCIIBNE,ladder_id_normal)))
 	    {
-		sprintf(msgtemp,"Warcraft II standard current %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II standard current %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_wins(account,CLIENTTAG_WARCIIBNE,ladder_id_normal),
@@ -2488,12 +2489,12 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Warcraft II standard current %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II standard current %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
-	    
+
 	    if ((account = ladder_get_account_by_rank(rank,ladder_sort_highestrated,ladder_time_current,CLIENTTAG_WARCIIBNE,ladder_id_ironman)))
 	    {
-		sprintf(msgtemp,"Warcraft II IronMan current  %5u: %-20.20s %u/%u/%u rating %u",
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II IronMan current  %5u: %-20.20s %u/%u/%u rating %u",
 			rank,
 			(tname = account_get_name(account)),
 			account_get_ladder_wins(account,CLIENTTAG_WARCIIBNE,ladder_id_ironman),
@@ -2503,7 +2504,7 @@ extern int handle_command(t_connection * c,  char const * text)
 		account_unget_name(tname);
 	    }
 	    else
-		sprintf(msgtemp,"Warcraft II IronMan current  %5u: <none>",rank);
+		snprintf(msgtemp, sizeof(msgtemp), "Warcraft II IronMan current  %5u: <none>",rank);
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
 	else
@@ -2512,7 +2513,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"You must supply a rank and a valid program ID.");
 	    message_send_text(c,message_type_error,c,"Example: /ladderinfo 1 STAR");
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/timer")==0)
@@ -2521,31 +2522,31 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int delta;
 	char         deltastr[64];
 	t_timer_data data;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get comm */
 	    if (j<sizeof(deltastr)-1) deltastr[j++] = text[i];
 	deltastr[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (deltastr[0]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"How long do you want the timer to last?");
 	    return 0;
 	}
-	
+
 	if (clockstr_to_seconds(deltastr,&delta)<0)
 	{
 	    message_send_text(c,message_type_error,c,"Invalid duration.");
 	    return 0;
 	}
-	
+
 	if (text[i]=='\0')
 	    data.p = strdup("Your timer has expired.");
 	else
 	    data.p = strdup(&text[i]);
-	
+
 	if (timerlist_add_timer(c,time(NULL)+(time_t)delta,user_timer_cb,data)<0)
 	{
 	    eventlog(eventlog_level_error,"handle_command","could not add timer");
@@ -2555,11 +2556,11 @@ extern int handle_command(t_connection * c,  char const * text)
 	else
 	{
 	    char msgtemp[MAX_MESSAGE_LEN];
-	    
-	    sprintf(msgtemp,"Timer set for %s",seconds_to_timestr(delta));
+
+	    snprintf(msgtemp, sizeof(msgtemp), "Timer set for %s",seconds_to_timestr(delta));
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
+
 	return 0;
     }
     if (strstart(text,"/netinfo")==0)
@@ -2575,89 +2576,89 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned short port;
 	unsigned int   taddr;
 	unsigned short tport;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (dest[0]=='\0')
 	{
 	    char const * tname;
-	    
+
 	    strcpy(dest,(tname = conn_get_username(c)));
 	    conn_unget_username(c,tname);
 	}
-	
+
 	if (!(conn = connlist_find_connection_by_accountname(dest)))
 	{
 	    message_send_text(c,message_type_error,c,"That user is not logged on.");
 	    return 0;
 	}
-	
+
 	if (conn_get_account(conn)!=conn_get_account(c) &&
 	    prefs_get_hide_addr() && account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
 	{
 	    message_send_text(c,message_type_error,c,"Address information for other users is only available to admins.");
 	    return 0;
 	}
-	
-	sprintf(msgtemp,"Server TCP: %s (bind %s)",addr_num_to_addr_str(conn_get_real_local_addr(conn),conn_get_real_local_port(conn)),addr_num_to_addr_str(conn_get_local_addr(conn),conn_get_local_port(conn)));
+
+	snprintf(msgtemp, sizeof(msgtemp), "Server TCP: %s (bind %s)",addr_num_to_addr_str(conn_get_real_local_addr(conn),conn_get_real_local_port(conn)),addr_num_to_addr_str(conn_get_local_addr(conn),conn_get_local_port(conn)));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
         if (!(host=thost = account_get_ll_host(conn_get_account(conn))))
 	    host = "unknown";
-	sprintf(msgtemp,"Client TCP: %s (%.32s)",addr_num_to_addr_str(conn_get_addr(conn),conn_get_port(conn)),host);
+	snprintf(msgtemp, sizeof(msgtemp), "Client TCP: %s (%.32s)",addr_num_to_addr_str(conn_get_addr(conn),conn_get_port(conn)),host);
 	if (thost)
 	    account_unget_ll_host(thost);
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	taddr=addr = conn_get_game_addr(conn);
 	tport=port = conn_get_game_port(conn);
 	gametrans_net(conn_get_addr(c),conn_get_port(c),addr,port,&taddr,&tport);
-	
+
 	if (taddr==addr && tport==port)
-	    sprintf(msgtemp,"Client UDP: %s",
+	    snprintf(msgtemp, sizeof(msgtemp), "Client UDP: %s",
 		    addr_num_to_addr_str(addr,port));
 	else
-	    sprintf(msgtemp,"Client UDP: %s (trans %s)",
+	    snprintf(msgtemp, sizeof(msgtemp), "Client UDP: %s (trans %s)",
 		    addr_num_to_addr_str(addr,port),
 		    addr_num_to_addr_str(taddr,tport));
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	if ((game = conn_get_game(conn)))
 	{
 	    taddr=addr = game_get_addr(game);
 	    tport=port = game_get_port(game);
 	    gametrans_net(conn_get_addr(c),conn_get_port(c),addr,port,&taddr,&tport);
-	    
+
 	    if (taddr==addr && tport==port)
-		sprintf(msgtemp,"Game UDP:  %s",
+		snprintf(msgtemp, sizeof(msgtemp), "Game UDP:  %s",
 			addr_num_to_addr_str(addr,port));
 	    else
-		sprintf(msgtemp,"Game UDP:  %s (trans %s)",
+		snprintf(msgtemp, sizeof(msgtemp), "Game UDP:  %s (trans %s)",
 			addr_num_to_addr_str(addr,port),
 			addr_num_to_addr_str(taddr,tport));
 	}
 	else
 	    strcpy(msgtemp,"Game UDP:  none");
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	return 0;
     }
     if (strstart(text,"/quota")==0)
     {
 	char msgtemp[MAX_MESSAGE_LEN];
-	
-	sprintf(msgtemp,"Your quota allows you to write %u lines per %u seconds.",prefs_get_quota_lines(),prefs_get_quota_time());
+
+	snprintf(msgtemp, sizeof(msgtemp), "Your quota allows you to write %u lines per %u seconds.",prefs_get_quota_lines(),prefs_get_quota_time());
 	message_send_text(c,message_type_info,c,msgtemp);
-	sprintf(msgtemp,"Long lines will be considered to wrap every %u characters.",prefs_get_quota_wrapline());
+	snprintf(msgtemp, sizeof(msgtemp), "Long lines will be considered to wrap every %u characters.",prefs_get_quota_wrapline());
 	message_send_text(c,message_type_info,c,msgtemp);
-	sprintf(msgtemp,"You are not allowed to send lines with more than %u characters.",prefs_get_quota_maxline());
+	snprintf(msgtemp, sizeof(msgtemp), "You are not allowed to send lines with more than %u characters.",prefs_get_quota_maxline());
 	message_send_text(c,message_type_info,c,msgtemp);
-	
+
 	return 0;
     }
     if (strstart(text,"/lockacct")==0)
@@ -2666,10 +2667,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	t_connection * user;
 	t_account *    account;
 	char const *   tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
@@ -2684,7 +2685,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	if (bits_va_command_with_account_name(c,text,&text[i]))
 	    return 0;
 #endif
-	
+
 	if (!(account = accountlist_find_account(&text[i])))
 	{
 	    message_send_text(c,message_type_error,c,"Invalid user.");
@@ -2698,10 +2699,10 @@ extern int handle_command(t_connection * c,  char const * text)
 #endif
 	if ((user = connlist_find_connection_by_accountname(&text[i])))
 	    message_send_text(user,message_type_info,user,"Your account has just been locked by admin.");
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s lockacct: %.128s", conn_get_socket(c), (tname = conn_get_username(c)),&text[i]);
 	conn_unget_username(c,tname);
-	
+
         account_set_auth_lock(account,1);
         message_send_text(c,message_type_error,c,"That user account is now locked.");
         return 0;
@@ -2712,10 +2713,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	t_connection * user;
 	t_account *    account;
 	char const *   tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
         {
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
@@ -2743,10 +2744,10 @@ extern int handle_command(t_connection * c,  char const * text)
 #endif
 	if ((user = connlist_find_connection_by_accountname(&text[i])))
 	    message_send_text(user,message_type_info,user,"Your account has just been unlocked by admin.");
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s unlockacct: %.128s", conn_get_socket(c), (tname = conn_get_username(c)),&text[i]);
 	conn_unget_username(c,tname);
-	
+
         account_set_auth_lock(account,0);
         message_send_text(c,message_type_error,c,"That user account is now unlocked.");
         return 0;
@@ -2758,20 +2759,20 @@ extern int handle_command(t_connection * c,  char const * text)
 	FILE *       pp;
 	unsigned int len;
 	unsigned int i;
-	
+
 	if (!(fcmd = prefs_get_fortunecmd()) || fcmd[0]=='\0')
 	{
 	    message_send_text(c,message_type_info,c,"Fortune not available.");
 	    return 0;
 	}
-	
+
 	if (!(pp = runprog_open(fcmd)))
 	{
 	    message_send_text(c,message_type_error,c,"Fortune failed.");
 	    eventlog(eventlog_level_error,"handle_command","could not open fortune process \"%s\"",fcmd);
 	    return 0;
 	}
-	
+
 	while (fgets(msgtemp,sizeof(msgtemp),pp))
 	{
 	    len = strlen(msgtemp);
@@ -2780,10 +2781,10 @@ extern int handle_command(t_connection * c,  char const * text)
 	    for (i=0; i<len; i++)
 		if (msgtemp[i]=='\t')
 		    msgtemp[i] = ' ';
-	    
+
 	    message_send_text(c,message_type_info,c,msgtemp);
 	}
-	
+
 	if (runprog_close(pp)!=0)
 	{
 	    message_send_text(c,message_type_error,c,"Fortune failed.");
@@ -2798,14 +2799,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	unsigned int i,j;
 	unsigned int newflag;
 	char const * tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
 	if (account_get_auth_admin(conn_get_account(c))!=1)
 	{
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
@@ -2816,14 +2817,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"What flags do you want to set?");
 	    return 0;
 	}
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s flag: %.128s", conn_get_socket(c), (tname = conn_get_username(c)),dest);
 	conn_unget_username(c,tname);
 
 	newflag = strtoul(dest,NULL,0);
 	conn_set_flags(c,newflag);
-	
-	sprintf(msgtemp,"Flags set to 0x%08x.",newflag);
+
+	snprintf(msgtemp, sizeof(msgtemp), "Flags set to 0x%08x.",newflag);
 	message_send_text(c,message_type_info,c,msgtemp);
         return 0;
     }
@@ -2833,14 +2834,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	char         dest[8];
 	unsigned int i,j;
 	char const * tname;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 	for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get dest */
 	    if (j<sizeof(dest)-1) dest[j++] = text[i];
 	dest[j] = '\0';
 	for (; text[i]==' '; i++);
-	
+
         if (account_get_auth_admin(conn_get_account(c))!=1)
 	{
             message_send_text(c,message_type_error,c,"This command is reserved for admins.");
@@ -2854,13 +2855,13 @@ extern int handle_command(t_connection * c,  char const * text)
 
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s tag: %.128s", conn_get_socket(c), (tname = conn_get_username(c)),dest);
 	conn_unget_username(c,tname);
-	
+
         conn_set_clienttag(c,dest);
-	sprintf(msgtemp,"Client tag set to %s.",dest);
+	snprintf(msgtemp, sizeof(msgtemp), "Client tag set to %s.",dest);
         message_send_text(c,message_type_info,c,msgtemp);
         return 0;
     }
-    
+
     if (strstart(text,"/bitsinfo")==0)
     {
 #ifndef WITH_BITS
@@ -2869,9 +2870,9 @@ extern int handle_command(t_connection * c,  char const * text)
 	char temp[MAX_MESSAGE_LEN];
 	t_elem const * curr;
 	int count;
-	
+
 	message_send_text(c,message_type_info,c,"This BNETD server was compiled WITH BITS support.");
-	sprintf(temp,"Server address: 0x%04x",bits_get_myaddr());
+	snprintf(temp, sizeof(temp), "Server address: 0x%04x",bits_get_myaddr());
 	message_send_text(c,message_type_info,c,temp);
 	if (bits_uplink_connection) {
 	    message_send_text(c,message_type_info,c,"Server type: client/slave");
@@ -2884,7 +2885,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    t_bits_routing_table_entry *e = elem_get_data(curr);
 	    count++;
 
-	    sprintf(temp,"Route %d: [%d] -> 0x%04x",count,conn_get_socket(e->conn),e->bits_addr);
+	    snprintf(temp, sizeof(temp), "Route %d: [%d] -> 0x%04x",count,conn_get_socket(e->conn),e->bits_addr);
 	    message_send_text(c,message_type_info,c,temp);
 	}
 	if (bits_master) {
@@ -2894,12 +2895,12 @@ extern int handle_command(t_connection * c,  char const * text)
 
 		if (e->name)
 		    if (strlen(e->name)>128)
-		    	sprintf(temp,"[0x%04x] name=(too long)",e->address);
+		    	snprintf(temp, sizeof(temp), "[0x%04x] name=(too long)",e->address);
 		    else
-		    	sprintf(temp,"[0x%04x] name=\"%s\"",e->address,e->name);
+		    	snprintf(temp, sizeof(temp), "[0x%04x] name=\"%s\"",e->address,e->name);
 		else {
 		    eventlog(eventlog_level_error,"handle_command","corruption in bits_hostlist detected");
-		    sprintf(temp,"[0x%04x] name=(null)",e->address);
+		    snprintf(temp, sizeof(temp), "[0x%04x] name=(null)",e->address);
 		}
 	    	message_send_text(c,message_type_info,c,temp);
 	    }
@@ -2907,19 +2908,19 @@ extern int handle_command(t_connection * c,  char const * text)
 #endif
 	return 0;
     }
-    
+
     if (strstart(text,"/help")==0)
     {
 	handle_help_command(c,text);
 	return 0;
     }
-    
+
     if (strstart(text,"/mail")==0)
     {
 	handle_mail_command(c,text);
 	return 0;
     }
-    
+
     if (strstart(text,"/ipban")==0)
     {
         char const * tname;
@@ -2933,14 +2934,14 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_info,c,"You do not have permission to use this command.");
 	    return 0;
 	}
-	
+
 	eventlog(eventlog_level_command,"handle_command","[%d] %.64s ipban %s", conn_get_socket(c), (tname = conn_get_username(c)),&text[i]);
 	conn_unget_username(c,tname);
 
 	handle_ipban_command(c,text);
 	return 0;
     }
-    
+
     if (strstart(text,"/set")==0)
     {
 	t_account * account;
@@ -2954,24 +2955,24 @@ extern int handle_command(t_connection * c,  char const * text)
 	    eventlog(eventlog_level_error,"handle_command","could not allocate memory for temp (with /set)");
 	    free(temp);
 	    return 0;
-	}	
+	}
 	if (account_get_auth_admin(conn_get_account(c))!=1) /* default to false */
 	{
 	    message_send_text(c,message_type_error,c,"This command is only enabled for admins.");
 	    free(temp);
 	    return 0;
 	}
-	
+
 	for (i=0; temp[i]!=' ' && temp[i]!='\0'; i++); /* skip command */
 	for (; temp[i]==' '; i++);
-	
+
 	if (temp[i]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"Which account do you want to change?");
 	    free(temp);
 	    return 0;
 	}
-	
+
 	a=i;
 	for (; temp[i]!=' ' && temp[i]!='\0'; i++); /* skip command */
 	temp[i] = '\0';
@@ -2984,7 +2985,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    return 0;
 	}
 #endif
-	
+
 	if (!(account = accountlist_find_account(&temp[a])))
 	{
 	    message_send_text(c,message_type_error,c,"Invalid user.");
@@ -3002,7 +3003,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	for (; temp[i]!=' ' && temp[i]!='\0'; i++); /* skip key */
 	j1=i;
 	for (; temp[i]==' '; i++);
-	
+
 	if (temp[i]=='\0')
 	{
 	    message_send_text(c,message_type_error,c,"Which key do you want to change?");
@@ -3033,12 +3034,12 @@ extern int handle_command(t_connection * c,  char const * text)
 
 	return 0;
     }
-    
+
     if (strstart(text,"/motd")==0)
     {
 	char const * filename;
 	FILE *       fp;
-	
+
 	if ((filename = prefs_get_motdfile()))
 	    if ((fp = fopen(filename,"r")))
 	    {
@@ -3055,7 +3056,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    message_send_text(c,message_type_error,c,"No motd.");
 	return 0;
     }
-    
+
     if (strlen(text)>=2 && strncmp(text,"//",2)==0)
     {
 	handle_alias_command(c,text);
@@ -3086,15 +3087,15 @@ extern int handle_command(t_connection * c,  char const * text)
 	        message_send_text(c,message_type_error,c,"You are not a channel operator.");
 		return 0;
 	    }
-								
-	    if (channel_set_topic(channel,&text[i])<0) 
+
+	    if (channel_set_topic(channel,&text[i])<0)
 	    {
 		eventlog(eventlog_level_warn,"handle_command","Couldn't set topic.");
 		message_send_text(c,message_type_error,c,"Couldn't set topic.");
 	    }
 	    else
 		message_send_text(c,message_type_info,c,"Topic changed.");
-	}    
+	}
 	return 0;
     }
 
@@ -3102,22 +3103,22 @@ extern int handle_command(t_connection * c,  char const * text)
     {
 	char tstr[MAX_MESSAGE_LEN];
 	int  i;
-	
+
 	for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
 	for (; text[i]==' '; i++);
 
 	if (text[i]=='\0')
-	    sprintf(tstr,"Your latency: %ims",conn_get_latency(c)); 
+	    sprintf(tstr,"Your latency: %ims",conn_get_latency(c));
 	else
 	{
 	    t_connection * user;
 	    char           usernick[MAX_NICK_LEN];
 	    int            j;
-	    
+
 	    for (j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get nick */
 		if (j<sizeof(usernick)-1) usernick[j++] = text[i];
 	    usernick[j]='\0';
-	    
+
 	    if (!(user = connlist_find_connection_by_accountname(usernick)))
 	    {
 	        message_send_text(c,message_type_error,c,"That user is not logged in?");
@@ -3125,7 +3126,7 @@ extern int handle_command(t_connection * c,  char const * text)
 	    }
 	    sprintf(tstr,"%.64s's latency: %ims",usernick,conn_get_latency(user));
 	}
-						     
+
 	message_send_text(c,message_type_info,c,tstr);
 	return 0;
     }
@@ -3135,7 +3136,7 @@ extern int handle_command(t_connection * c,  char const * text)
     {
 	accountlist_log_ref();
 	return 0;
-    }	
+    }
 #endif
 
     message_send_text(c,message_type_error,c,"Unknown command.");

@@ -23,6 +23,10 @@
 #else
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
+# else
+#  ifdef HAVE_MALLOC_MALLOC_H
+#   include <malloc/malloc.h>
+#  endif
 # endif
 #endif
 
@@ -73,7 +77,7 @@ extern int handle_bnetd_packet(t_connection * c, t_packet * packet)
 extern int handle_bnetd_init(t_connection * c)
 {
 	t_packet * packet;
-	
+
 	packet=packet_create(packet_class_init);
 	packet_set_size(packet,sizeof(t_client_initconn));
 	bn_byte_set(&packet->u.client_initconn.class, CLIENT_INITCONN_CLASS_D2CS_BNETD);
@@ -122,7 +126,7 @@ static int on_bnetd_accountloginreply(t_connection * c, t_packet * packet)
 	unsigned int	seqno;
 	t_sq		* sq;
 	t_packet	* opacket, * rpacket;
-	t_connection	* client;
+	t_connection	* client = c;
 	int		result, reply;
 	char const	* account;
 
@@ -167,7 +171,7 @@ static int on_bnetd_charloginreply(t_connection * c, t_packet * packet)
 {
 	unsigned int	seqno;
 	t_sq		* sq;
-	t_connection	* client;
+	t_connection	* client = c;
 	t_packet	* opacket, * rpacket;
 	int		result, reply, type;
 	char const	* charname;

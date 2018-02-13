@@ -86,9 +86,9 @@ extern int irc_send_cmd(t_connection * conn, char const * command, char const * 
     t_packet * p;
     char data[MAX_IRC_MESSAGE_LEN+1];
     int len;
-    char const * ircname = server_get_name(); 
+    char const * ircname = server_get_name();
     char const * nick;
-    
+
     if (!conn) {
 	eventlog(eventlog_level_error,"irc_send_cmd","got NULL connection");
 	return -1;
@@ -130,7 +130,7 @@ extern int irc_send_cmd(t_connection * conn, char const * command, char const * 
 extern int irc_send(t_connection * conn, int code, char const * params)
 {
     char temp[4]; /* '000\0' */
-    
+
     if (!conn) {
 	eventlog(eventlog_level_error,"irc_send","got NULL connection");
 	return -1;
@@ -147,7 +147,7 @@ extern int irc_send_ping(t_connection * conn)
 {
     t_packet * p;
     char data[MAX_IRC_MESSAGE_LEN];
-    
+
     if (!conn) {
 	eventlog(eventlog_level_error,"irc_send_ping","got NULL connection");
 	return -1;
@@ -175,7 +175,7 @@ extern int irc_send_pong(t_connection * conn, char const * params)
 {
     t_packet * p;
     char data[MAX_IRC_MESSAGE_LEN];
-    
+
     if (!conn) {
 	eventlog(eventlog_level_error,"irc_send_pong","got NULL connection");
 	return -1;
@@ -220,7 +220,7 @@ extern int irc_authenticate(t_connection * conn, char const * passhash)
 	/* redundant sanity check */
 	eventlog(eventlog_level_error,"irc_authenticate","got NULL conn->botuser");
 	return 0;
-    }	
+    }
 #ifdef WITH_BITS
     /* FIXME: lock account here*/
 #endif
@@ -234,7 +234,7 @@ extern int irc_authenticate(t_connection * conn, char const * passhash)
     conn_unget_username(conn,tempname);
 
     hash_set_str(&h1,passhash);
-    temphash = account_get_pass(a);	
+    temphash = account_get_pass(a);
     hash_set_str(&h2,temphash);
     account_unget_pass(temphash);
     if (hash_eq(h1,h2)) {
@@ -256,7 +256,7 @@ extern int irc_welcome(t_connection * conn)
     time_t temptime;
     char const * tempname;
     char const * temptimestr;
-    
+
     if (!conn) {
 	eventlog(eventlog_level_error,"irc_send_welcome","got NULL connection");
 	return -1;
@@ -271,7 +271,7 @@ extern int irc_welcome(t_connection * conn)
     else
         sprintf(temp,":Maximum length exceeded");
     irc_send(conn,RPL_WELCOME,temp);
-    
+
     if ((14+strlen(server_get_name())+24+strlen(BNETD_VERSION)+1)<=MAX_IRC_MESSAGE_LEN)
         sprintf(temp,":Your host is %s, running version bnetd-" BNETD_VERSION,server_get_name());
     else
@@ -338,14 +338,14 @@ extern int irc_welcome(t_connection * conn)
 /*   ':'  -> '%='     */
 /*   ','  -> '%-'     */
 /* In IRC a channel can be specified by '#'+channelname or '!'+channelid */
- 
+
 extern char const * irc_convert_channel(t_channel const * channel)
 {
     char const * bname;
     static char out[CHANNEL_NAME_LEN];
     int outpos;
     int i;
-    
+
     if (!channel)
 	return "*";
 
@@ -356,7 +356,7 @@ extern char const * irc_convert_channel(t_channel const * channel)
     for (i=0; bname[i]!='\0'; i++) {
 	if (bname[i]==' ') {
 	    out[outpos++] = '_';
-	} else if (bname[i]=='_') { 
+	} else if (bname[i]=='_') {
 	    out[outpos++] = '%';
 	    out[outpos++] = '_';
 	} else if (bname[i]=='%') {
@@ -395,7 +395,7 @@ extern char const * irc_convert_ircname(char const * pircname)
     int special;
     int i;
     char const * ircname = pircname + 1;
-    
+
     if (!ircname) {
 	eventlog(eventlog_level_error,"irc_convert_ircname","got NULL ircname");
 	return NULL;
@@ -460,7 +460,7 @@ static char ** irc_split_elems(char * list, int separator, int ignoreblank)
     int i;
     int count;
     char ** out;
-    
+
     if (!list) {
 	eventlog(eventlog_level_error,"irc_get_elems","got NULL list");
 	return NULL;
@@ -574,7 +574,7 @@ static char * irc_message_preformat(t_irc_message_from const * from, char const 
     	  strlen(mydest)+1+
     	  1+strlen(mytext)+1;
 
-     
+
     if (!(msg = malloc(len))) {
         eventlog(eventlog_level_error,"irc_message_preformat","could not allocate memory for message: %s",strerror(errno));
         free(myfrom);
@@ -634,7 +634,7 @@ extern int irc_message_postformat(t_packet * packet, t_connection const * dest)
     if (strcmp(toname,"\r")==0) {
 	toname = ""; /* HACK: the target field is really empty */
     }
-    	
+
     len = (strlen(e1)+1+strlen(e2)+1+strlen(toname)+1+strlen(e4)+2+1);
     if (len<=MAX_IRC_MESSAGE_LEN) {
 	char msg[MAX_IRC_MESSAGE_LEN+1];
@@ -655,90 +655,98 @@ extern int irc_message_postformat(t_packet * packet, t_connection const * dest)
     }
 }
 
-extern int irc_message_format(t_packet * packet, t_message_type type, t_connection * me, t_connection * dst, char const * text, unsigned int dstflags)
+extern int irc_message_format(t_packet *packet, t_message_type type,
+			      t_connection *me, t_connection *dst,
+			      const char *text, unsigned int dstflags)
 {
-    char * msg;
-    t_irc_message_from from;
-    
-    if (!packet)
-    {
-	eventlog(eventlog_level_error,"message_irc_format","got NULL packet");
-	return -1;
-    }
+  char * msg;
+  t_irc_message_from from;
 
-    msg = NULL;
-        
-    switch (type)
-    {
-    /* case message_type_adduser: this is sent manually in handle_irc */
+  if (dst == NULL)
+  {
+    eventlog(eventlog_level_error, "message_irc_format", "NULL destination");
+    return -1;
+  }
+  if (!packet)
+  {
+    eventlog(eventlog_level_error,"message_irc_format","got NULL packet");
+    return -1;
+  }
+
+  msg = NULL;
+
+  switch (type)
+  {
+      /* case message_type_adduser: this is sent manually in handle_irc */
     case message_type_join:
-    	from.nick = conn_get_chatname(me);
-    	from.user = conn_get_clienttag(me);
-    	from.host = addr_num_to_ip_str(conn_get_addr(me));
-    	msg = irc_message_preformat(&from,"JOIN","\r",irc_convert_channel(conn_get_channel(me)));
-    	conn_unget_chatname(me,from.nick);
-    	break;
+      from.nick = conn_get_chatname(me);
+      from.user = conn_get_clienttag(me);
+      from.host = addr_num_to_ip_str(conn_get_addr(me));
+      msg = irc_message_preformat(&from,"JOIN","\r",irc_convert_channel(conn_get_channel(me)));
+      conn_unget_chatname(me,from.nick);
+      break;
     case message_type_part:
-    	from.nick = conn_get_chatname(me);
-    	from.user = conn_get_clienttag(me);
-    	from.host = addr_num_to_ip_str(conn_get_addr(me));
-    	msg = irc_message_preformat(&from,"PART","\r",irc_convert_channel(conn_get_channel(me)));
-    	conn_unget_chatname(me,from.nick);
-    	break;
+      from.nick = conn_get_chatname(me);
+      from.user = conn_get_clienttag(me);
+      from.host = addr_num_to_ip_str(conn_get_addr(me));
+      msg = irc_message_preformat(&from,"PART","\r",irc_convert_channel(conn_get_channel(me)));
+      conn_unget_chatname(me,from.nick);
+      break;
     case message_type_talk:
     case message_type_whisper:
-    	{
-    	    char const * dst;
-    	    from.nick = conn_get_chatname(me);
-            from.user = conn_get_clienttag(me);
-    	    from.host = addr_num_to_ip_str(conn_get_addr(me));
-    	    if (type==message_type_talk)
-    	    	dst = irc_convert_channel(conn_get_channel(me)); /* FIXME: support more channels and choose right one! */
-	    else
-	        dst = ""; /* will be replaced with username in postformat */
-    	    msg = irc_message_preformat(&from,"PRIVMSG",dst,text);
-    	    conn_unget_chatname(me,from.nick);
-    	}
-        break;
+      {
+	const char *dststr;
+	from.nick = conn_get_chatname(me);
+	from.user = conn_get_clienttag(me);
+	from.host = addr_num_to_ip_str(conn_get_addr(me));
+	if (type==message_type_talk)
+	  dststr = irc_convert_channel(conn_get_channel(me)); /* FIXME: support more channels and choose right one! */
+	else
+	  dststr = ""; /* will be replaced with username in postformat */
+	msg = irc_message_preformat(&from, "PRIVMSG", dststr, text);
+	conn_unget_chatname(me, from.nick);
+      }
+      break;
     case message_type_emote:
-    	{
-    	    char const * dst;
-	    char temp[MAX_IRC_MESSAGE_LEN];
+      {
+	const char *dststr;
+	char temp[MAX_IRC_MESSAGE_LEN];
 
-    	    /* "\001ACTION " + text + "\001" + \0 */
-	    if ((8+strlen(text)+1+1)<=MAX_IRC_MESSAGE_LEN) {
-		sprintf(temp,"\001ACTION %s\001",text);
-	    } else {
-		sprintf(temp,"\001ACTION (maximum message length exceeded)\001");
-	    }
-    	    from.nick = conn_get_chatname(me);
-            from.user = conn_get_clienttag(me);
-    	    from.host = addr_num_to_ip_str(conn_get_addr(me));
-    	    /* FIXME: also supports whisper emotes? */
-    	    dst = irc_convert_channel(conn_get_channel(me)); /* FIXME: support more channels and choose right one! */
-	    msg = irc_message_preformat(&from,"PRIVMSG",dst,temp);
-    	    conn_unget_chatname(me,from.nick);
-    	}
-        break;
+	/* "\001ACTION " + text + "\001" + \0 */
+	if ((8+strlen(text)+1+1)<=MAX_IRC_MESSAGE_LEN) {
+	  sprintf(temp,"\001ACTION %s\001",text);
+	} else {
+	  sprintf(temp,"\001ACTION (maximum message length exceeded)\001");
+	}
+	from.nick = conn_get_chatname(me);
+	from.user = conn_get_clienttag(me);
+	from.host = addr_num_to_ip_str(conn_get_addr(me));
+	/* FIXME: also supports whisper emotes? */
+	dststr = irc_convert_channel(conn_get_channel(me)); /* FIXME: support more channels and choose right one! */
+	msg = irc_message_preformat(&from, "PRIVMSG", dststr, temp);
+	conn_unget_chatname(me, from.nick);
+      }
+      break;
     case message_type_broadcast:
     case message_type_info:
     case message_type_error:
-	msg = irc_message_preformat(NULL,"NOTICE",NULL,text);
-	break;
+      msg = irc_message_preformat(NULL,"NOTICE",NULL,text);
+      break;
     case message_type_channel:
-    	/* ignore it */
-	break;
+      /* ignore it */
+      break;
     default:
-    	eventlog(eventlog_level_warn,"irc_message_format","%d not yet implemented",type);
-	return -1;
-    }
+      eventlog(eventlog_level_warn,"irc_message_format","%d not yet implemented",type);
+      return -1;
+  }
 
-    if (msg) {
-	packet_append_string(packet,msg);
-	free(msg);
-        return 0;
-    }
-    return -1;
+  if (msg) {
+    packet_append_string(packet,msg);
+    free(msg);
+    return 0;
+  }
+  (void)dstflags;
+  return -1;
 }
 
 extern int irc_send_rpl_namreply(t_connection * c, t_channel const * channel)
@@ -774,35 +782,35 @@ extern int irc_send_rpl_namreply(t_connection * c, t_channel const * channel)
 	return -1;
     }
     /* FIXME: Add per user flags (@(op) and +(voice))*/
-#ifdef WITH_BITS  
+#ifdef WITH_BITS
     for (m = channel_get_first(channel);m;m = channel_get_next()) {
 	char const * name = bits_loginlist_get_name_bysessionid(m->sessionid);
 	char flg[3] = "";
-	
+
 	if (!name)
 	    continue;
 	if (m->flags & MF_GAVEL)
-	    strcat(flg,"@"); 
+	    strcat(flg,"@");
 	if (m->flags & MF_VOICE)
-	    strcat(flg,"+"); 
+	    strcat(flg,"+");
 	if ((strlen(temp)+((!first)?(1):(0))+strlen(flg)+strlen(name)+1)<=sizeof(temp)) {
 	    if (!first) strcat(temp," ");
 	    strcat(temp,flg);
 	    strcat(temp,name);
 	    first = 0;
 	}
-    } 
+    }
 #else
     for (m = channel_get_first(channel);m;m = channel_get_next()) {
 	char const * name = conn_get_chatname(m);
 	char flg[3] = "";
-	
+
 	if (!name)
 	    continue;
 	if (conn_get_flags(m) & MF_GAVEL)
-	    strcat(flg,"@"); 
+	    strcat(flg,"@");
 	if (conn_get_flags(m) & MF_VOICE)
-	    strcat(flg,"+"); 
+	    strcat(flg,"+");
 	if ((strlen(temp)+((!first)?(1):(0))+strlen(flg)+strlen(name)+1)<=sizeof(temp)) {
 	    if (!first) strcat(temp," ");
 	    strcat(temp,flg);
@@ -810,7 +818,7 @@ extern int irc_send_rpl_namreply(t_connection * c, t_channel const * channel)
 	    first = 0;
 	}
 	conn_unget_chatname(m,name);
-    } 
+    }
 #endif
     irc_send(c,RPL_NAMREPLY,temp);
     return 0;
@@ -827,7 +835,7 @@ static int irc_who_connection(t_connection * dest, t_connection * c)
     char const * tempflags = "@"; /* FIXME: that's dumb */
     char temp[MAX_IRC_MESSAGE_LEN];
     char const * tempchannel;
-    
+
     if (!dest) {
 	eventlog(eventlog_level_error,"irc_who_connection","got NULL destination");
 	return -1;
@@ -872,7 +880,7 @@ extern int irc_who(t_connection * c, char const * name)
 	t_connection * info;
 	t_channel * channel;
 	char const * ircname;
-	
+
 	ircname = irc_convert_ircname(name);
 	channel = channellist_find_channel_by_name(ircname,NULL,NULL);
 	if (!channel) {
@@ -892,9 +900,9 @@ extern int irc_who(t_connection * c, char const * name)
     } else {
 	/* it's just one user */
 	t_connection * info;
-	
+
 	if ((info = connlist_find_connection_by_accountname(name)))
-	    return irc_who_connection(c,info);	
+	    return irc_who_connection(c,info);
     }
     return 0;
 }

@@ -75,7 +75,7 @@ extern int friendslist_destroy(void)
 {
     t_elem *		curr;
     t_friends_pair * 	pair;
-    
+
     if (friendslist_head)
     {
 	LIST_TRAVERSE(friendslist_head,curr)
@@ -90,12 +90,12 @@ extern int friendslist_destroy(void)
 		eventlog(eventlog_level_error,"friendslist_destroy","could not remove item from list");
 	    free(pair);
 	}
-	
+
 	if (list_destroy(friendslist_head)<0)
 	    return -1;
 	friendslist_head = NULL;
     }
-    
+
     return 0;
 }
 
@@ -115,7 +115,7 @@ extern int friendslist_load(t_connection * c)
 	eventlog(eventlog_level_error,"friendslist_load","got NULL connection");
 	return -1;
     }
-    
+
     if (!(owner = conn_get_account(c)))
     {
         eventlog(eventlog_level_error,"friendslist_load","got NULL owner");
@@ -138,11 +138,11 @@ extern int friendslist_load(t_connection * c)
 	return -1;
     }
     account_unget_friends(tfriends);
-    													
+
     friendsp = friends;
     while ((ttok = strsep(&friends,",")))
     {
-	sprintf(nick,"%.64s",ttok);
+	snprintf(nick, sizeof(nick), "%.47s", ttok);
 	if (!(ttok = strsep(&friends,",")))
 	{
 	    eventlog(eventlog_level_error,"friendslist_load","corrupted friends list for account: %s",nick);
@@ -156,7 +156,7 @@ extern int friendslist_load(t_connection * c)
 	friends_add_events(c,who,friends_str_to_event(c,ttok));
     }
     free(friendsp);
-    
+
     return 0;
 }
 
@@ -170,7 +170,7 @@ extern int friendslist_save(t_connection * c)
     int			first;
     char *		events;
     char * 		tptr;
-			    
+
     if (!c)
     {
 	eventlog(eventlog_level_error,"friendslist_save","got NULL connection");
@@ -182,7 +182,7 @@ extern int friendslist_save(t_connection * c)
 	eventlog(eventlog_level_error,"friendslist_save","not enought memory for initialize friends");
 	return -1;
     }
-    
+
     first = 1;
     LIST_TRAVERSE_CONST(friendslist_head,curr)
     {
@@ -256,7 +256,7 @@ extern int friends_notify_event(t_account * who, t_friends_event event, char con
     char 		tmsg[MAX_MESSAGE_LEN];
     t_channel *		channel;
     t_game *		game;
-    
+
     if (!who)
     {
 	eventlog(eventlog_level_error,"friends_notify_event","got NULL who");
@@ -296,7 +296,7 @@ extern int friends_notify_event(t_account * who, t_friends_event event, char con
 			sprintf(tmsg,"Your friend %.64s has created private game %.64s.",tname,info);
 		    else
 			sprintf(tmsg,"Your friend %.64s has created private game",tname);
-		break;    
+		break;
 	    case friends_event_join_game:
 		game = gamelist_find_game(info,game_type_all); /* FIXME: add checking */
 		if (strcasecmp(game_get_pass(game),"")==0)
@@ -306,7 +306,7 @@ extern int friends_notify_event(t_account * who, t_friends_event event, char con
 			sprintf(tmsg,"Your friend %.64s has joined private game %.64s.",tname,info);
 		    else
 			sprintf(tmsg,"Your friend %.64s has joined private game",tname);
-		break;    
+		break;
 	    case friends_event_finished_game:
 		sprintf(tmsg,"Your friend %.64s has finished game.",tname);
 		break;
@@ -333,7 +333,7 @@ extern int friends_notify_event(t_account * who, t_friends_event event, char con
 
     return 0;
 }
-											    
+
 
 extern int handle_friends_command(t_connection * c, char const * text)
 {
@@ -342,7 +342,7 @@ extern int handle_friends_command(t_connection * c, char const * text)
     char	events[MAX_EVENT_STR_LEN];
     char	msg[MAX_MESSAGE_LEN - 22 - 64 - 1 ]; /* max message lenght - "Message from friend %.64s: " - '\0' */
     int		i,j;
-    
+
     for (i=0; text[i]!=' ' && text[i]!='\0'; i++); /* skip command */
     for (; text[i]==' '; i++);
 
@@ -350,7 +350,7 @@ extern int handle_friends_command(t_connection * c, char const * text)
         if (j<sizeof(subcommand)-1) subcommand[j++] = text[i];
     subcommand[j] = '\0';
     for (; text[i]==' '; i++);
-    
+
     if ((strcasecmp(subcommand,"m")==0) || (strcasecmp(subcommand,"msg")==0))
     {
 	for (j=0; text[i]!='\0'; i++) /* get message */
@@ -363,12 +363,12 @@ extern int handle_friends_command(t_connection * c, char const * text)
 	    if (j<sizeof(nick)-1) nick[j++] = text[i];
         nick[j] = '\0';
 	for (; text[i]==' '; i++);
-    
+
         for (j=0; text[i]!='\0'; i++) /* get events */
 	    if (j<sizeof(events)-1) events[j++] = text[i];
         events[j] = '\0';
     }
-    
+
     switch (identify_friends_function(subcommand))
     {
 	case FRIENDS_FUNC_ADD:
@@ -400,7 +400,7 @@ extern int handle_friends_command(t_connection * c, char const * text)
 	    message_send_text(c,message_type_info,c,"The command is incorrect. Use one of the following patterns.");
 	    friends_usage(c);
     }
-    
+
     return 0;
 }
 
@@ -421,7 +421,7 @@ static int identify_friends_function(const char * funcstr)
 	return FRIENDS_FUNC_FLUSH;
     if (strcasecmp(funcstr,"help")==0 || strcasecmp(funcstr,"h")==0)
 	return FRIENDS_FUNC_HELP;
-    
+
     return FRIENDS_FUNC_UNKNOWN;
 }
 
@@ -431,8 +431,8 @@ static void friends_func_add(t_connection * owner, char const * nick, t_friends_
     t_account *		who;
     t_account *		acc_owner;
     char		tstr[MAX_MESSAGE_LEN];
-    
-    if (!owner) 
+
+    if (!owner)
     {
 	eventlog(eventlog_level_error,"friends_func_add","got NULL connection");
 	return;
@@ -442,7 +442,7 @@ static void friends_func_add(t_connection * owner, char const * nick, t_friends_
 	eventlog(eventlog_level_error,"friends_func_add","got NULL nick");
 	return;
     }
-    
+
     if (!(acc_owner = conn_get_account(owner)))
     {
 	eventlog(eventlog_level_error,"friends_func_add","got NULL owner account");
@@ -462,7 +462,7 @@ static void friends_func_add(t_connection * owner, char const * nick, t_friends_
 	message_send_text(owner,message_type_error,owner,"Add to friends list failed");
     else
     {
-	sprintf(tstr,"User %.64s added to your friends list.",nick);
+	snprintf(tstr, sizeof(tstr), "User %.64s added to your friends list.",nick);
 	message_send_text(owner,message_type_info,owner,tstr);
     }
 }
@@ -471,7 +471,7 @@ static void friends_func_add(t_connection * owner, char const * nick, t_friends_
 static void friends_func_del(t_connection * owner, char const * nick, t_friends_event events)
 {
     t_account * 	account;
-    int 		ret;	    
+    int 		ret;
 
     if (!owner)
     {
@@ -483,7 +483,7 @@ static void friends_func_del(t_connection * owner, char const * nick, t_friends_
 	eventlog(eventlog_level_error,"friensd_func_del","got NULL nick");
 	return;
     }
-    
+
     if (!(account = accountlist_find_account(nick)))
     {
 	eventlog(eventlog_level_error,"friends_func_del","got NULL account");
@@ -495,7 +495,7 @@ static void friends_func_del(t_connection * owner, char const * nick, t_friends_
 	message_send_text(owner,message_type_info,owner,"Done.");
     else if (ret == 1)
 	message_send_text(owner,message_type_info,owner,"That user is not on your friends list");
-    else 
+    else
 	message_send_text(owner,message_type_info,owner,"Error occured.");
 }
 
@@ -521,7 +521,7 @@ static void friends_func_list(t_connection * c, int all)
     }
     counter = 0;
     isany = 0;
-    
+
     if (all)
 	message_send_text(c,message_type_info,c,"Your friends are:");
     else
@@ -550,7 +550,7 @@ static void friends_func_list(t_connection * c, int all)
 		{
 		    if (friends_is_mutual_friend(c,pair->who)==1)
 			sprintf(tmsg,"%u: %.64s [mutual, offline] (%s)",++counter,nick,event);
-		    else 
+		    else
 			sprintf(tmsg,"%u: %.64s [offline] (%s)",++counter,nick,event);
 		    message_send_text(c,message_type_info,c,tmsg);
 		    isany = 1;
@@ -563,22 +563,22 @@ static void friends_func_list(t_connection * c, int all)
 	    {
 		if ((game = conn_get_game(tc)))
 		    if (strcmp(game_get_pass(game),"")==0)
-			sprintf(tstr,"in game \"%.64s\"",game_get_name(game));
+			snprintf(tstr, sizeof(tstr), "in game \"%.64s\"",game_get_name(game));
 		    else
 			if (friends_is_mutual_friend(c,pair->who)==1)
-			    sprintf(tstr,"in private game \"%.64s\"",game_get_name(game));
+			    snprintf(tstr, sizeof(tstr), "in private game \"%.64s\"",game_get_name(game));
 			else
-			    sprintf(tstr,"in private game");
+			    snprintf(tstr, sizeof(tstr), "in private game");
 		else if ((channel = conn_get_channel(tc)))
 		    if (channel_get_permanent(channel)==1)
-			sprintf(tstr,"in channel \"%.64s\"",channel_get_name(channel));
+			snprintf(tstr, sizeof(tstr), "in channel \"%.64s\"",channel_get_name(channel));
 		    else
 			if (friends_is_mutual_friend(c,pair->who)==1)
-			    sprintf(tstr,"in private channel \"%.64s\"",channel_get_name(channel));
+			    snprintf(tstr, sizeof(tstr), "in private channel \"%.64s\"",channel_get_name(channel));
 			else
-			    sprintf(tstr,"in private channel");
+			    snprintf(tstr, sizeof(tstr), "in private channel");
 		else
-		    sprintf(tstr,"not in game nor in channel"); /* FIXME: so where? Could be at score table after game, but anywhere else? How to check it? */
+		    snprintf(tstr, sizeof(tstr), "not in game nor in channel"); /* FIXME: so where? Could be at score table after game, but anywhere else? How to check it? */
 
 		if (friends_is_mutual_friend(c,pair->who)==1)
 	            sprintf(tmsg,"%u: %.64s [mutual, %.128s] (%s)",++counter,nick,tstr,event);
@@ -591,7 +591,7 @@ static void friends_func_list(t_connection * c, int all)
 	    account_unget_name(nick);
 	}
     }
-    
+
     if (isany==0)
 	message_send_text(c,message_type_info,c,"-No One-");
 }
@@ -618,7 +618,7 @@ static void friends_func_msg(t_connection * c, char const * message)
 	eventlog(eventlog_level_error,"friends_func_msg","got null message");
 	return;
     }
-    
+
     if (!(account = conn_get_account(c)))
     {
 	eventlog(eventlog_level_error,"friends_func_msg","got NULL account");
@@ -629,12 +629,13 @@ static void friends_func_msg(t_connection * c, char const * message)
 	eventlog(eventlog_level_error,"account_func_msg","got NULL tname");
 	return;
     }
-    
-    sprintf(msg,"Message from your friend %.64s: %s",tname,message);
+
+    snprintf(msg, sizeof(msg), "Message from your friend %.60s: %s", tname,
+	     message);
     account_unget_name(tname);
     counter = 0;
     lc = NULL;
-    
+
     LIST_TRAVERSE_CONST(friendslist_head,curr)
     {
 	pair = elem_get_data(curr);
@@ -660,7 +661,7 @@ static void friends_func_msg(t_connection * c, char const * message)
     }
     if (counter == 0)
 	message_send_text(c,message_type_info,c,"No one have recived your message.");
-    else 
+    else
     {
 	if (counter == 1)
 	{
@@ -687,7 +688,7 @@ static int friends_is_friend(t_connection * c, t_account * a)
 {
     t_elem const *	curr;
     t_friends_pair *	pair;
-    
+
     if (!c)
     {
 	eventlog(eventlog_level_error,"friends_is_friend","got NULL connection");
@@ -698,7 +699,7 @@ static int friends_is_friend(t_connection * c, t_account * a)
 	eventlog(eventlog_level_error,"friends_is_friend","got NULL account");
 	return -1;
     }
-    
+
     LIST_TRAVERSE_CONST(friendslist_head,curr)
     {
 	pair = elem_get_data(curr);
@@ -707,11 +708,11 @@ static int friends_is_friend(t_connection * c, t_account * a)
 	    eventlog(eventlog_level_error,"friends_is_friend","friendlist contains NULL item");
 	    return -1;
 	}
-	
+
 	if ((c == pair->owner) && (a == pair->who))
 	    return 1;
     }
-    
+
     return 0;
 }
 
@@ -726,8 +727,8 @@ static int friends_is_mutual_friend(t_connection * c1, t_account * a2)
     char *	 friendsp;
     char const * tfriends;
     char *	 ttok;
-		
-    
+
+
     if (!c1)
     {
 	eventlog(eventlog_level_error,"friends_is_mutual_friend","got NULL connection");
@@ -741,7 +742,7 @@ static int friends_is_mutual_friend(t_connection * c1, t_account * a2)
 
     if (friends_is_friend(c1,a2)!=1)
 	return 0;
-    
+
     if (!(name2 = account_get_name(a2)))
     {
 	eventlog(eventlog_level_error,"friends_is_mutual_friend","got NULL name2");
@@ -764,7 +765,7 @@ static int friends_is_mutual_friend(t_connection * c1, t_account * a2)
     else
     {
         account_unget_name(name2);
-	if (!(tfriends = account_get_friends((a2)))) 
+	if (!(tfriends = account_get_friends((a2))))
 	{
 	    eventlog(eventlog_level_error,"friends_is_mutual_friend","got NULL tfriends");
 	    account_unget_name(name2);
@@ -776,7 +777,7 @@ static int friends_is_mutual_friend(t_connection * c1, t_account * a2)
 	    return 0;
 	}
 	if (!(friends = strdup(tfriends)))
-	{ 
+	{
 	    account_unget_friends(tfriends);
 	    eventlog(eventlog_level_error,"friends_is_mutual_friend","could not allocate memory for friends");
 	    return -1;
@@ -787,7 +788,7 @@ static int friends_is_mutual_friend(t_connection * c1, t_account * a2)
 	    eventlog(eventlog_level_error,"friends_is_mutual_friend","got NULL name1");
 	    return -1;
 	}
-	    
+
 
 	friendsp = friends;
 	while ((ttok = strsep(&friends,",")))
@@ -807,10 +808,10 @@ static int friends_is_mutual_friend(t_connection * c1, t_account * a2)
 	account_unget_name(name1);
 	free(friendsp);
     }
-    
+
     return 0;
-}    
-    
+}
+
 
 static int friends_add_events(t_connection * owner, t_account * who, t_friends_event events)
 {
@@ -827,7 +828,7 @@ static int friends_add_events(t_connection * owner, t_account * who, t_friends_e
 	eventlog(eventlog_level_error,"friends_add_events","got NULL who");
 	return -1;
     }
-    
+
     LIST_TRAVERSE_CONST(friendslist_head,curr)
     {
 	pair = elem_get_data(curr);
@@ -869,7 +870,7 @@ static int friends_del_events(t_connection * owner, t_account * who, t_friends_e
 {
     t_elem *		curr;
     t_friends_pair * 	pair;
-    
+
     if (!owner)
     {
 	eventlog(eventlog_level_error,"friendslist_del_events","got NULL owner.");
@@ -880,7 +881,7 @@ static int friends_del_events(t_connection * owner, t_account * who, t_friends_e
 	eventlog(eventlog_level_error,"friendslist_del_events","got NULL who.");
 	return -1;
     }
-    
+
     LIST_TRAVERSE(friendslist_head,curr)
     {
 		pair = elem_get_data(curr);
@@ -910,7 +911,7 @@ static int friends_del_events(t_connection * owner, t_account * who, t_friends_e
 	    	return 0;
 		}
     }
-    
+
     return 1;
 }
 
@@ -918,7 +919,7 @@ static int friends_del_events(t_connection * owner, t_account * who, t_friends_e
 static t_friends_event friends_identify_event(char const * eventstr)
 {
     t_friends_event	tevent;
-    
+
     tevent = FRIENDS_NO_EVENTS;
     if (strcasecmp(eventstr,"li")==0) tevent = friends_event_login;
     else if (strcasecmp(eventstr,"lo")==0) tevent = friends_event_logout;
@@ -929,7 +930,7 @@ static t_friends_event friends_identify_event(char const * eventstr)
     else if (strcasecmp(eventstr,"g")==0) tevent = friends_event_finished_game | friends_event_join_game;
     else if (strcasecmp(eventstr,"ci")==0) tevent = friends_event_join_channel;
     else if (strcasecmp(eventstr,"c")==0) tevent = friends_event_join_channel;
-    
+
     return tevent;
 }
 
@@ -942,7 +943,7 @@ static t_friends_event friends_str_to_event(t_connection * c, char const * event
     char *		peventstr;
     char *		ttok;
     char		tstr[MAX_MESSAGE_LEN];
-    
+
     if (!c)
     {
 	eventlog(eventlog_level_error,"friends_str_to_event","got NULL connection");
@@ -953,7 +954,7 @@ static t_friends_event friends_str_to_event(t_connection * c, char const * event
 	eventlog(eventlog_level_error,"friends_str_to_event","got NULL eventstr");
 	return FRIENDS_NO_EVENTS;
     }
-    
+
     if (eventstr[0]=='\0')
 	return FRIENDS_ALL_EVENTS;
 
@@ -968,7 +969,7 @@ static t_friends_event friends_str_to_event(t_connection * c, char const * event
 	    {
 		if (c)
 		{
-		    sprintf(tstr,"Unknown option: %s",ttok);
+		    snprintf(tstr, sizeof(tstr), "Unknown option: %s",ttok);
 		    message_send_text(c,message_type_info,c,tstr);
 		}
 	    }
@@ -985,14 +986,20 @@ static char * friends_event_to_str(t_friends_event event)
 {
     char * 	tevent;
     char	tstr[MAX_EVENT_STR_LEN];
-    
+
     strcpy(tstr,"");
-    if (event & friends_event_login) sprintf(tstr,"%s li",tstr);
-    if (event & friends_event_logout) sprintf(tstr,"%s lo",tstr);
-    if (event & friends_event_create_game) sprintf(tstr,"%s gc",tstr);
-    if (event & friends_event_join_game) sprintf(tstr,"%s gi",tstr);
-    if (event & friends_event_finished_game) sprintf(tstr,"%s go",tstr);
-    if (event & friends_event_join_channel) sprintf(tstr,"%s ci",tstr);
+    if (event & friends_event_login) snprintf(tstr, sizeof(tstr), "%.16s li",
+					      tstr);
+    if (event & friends_event_logout) snprintf(tstr, sizeof(tstr), "%.16s lo",
+					       tstr);
+    if (event & friends_event_create_game) snprintf(tstr, sizeof(tstr),
+						    "%.16s gc", tstr);
+    if (event & friends_event_join_game) snprintf(tstr, sizeof(tstr),
+						  "%.16s gi", tstr);
+    if (event & friends_event_finished_game) snprintf(tstr, sizeof(tstr),
+						      "%.16s go", tstr);
+    if (event & friends_event_join_channel) snprintf(tstr, sizeof(tstr),
+						     "%.16s ci", tstr);
     tstr[strlen(tstr)] = '\0';
     if (!(tevent = strdup(&tstr[1])))
     {
@@ -1008,7 +1015,7 @@ static int friends_del_all(t_connection * c)
 {
     t_elem *       curr;
     t_friends_pair * pair;
-	
+
     if (!c)
     {
 	eventlog(eventlog_level_error,"friends_del_all","got NULL c");
@@ -1040,7 +1047,7 @@ static int friends_del_all(t_connection * c)
 		}
     }
     list_purge(friendslist_head);
-    
+
     return 0;
 }
 
@@ -1073,7 +1080,7 @@ static void friends_usage(t_connection * c)
     message_send_text(c,message_type_info,c,"ci - join channel");
     message_send_text(c,message_type_info,c,"c - join channel");
     message_send_text(c,message_type_info,c,"default is all of them");
-}    
+}
 
 #ifdef ACCT_DYN_UNLOAD
 extern unsigned int friends_count_acc_ref(t_account const * account)

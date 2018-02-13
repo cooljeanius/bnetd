@@ -65,13 +65,13 @@ extern int gametrans_load(char const * filename)
     char const *  output;
     char const *  exclude;
     t_gametrans * entry;
-    
+
     if (!filename)
     {
         eventlog(eventlog_level_error,"gametrans_load","got NULL filename");
         return -1;
     }
-    
+
     if (!(gametrans_head = list_create()))
     {
         eventlog(eventlog_level_error,"gametrans_load","could not create list");
@@ -84,7 +84,7 @@ extern int gametrans_load(char const * filename)
 	gametrans_head = NULL;
         return -1;
     }
-    
+
     for (line=1; (buff = file_get_line(fp)); line++)
     {
         for (pos=0; buff[pos]=='\t' || buff[pos]==' '; pos++);
@@ -97,13 +97,13 @@ extern int gametrans_load(char const * filename)
         {
 	    unsigned int len;
 	    unsigned int endpos;
-	    
+
             *temp = '\0';
 	    len = strlen(buff)+1;
             for (endpos=len-1; buff[endpos]=='\t' || buff[endpos]==' '; endpos--);
             buff[endpos+1] = '\0';
         }
-	
+
 	if (!(viewer = strtok(buff," \t"))) /* strtok modifies the string it is passed */
 	{
 	    eventlog(eventlog_level_error,"gametrans_load","missing viewer on line %u of file \"%s\"",line,filename);
@@ -124,7 +124,7 @@ extern int gametrans_load(char const * filename)
 	}
 	if (!(exclude = strtok(NULL," \t")))
 	    exclude = "0.0.0.0/0"; /* no excluded network address */
-	
+
 	if (!(entry = malloc(sizeof(t_gametrans))))
 	{
 	    eventlog(eventlog_level_error,"gametrans_load","could not allocate memory for entry");
@@ -165,9 +165,9 @@ extern int gametrans_load(char const * filename)
 	    free(buff);
 	    continue;
 	}
-	
+
 	free(buff);
-	
+
 	if (list_append_data(gametrans_head,entry)<0)
 	{
 	    eventlog(eventlog_level_error,"gametrans_load","could not append item");
@@ -181,7 +181,7 @@ extern int gametrans_load(char const * filename)
 
     if (fclose(fp)<0)
 	eventlog(eventlog_level_error,"gametrans_load","could not close gametrans file \"%s\" after reading (fclose: %s)",filename,strerror(errno));
-    
+
     return 0;
 }
 
@@ -190,7 +190,7 @@ extern int gametrans_unload(void)
 {
     t_elem *      curr;
     t_gametrans * entry;
-    
+
     if (gametrans_head)
     {
 	LIST_TRAVERSE(gametrans_head,curr)
@@ -210,92 +210,94 @@ extern int gametrans_unload(void)
 	list_destroy(gametrans_head);
 	gametrans_head = NULL;
     }
-    
+
     return 0;
 }
 
 
 extern void gametrans_net(unsigned int vaddr, unsigned short vport, unsigned int laddr, unsigned short lport, unsigned int * addr, unsigned short * port)
 {
-    t_elem const * curr;
-    t_gametrans *  entry;
+  const t_elem *curr;
+  t_gametrans *entry;
 #ifdef DEBUGGAMETRANS
-    char           temp1[32];
-    char           temp2[32];
-    char           temp3[32];
-    char           temp4[32];
+  char temp1[32];
+  char temp2[32];
+  char temp3[32];
+  char temp4[32];
 #endif
-    
+
 #ifdef DEBUGGAMETRANS
-    eventlog(eventlog_level_debug,"gametrans_net","checking client %s (viewer on %s connected to %s)...",
-	     addr_num_to_addr_str(*addr,*port),
-	     addr_num_to_addr_str(vaddr,vport),
-	     addr_num_to_addr_str(laddr,lport));
+  eventlog(eventlog_level_debug,"gametrans_net","checking client %s (viewer on %s connected to %s)...",
+	   addr_num_to_addr_str(*addr,*port),
+	   addr_num_to_addr_str(vaddr,vport),
+	   addr_num_to_addr_str(laddr,lport));
+#else
+  (void)vport;
 #endif
-    if (gametrans_head)
+  if (gametrans_head)
+  {
+    LIST_TRAVERSE_CONST(gametrans_head,curr)
     {
-	LIST_TRAVERSE_CONST(gametrans_head,curr)
-	{
-	    if (!(entry = elem_get_data(curr)))
-	    {
-		eventlog(eventlog_level_error,"gametrans_net","found NULL entry in list");
-		continue;
-	    }
-	    
+      if (!(entry = elem_get_data(curr)))
+      {
+	eventlog(eventlog_level_error,"gametrans_net","found NULL entry in list");
+	continue;
+      }
+
 #ifdef DEBUGGAMETRANS
-	    eventlog(eventlog_level_debug,"gametrans_net","against entry viewerint=%s client=%s output=%s viewerex=%s",
-		     addr_get_addr_str(entry->viewer,temp1,sizeof(temp1)),
-		     addr_get_addr_str(entry->client,temp2,sizeof(temp2)),
-		     addr_get_addr_str(entry->output,temp3,sizeof(temp3)),
-		     netaddr_get_addr_str(entry->exclude,temp4,sizeof(temp4)));
+      eventlog(eventlog_level_debug,"gametrans_net","against entry viewerint=%s client=%s output=%s viewerex=%s",
+	       addr_get_addr_str(entry->viewer,temp1,sizeof(temp1)),
+	       addr_get_addr_str(entry->client,temp2,sizeof(temp2)),
+	       addr_get_addr_str(entry->output,temp3,sizeof(temp3)),
+	       netaddr_get_addr_str(entry->exclude,temp4,sizeof(temp4)));
 #endif
-	    
-	    if (addr_get_ip(entry->viewer)!=0 && addr_get_ip(entry->viewer)!=laddr)
-	    {
+
+      if (addr_get_ip(entry->viewer)!=0 && addr_get_ip(entry->viewer)!=laddr)
+      {
 #ifdef DEBUGGAMETRANS
-		eventlog(eventlog_level_debug,"gametrans_net","viewer is not on right interface IP");
+	eventlog(eventlog_level_debug,"gametrans_net","viewer is not on right interface IP");
 #endif
-		continue;
-	    }
-	    if (addr_get_port(entry->viewer)!=0 && addr_get_port(entry->viewer)!=lport)
-	    {
+	continue;
+      }
+      if (addr_get_port(entry->viewer)!=0 && addr_get_port(entry->viewer)!=lport)
+      {
 #ifdef DEBUGGAMETRANS
-		eventlog(eventlog_level_debug,"gametrans_net","view is not on right interface port");
+	eventlog(eventlog_level_debug,"gametrans_net","view is not on right interface port");
 #endif
-		continue;
-	    }
-	    
-	    if (addr_get_ip(entry->client)!=0 && addr_get_ip(entry->client)!=*addr)
-	    {
+	continue;
+      }
+
+      if (addr_get_ip(entry->client)!=0 && addr_get_ip(entry->client)!=*addr)
+      {
 #ifdef DEBUGGAMETRANS
-		eventlog(eventlog_level_debug,"gametrans_net","client is not on the right IP");
+	eventlog(eventlog_level_debug,"gametrans_net","client is not on the right IP");
 #endif
-		continue;
-	    }
-	    if (addr_get_port(entry->client)!=0 && addr_get_port(entry->client)!=*port)
-	    {
+	continue;
+      }
+      if (addr_get_port(entry->client)!=0 && addr_get_port(entry->client)!=*port)
+      {
 #ifdef DEBUGGAMETRANS
-		eventlog(eventlog_level_debug,"gametrans_net","client is not on the right port");
+	eventlog(eventlog_level_debug,"gametrans_net","client is not on the right port");
 #endif
-		continue;
-	    }
-	    
-	    if (netaddr_contains_addr_num(entry->exclude,vaddr)==1)
-	    {
+	continue;
+      }
+
+      if (netaddr_contains_addr_num(entry->exclude,vaddr)==1)
+      {
 #ifdef DEBUGGAMETRANS
-		eventlog(eventlog_level_debug,"gametrans_net","viewer is in the excluded network");
+	eventlog(eventlog_level_debug,"gametrans_net","viewer is in the excluded network");
 #endif
-		continue;
-	    }
-	    
-	    *addr = addr_get_ip(entry->output);
-	    *port = addr_get_port(entry->output);
-	    
+	continue;
+      }
+
+      *addr = addr_get_ip(entry->output);
+      *port = addr_get_port(entry->output);
+
 #ifdef DEBUGGAMETRANS
-	    eventlog(eventlog_level_debug,"gametrans_net","did translation");
+      eventlog(eventlog_level_debug,"gametrans_net","did translation");
 #endif
-	    
-	    return;
-	}
+
+      return;
     }
+  }
 }

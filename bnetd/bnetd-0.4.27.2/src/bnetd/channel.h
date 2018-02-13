@@ -94,10 +94,10 @@ typedef enum
 
 /* Just a quick note for BITS: Only the master server decides whether
  * to remove or add users to channels. The 'subscribed' clients just
- * have to follow the instructions from the master server. 
+ * have to follow the instructions from the master server.
  * The same is valid for almost everything else (eg. operator, channelname, ...)
- * in channels. 
- * There are two types of channels for bits clients: 
+ * in channels.
+ * There are two types of channels for bits clients:
  *
  *  1) unsubscribed channels (ref==0)
  *    The bits client is only notified when this channel is created or
@@ -105,7 +105,7 @@ typedef enum
  *    own channellist. This mode is the default when there are no local
  *    users (or users on 'sub-servers') in this channel. There is
  *    only low bits traffic.
- *    
+ *
  *  2) subscribed channels (ref>0)
  *    The bits client receives any messages for this channel (joins,leaves,chats,...).
  *    Since this produces high traffic on the bits network it's only
@@ -114,7 +114,7 @@ typedef enum
  *    The server subscribes to that channel as soon as the ref level is higher than
  *    0. The ref level _could_ be calculated by adding the number of local users
  *    in this channel to the number of 'sub-servers' where this channel is needed.
- *    
+ *
  * I hope that described the mechanism good enough - Marco
  */
 
@@ -167,7 +167,7 @@ t_channel;
 #define CHANNEL_NAME_KICKED "THE VOID"
 #define CHANNEL_NAME_CHAT   "Chat"
 
-extern char * channel_get_topic(t_channel const * channel);
+extern const char * channel_get_topic(t_channel const * channel);
 extern int channel_set_topic(t_channel * channel, char const * topic);
 extern int channel_send_topic(t_channel const * channel, t_connection * c);
 extern t_channel * channel_create(char const * fullname, char const * shortname, char const * clienttag, t_channel_flags flags, t_channel_loglevel logflag, char const * country, char const * realmname, int maxmembers, char const * password) MALLOC_ATTR();
@@ -212,7 +212,7 @@ extern int channel_del_ref(t_channel * channel);
 
 extern int channellist_create(void);
 extern int channellist_destroy(void);
-#ifndef WITH_BITS 
+#ifndef WITH_BITS
 extern int channellist_reload(void);
 #endif
 extern t_list * channellist(void);

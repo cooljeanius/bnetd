@@ -38,3 +38,26 @@ conf*/*.awk
 *.tmp
 */.deps/*
 */.dirstamp
+
+# built executables:
+addrtest
+bnbot
+bnchat
+bnetd/bnetd
+bnftp
+bni2tga
+bnibuild
+bniextract
+bnilist
+bnpass/bnpass
+bnproxy/bnproxy
+bnstat
+bntrackd/bntrackd
+d2cs/d2cs
+d2dbs/d2dbs
+hashtabletest
+hashtest
+listtest
+sbnetd
+tgainfo
+timetest

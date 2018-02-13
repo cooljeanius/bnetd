@@ -70,20 +70,20 @@ static int list_aliases(t_connection * c)
     t_alias const * alias;
     t_output *      output;
     char            temp[MAX_MESSAGE_LEN];
-    
+
     message_send_text(c,message_type_info,c,"Alias list:");
     LIST_TRAVERSE_CONST(aliaslist_head,elem1)
     {
 	if (!(alias = elem_get_data(elem1)))
 	    continue;
-	
+
 	sprintf(temp,"@%.128s",alias->alias);
 	message_send_text(c,message_type_info,c,temp);
 	LIST_TRAVERSE_CONST(alias->output,elem2)
 	{
 	    if (!(output = elem_get_data(elem2)))
 		continue;
-	    
+
 	    /*
 	     * FIXME: need a more user-friendly way to express this... maybe
              * add a help line to the file format?
@@ -101,13 +101,13 @@ static char * replace_args(char const * in, unsigned int * offsets, unsigned int
     char *         out;
     unsigned int   inpos;
     unsigned int   outpos;
-    unsigned int   off1;
-    unsigned int   off2;
-    unsigned int   i;
-    
+    unsigned int   off1 = 0;
+    unsigned int   off2 = 0;
+    unsigned int   i = 0;
+
     if (!(out = malloc(1))) /* for nul */
         return NULL;
-    
+
     for (inpos=outpos=0; inpos<strlen(in); inpos++)
     {
 	if (in[inpos]!='$')
@@ -116,9 +116,9 @@ static char * replace_args(char const * in, unsigned int * offsets, unsigned int
             outpos++;
 	    continue;
         }
-	
+
 	inpos++;
-	
+
 	if (in[inpos]=='*')
 	{
 	    off1 = 0;
@@ -128,8 +128,9 @@ static char * replace_args(char const * in, unsigned int * offsets, unsigned int
 	{
 	    unsigned int arg1;
 	    unsigned int arg2;
-	    
+
 	    if (sscanf(&in[inpos],"{%u-%u}",&arg1,&arg2)!=2)
+	    {
 		if (sscanf(&in[inpos],"{%u-}",&arg1)!=1)
 		{
 		    if (sscanf(&in[inpos],"{-%u}",&arg2)!=1)
@@ -147,7 +148,8 @@ static char * replace_args(char const * in, unsigned int * offsets, unsigned int
 		}
 		else
 		    arg2 = numargs-1;
-	    
+	    }
+
 	    if (arg2>=numargs)
 		arg2 = numargs-1;
 	    if (arg1>arg2)
@@ -161,14 +163,14 @@ static char * replace_args(char const * in, unsigned int * offsets, unsigned int
 		off2 = strlen(in)-1;
 	    else
 		off2 = offsets[arg2+1]-1;
-	    
+
 	    while (in[inpos]!='\0' && in[inpos]!='}')
 		inpos++;
 	}
 	else if (isdigit((int)in[inpos]))
 	{
 	    unsigned int arg;
-	    
+
 	    if (in[inpos]=='0') arg = 0;
 	    else if (in[inpos]=='1') arg = 1;
 	    else if (in[inpos]=='2') arg = 2;
@@ -179,75 +181,77 @@ static char * replace_args(char const * in, unsigned int * offsets, unsigned int
 	    else if (in[inpos]=='7') arg = 7;
 	    else if (in[inpos]=='8') arg = 8;
 	    else arg = 9;
-	    
+
 	    if (arg>=numargs)
 		continue;
 	    for (off1=off2=offsets[arg]; in[off2]!='\0' && in[off2]!=' ' && in[off2]!='\t'; off2++);
 	    if (in[off2]!='\0')
 		off2--;
 	}
-	
+
         {
             char * newout;
-	    
+
             if (!(newout = realloc(out,outpos+(off2-off1)+1))) /* curr + new + nul */
             {
                 free(out);
                 return NULL;
             }
             out = newout;
-	    
+
 	    while (off1<off2)
 		out[outpos++] = in[off1++];
         }
     }
     out[outpos] = '\0';
-    
-    return out;
+
+    return out + i;
 }
 
 
 static int do_alias(t_connection * c, char const * cmd, char const * text)
 {
-    t_elem const *  elem1;
-    t_elem const *  elem2;
-    t_alias const * alias;
-    t_output *      output;
-    unsigned int *  offsets;
-    unsigned int    numargs;
-    
-    
-    
-    LIST_TRAVERSE_CONST(aliaslist_head,elem1)
+  const t_elem *elem1;
+  const t_elem *elem2;
+  const t_alias *alias;
+  t_output *output;
+  unsigned int *offsets = NULL;
+  unsigned int numargs = 0;
+
+  if (text == NULL) {
+    ; /* ??? */
+  }
+
+  LIST_TRAVERSE_CONST(aliaslist_head,elem1)
+  {
+    if (!(alias = elem_get_data(elem1)))
+      continue;
+
+    LIST_TRAVERSE_CONST(alias->output,elem2)
     {
-	if (!(alias = elem_get_data(elem1)))
-	    continue;
-	
-	LIST_TRAVERSE_CONST(alias->output,elem2)
+      if (!(output = elem_get_data(elem2)))
+	continue;
+
+      if (!output->line || strcasecmp(output->line,cmd)!=0)
+	continue;
+
+      {
+	char const * msgtmp;
+
+	if ((msgtmp = replace_args(output->line,offsets,numargs)))
 	{
-	    if (!(output = elem_get_data(elem2)))
-		continue;
-	    
-	    if (!output->line || strcasecmp(output->line,cmd)!=0)
-		continue;
-	    
-            {
-		char const * msgtmp;
-		
-		if ((msgtmp = replace_args(output->line,offsets,numargs)))
-		{
-/* FIXME: add %C to start of line */
-		    message_send_formatted(c,msgtmp);
-		    free((void *)msgtmp); /* avoid warning */
-		}
-		else
-		    eventlog(eventlog_level_error,"do_alias","could not perform argument replacement");
-	    }
-	    return 0;
+	  /* FIXME: add %C to start of line */
+	  message_send_formatted(c,msgtmp);
+	  free((void *)msgtmp); /* avoid warning */
 	}
+	else
+	  eventlog(eventlog_level_error,"do_alias","could not perform argument replacement");
+      }
+      return 0;
     }
-    
-    return -1;
+  }
+
+  return -1;
 }
 
 
@@ -259,7 +263,7 @@ extern int aliasfile_load(char const * filename)
     unsigned int line;
     unsigned int pos;
     int          inalias;
-    
+
     if (!filename)
     {
 	eventlog(eventlog_level_error,"aliasfile_load","got NULL filename");
@@ -270,7 +274,7 @@ extern int aliasfile_load(char const * filename)
 	eventlog(eventlog_level_error,"aliasfile_load","unable to open alias file \"%s\" for reading (fopen: %s)",filename,strerror(errno));
 	return -1;
     }
-    
+
     inalias = 0;
     for (line=1; (buff = file_get_line(afp)); line++)
     {
@@ -286,13 +290,13 @@ extern int aliasfile_load(char const * filename)
 	{
 	    unsigned int len;
 	    unsigned int endpos;
-	    
+
 	    *temp = '\0';
 	    len = strlen(buff)+1;
 	    for (endpos=len-1;  buff[endpos]=='\t' || buff[endpos]==' '; endpos--);
 	    buff[endpos+1] = '\0';
 	}
-	
+
 	switch (inalias)
 	{
 	case 0:
@@ -303,29 +307,29 @@ extern int aliasfile_load(char const * filename)
 	    }
 	    inalias = 1;
 	    break;
-	
+
 	case 1:
 	    {
 		unsigned int j;
 		char         cmd[MAX_ALIAS_LEN];
-		
+
 		for (;;)
 		{
 		    for (; buff[pos]==' '; pos++);
 		    for (j=0; buff[pos]!=' ' && buff[pos]!='\0'; pos++) /* get command */
 			if (j<sizeof(cmd)-1) cmd[j++] = buff[pos];
 		    cmd[j] = '\0';
-    
+
 		    if (cmd[0]=='\0')
 			break;
-		    
-		    
+
+
 		}
 		inalias = 2;
 		continue;
 	    }
 	    break;
-	
+
 	case 2:
 	    if (buff[pos]!='[')
 	    {
@@ -335,7 +339,7 @@ extern int aliasfile_load(char const * filename)
 	}
 	free(buff);
     }
-    
+
     fclose(afp);
     return 0;
 }
@@ -347,7 +351,7 @@ extern int aliasfile_unload(void)
     t_elem       *  elem2;
     t_alias const * alias;
     t_output *      output;
-    
+
     if (aliaslist_head)
     {
 	LIST_TRAVERSE(aliaslist_head,elem1)
@@ -357,7 +361,7 @@ extern int aliasfile_unload(void)
 		eventlog(eventlog_level_error,"aliasfile_unload","alias list contains NULL item");
 		continue;
 	    }
-	    
+
 	    if (list_remove_elem(aliaslist_head,elem1)<0)
 	    {
 	        eventlog(eventlog_level_error,"aliasfile_unload","could not remove alias");
@@ -372,7 +376,7 @@ extern int aliasfile_unload(void)
 			eventlog(eventlog_level_error,"aliasfile_unload","output list contains NULL item");
 			continue;
 		    }
-		    
+
 		    if (list_remove_elem(alias->output,elem2)<0)
 		    {
 		        eventlog(eventlog_level_error,"aliasfile_unload","could not remove output");
@@ -383,12 +387,12 @@ extern int aliasfile_unload(void)
 		}
 	    }
 	}
-	
+
 	if (list_destroy(aliaslist_head)<0)
 	    return -1;
 	aliaslist_head = NULL;
     }
-    
+
     return 0;
 }
 
@@ -397,14 +401,14 @@ extern int handle_alias_command(t_connection * c, char const * text)
 {
     unsigned int i,j;
     char         cmd[MAX_COMMAND_LEN];
-    
+
     for (i=j=0; text[i]!=' ' && text[i]!='\0'; i++) /* get command */
         if (j<sizeof(cmd)-1) cmd[j++] = text[i];
     cmd[j] = '\0';
-    
+
     if (cmd[0]=='\0')
 	return list_aliases(c);
-    
+
     if (do_alias(c,cmd,text)<0)
     {
 	message_send_text(c,message_type_info,c,"No such alias.  Use // to show the list.");

@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include "bnetd_prefix.h"
 
 int main(int argc, const char * argv[])
 {

@@ -217,7 +217,10 @@ static int on_d2gs_setgsinfo(t_connection * c, t_packet * packet)
 
 static int on_d2gs_echoreply(t_connection * c, t_packet * packet)
 {
-	return 0;
+  if ((c == NULL) || (packet == NULL)) {
+    return -1; /* I guess? */
+  }
+  return 0;
 }
 
 static int on_d2gs_creategamereply(t_connection * c, t_packet * packet)

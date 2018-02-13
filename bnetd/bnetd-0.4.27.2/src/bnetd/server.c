@@ -203,25 +203,29 @@ extern void server_save_wraper(void){
 #ifdef DO_POSIXSIG
 static void quit_sig_handle(int unused)
 {
-    server_quit_wraper();
+  (void)unused;
+  server_quit_wraper();
 }
 
 
 static void restart_sig_handle(int unused)
 {
-    do_restart = 1;
+  (void)unused;
+  do_restart = 1;
 }
 
 
 static void save_sig_handle(int unused)
 {
-    do_save = 1;
+  (void)unused;
+  do_save = 1;
 }
 
 
 static void pipe_sig_handle(int unused)
 {
-    got_epipe = 1;
+  (void)unused;
+  got_epipe = 1;
 }
 #endif
 
@@ -278,24 +282,24 @@ static int poll_check(struct pollfd const * fds, int num_fd, int sd, int mask)
 {
     static int guess=0;
     int        i;
-    
+
     for (i=guess; i<num_fd; i++)
 	if (fds[i].fd==sd)
 	{
 	    guess = i;
 	    return fds[i].revents & mask;
 	}
-    
+
     if (guess>=num_fd)
 	guess = num_fd;
-    
+
     for (i=0; i<guess; i++)
 	if (fds[i].fd==sd)
 	{
 	    guess = i;
 	    return fds[i].revents & mask;
 	}
-    
+
     return 0;
 }
 #endif
@@ -309,10 +313,10 @@ static int sd_accept(t_addr const * curr_laddr, t_laddr_info const * laddr_info,
     psock_t_socklen    caddr_len;
     unsigned int       raddr;
     unsigned short     rport;
-		    
+
     if (!addr_get_addr_str(curr_laddr,tempa,sizeof(tempa)))
 	strcpy(tempa,"x.x.x.x:x");
-    
+
     /* accept the connection */
     memset(&caddr,0,sizeof(caddr)); /* not sure if this is needed... modern systems are ok anyway */
     caddr_len = sizeof(caddr);
@@ -340,7 +344,7 @@ static int sd_accept(t_addr const * curr_laddr, t_laddr_info const * laddr_info,
 		eventlog(eventlog_level_error,"sd_accept","could not accept new connection on %s (psock_accept: %s)",tempa,strerror(psock_errno()));
 	return -1;
     }
-    
+
 #ifdef HAVE_POLL
     if (csocket>=BNETD_MAX_SOCKETS) /* This check is a bit too strict (csocket is probably
                                      * greater than the number of connections) but this makes
@@ -367,22 +371,22 @@ static int sd_accept(t_addr const * curr_laddr, t_laddr_info const * laddr_info,
 	psock_close(csocket);
 	return -1;
     }
-    
+
     eventlog(eventlog_level_info,"sd_accept","[%d] accepted connection from %s on %s",csocket,addr_num_to_addr_str(ntohl(caddr.sin_addr.s_addr),ntohs(caddr.sin_port)),tempa);
-    
+
     if (prefs_get_use_keepalive())
     {
 	int val=1;
-	
+
 	if (psock_setsockopt(csocket,PSOCK_SOL_SOCKET,PSOCK_SO_KEEPALIVE,&val,(psock_t_socklen)sizeof(val))<0)
 	    eventlog(eventlog_level_error,"sd_accept","[%d] could not set socket option SO_KEEPALIVE (psock_setsockopt: %s)",csocket,strerror(psock_errno()));
 	/* not a fatal error */
     }
-    
+
     {
 	struct sockaddr_in rsaddr;
 	psock_t_socklen    rlen;
-	
+
 	memset(&rsaddr,0,sizeof(rsaddr)); /* not sure if this is needed... modern systems are ok anyway */
 	rlen = sizeof(rsaddr);
 	if (psock_getsockname(csocket,(struct sockaddr *)&rsaddr,&rlen)<0)
@@ -408,24 +412,24 @@ static int sd_accept(t_addr const * curr_laddr, t_laddr_info const * laddr_info,
 	    }
 	}
     }
-    
+
     if (psock_ctl(csocket,PSOCK_NONBLOCK)<0)
     {
 	eventlog(eventlog_level_error,"sd_accept","[%d] could not set TCP socket to non-blocking mode (closing connection) (psock_ctl: %s)",csocket,strerror(psock_errno()));
 	psock_close(csocket);
 	return -1;
     }
-    
+
     {
 	t_connection * c;
-	
+
 	if (!(c = conn_create(csocket,usocket,raddr,rport,addr_get_ip(curr_laddr),addr_get_port(curr_laddr),ntohl(caddr.sin_addr.s_addr),ntohs(caddr.sin_port))))
 	{
 	    eventlog(eventlog_level_error,"sd_accept","[%d] unable to create new connection (closing connection)",csocket);
 	    psock_close(csocket);
 	    return -1;
 	}
-	
+
 	eventlog(eventlog_level_debug,"sd_accept","[%d] client connected to a %s listening address",csocket,laddr_type_get_str(laddr_info->type));
 	switch (laddr_info->type)
 	{
@@ -445,89 +449,93 @@ static int sd_accept(t_addr const * curr_laddr, t_laddr_info const * laddr_info,
 	    break;
 	}
     }
-    
+
     return 0;
 }
 
 
-static int sd_udpinput(t_addr * const curr_laddr, t_laddr_info const * laddr_info, int ssocket, int usocket)
+static int sd_udpinput(t_addr *const curr_laddr, const t_laddr_info *laddr_info,
+		       int ssocket, int usocket)
 {
-    int             err;
-    psock_t_socklen errlen;
-    t_packet *      upacket;
-    
-    err = 0;
-    errlen = sizeof(err);
-    if (psock_getsockopt(usocket,PSOCK_SOL_SOCKET,PSOCK_SO_ERROR,&err,&errlen)<0)
+  int             err;
+  psock_t_socklen errlen;
+  t_packet *      upacket;
+
+  if (laddr_info == NULL) {
+    (void)ssocket;
+  }
+  err = 0;
+  errlen = sizeof(err);
+  if (psock_getsockopt(usocket,PSOCK_SOL_SOCKET,PSOCK_SO_ERROR,&err,&errlen)<0)
+  {
+    eventlog(eventlog_level_error,"sd_udpinput","[%d] unable to read socket error (psock_getsockopt: %s)",usocket,strerror(psock_errno()));
+    return -1;
+  }
+  if (errlen && err) /* if it was an error, there is no packet to read */
+  {
+    eventlog(eventlog_level_error,"sd_udpinput","[%d] async UDP socket error notification (psock_getsockopt: %s)",usocket,strerror(err));
+    return -1;
+  }
+  if (!(upacket = packet_create(packet_class_udp)))
+  {
+    eventlog(eventlog_level_error,"sd_udpinput","could not allocate raw packet for input");
+    return -1;
+  }
+
+  {
+    struct sockaddr_in fromaddr;
+    psock_t_socklen    fromlen;
+    int                len;
+
+    fromlen = sizeof(fromaddr);
+    if ((len = psock_recvfrom(usocket,packet_get_raw_data_build(upacket,0),MAX_PACKET_SIZE,0,(struct sockaddr *)&fromaddr,&fromlen))<0)
     {
-        eventlog(eventlog_level_error,"sd_udpinput","[%d] unable to read socket error (psock_getsockopt: %s)",usocket,strerror(psock_errno()));
-	return -1;
-    }
-    if (errlen && err) /* if it was an error, there is no packet to read */
-    {
-	eventlog(eventlog_level_error,"sd_udpinput","[%d] async UDP socket error notification (psock_getsockopt: %s)",usocket,strerror(err));
-	return -1;
-    }
-    if (!(upacket = packet_create(packet_class_udp)))
-    {
-	eventlog(eventlog_level_error,"sd_udpinput","could not allocate raw packet for input");
-	return -1;
-    }
-    
-    {
-	struct sockaddr_in fromaddr;
-	psock_t_socklen    fromlen;
-	int                len;
-	
-	fromlen = sizeof(fromaddr);
-	if ((len = psock_recvfrom(usocket,packet_get_raw_data_build(upacket,0),MAX_PACKET_SIZE,0,(struct sockaddr *)&fromaddr,&fromlen))<0)
-	{
-	    if (
+      if (
 #ifdef PSOCK_EINTR
-		psock_errno()!=PSOCK_EINTR &&
+	  psock_errno()!=PSOCK_EINTR &&
 #endif
 #ifdef PSOCK_EAGAIN
-		psock_errno()!=PSOCK_EAGAIN &&
+	  psock_errno()!=PSOCK_EAGAIN &&
 #endif
 #ifdef PSOCK_EWOULDBLOCK
-		psock_errno()!=PSOCK_EWOULDBLOCK &&
+	  psock_errno()!=PSOCK_EWOULDBLOCK &&
 #endif
-		1)
-		eventlog(eventlog_level_error,"sd_udpinput","could not recv UDP datagram (psock_recvfrom: %s)",strerror(psock_errno()));
-	    packet_del_ref(upacket);
-	    return -1;
-	}
-	
-	if (fromaddr.sin_family!=PSOCK_AF_INET)
-	{
-	    eventlog(eventlog_level_error,"sd_udpinput","got UDP datagram with bad address family %d",(int)fromaddr.sin_family);
-	    packet_del_ref(upacket);
-	    return -1;
-	}
-	
-	packet_set_size(upacket,len);
-	
-	if (hexstrm)
-	{
-	    char tempa[32];
-	    
-	    if (!addr_get_addr_str(curr_laddr,tempa,sizeof(tempa)))
-		strcpy(tempa,"x.x.x.x:x");
-	    fprintf(hexstrm,"%d: recv class=%s[0x%02x] type=%s[0x%04x] from=%s to=%s length=%u\n",
-		    usocket,
-		    packet_get_class_str(upacket),(unsigned int)packet_get_class(upacket),
-		    packet_get_type_str(upacket,packet_dir_from_client),packet_get_type(upacket),
-		    addr_num_to_addr_str(ntohl(fromaddr.sin_addr.s_addr),ntohs(fromaddr.sin_port)),
-		    tempa,
-		    packet_get_size(upacket));
-	    hexdump(hexstrm,packet_get_raw_data(upacket,0),packet_get_size(upacket));
-	}
-	
-	handle_udp_packet(usocket,ntohl(fromaddr.sin_addr.s_addr),ntohs(fromaddr.sin_port),upacket);
-	packet_del_ref(upacket);
+	  1)
+	eventlog(eventlog_level_error,"sd_udpinput","could not recv UDP datagram (psock_recvfrom: %s)",strerror(psock_errno()));
+      packet_del_ref(upacket);
+      return -1;
     }
-    
-    return 0;
+
+    if (fromaddr.sin_family!=PSOCK_AF_INET)
+    {
+      eventlog(eventlog_level_error,"sd_udpinput","got UDP datagram with bad address family %d",(int)fromaddr.sin_family);
+      packet_del_ref(upacket);
+      return -1;
+    }
+
+    packet_set_size(upacket,len);
+
+    if (hexstrm)
+    {
+      char tempa[32];
+
+      if (!addr_get_addr_str(curr_laddr,tempa,sizeof(tempa)))
+	strcpy(tempa,"x.x.x.x:x");
+      fprintf(hexstrm,"%d: recv class=%s[0x%02x] type=%s[0x%04x] from=%s to=%s length=%u\n",
+	      usocket,
+	      packet_get_class_str(upacket),(unsigned int)packet_get_class(upacket),
+	      packet_get_type_str(upacket,packet_dir_from_client),packet_get_type(upacket),
+	      addr_num_to_addr_str(ntohl(fromaddr.sin_addr.s_addr),ntohs(fromaddr.sin_port)),
+	      tempa,
+	      packet_get_size(upacket));
+      hexdump(hexstrm,packet_get_raw_data(upacket,0),packet_get_size(upacket));
+    }
+
+    handle_udp_packet(usocket,ntohl(fromaddr.sin_addr.s_addr),ntohs(fromaddr.sin_port),upacket);
+    packet_del_ref(upacket);
+  }
+
+  return 0;
 }
 
 
@@ -535,9 +543,9 @@ static int sd_tcpinput(int csocket, t_connection * c)
 {
     unsigned int currsize;
     t_packet *   packet;
-    
+
     currsize = conn_get_in_size(c);
-    
+
     if (!*conn_get_in_queue(c))
     {
 	switch (conn_get_class(c))
@@ -606,7 +614,7 @@ static int sd_tcpinput(int csocket, t_connection * c)
 	    return -1; /* push failed */
 	currsize = 0;
     }
-    
+
     packet = queue_peek_packet((t_queue const * const *)conn_get_in_queue(c)); /* avoid warning */
     switch (net_recv_packet(csocket,packet,&currsize))
     {
@@ -614,19 +622,19 @@ static int sd_tcpinput(int csocket, t_connection * c)
 	eventlog(eventlog_level_debug,"sd_tcpinput","[%d] read FAILED (closing connection)",conn_get_socket(c));
 	conn_destroy(c);
 	return -1;
-	
+
     case 0: /* still working on it */
 	/* eventlog(eventlog_level_debug,"sd_tcpinput","[%d] still reading \"%s\" packet (%u of %u bytes so far)",conn_get_socket(c),packet_get_class_str(packet),conn_get_in_size(c),packet_get_size(packet)); */
 	conn_set_in_size(c,currsize);
 	break;
-	
+
     case 1: /* done reading */
 	switch (conn_get_class(c))
 	{
 	case conn_class_defer:
 	    {
 		unsigned char const * const temp=packet_get_raw_data_const(packet,0);
-		
+
 		eventlog(eventlog_level_debug,"sd_tcpinput","[%d] got first packet byte %02x",conn_get_socket(c),(unsigned int)temp[0]);
 		if (temp[0]==(unsigned char)0xff) /* HACK: thankfully all bnet packet types end with ff */
 		{
@@ -644,7 +652,7 @@ static int sd_tcpinput(int csocket, t_connection * c)
 		}
 	    }
 	    break;
-	
+
 	case conn_class_bot:
 	case conn_class_telnet:
 	    if (currsize<MAX_PACKET_SIZE) /* if we overflow, we can't wait for the end of the line.
@@ -653,11 +661,11 @@ static int sd_tcpinput(int csocket, t_connection * c)
 		char const * const temp=packet_get_raw_data_const(packet,0);
 
 		if ((temp[currsize-1]=='\003')||(temp[currsize-1]=='\004')) {
-		    /* we have to ignore these special characters, since 
+		    /* we have to ignore these special characters, since
 		     * some bots even send them after login (eg. UltimateBot)
 		     */
 		    currsize--;
-		    break;	 
+		    break;
 		}
 
 		if (temp[currsize-1]!='\r' && temp[currsize-1]!='\n')
@@ -667,11 +675,11 @@ static int sd_tcpinput(int csocket, t_connection * c)
 		    break; /* no end of line, get another char */
 		}
 	    }
-	    /* got a complete line or overflow... fall through */
-	
+	    /* got a complete line or overflow, so: */
+	    /*FALLTHRU*/
 	default:
 	    packet = queue_pull_packet(conn_get_in_queue(c));
-	    
+
 	    if (hexstrm)
 	    {
 		fprintf(hexstrm,"%d: recv class=%s[0x%02x] type=%s[0x%04x] length=%u\n",
@@ -681,20 +689,20 @@ static int sd_tcpinput(int csocket, t_connection * c)
 			packet_get_size(packet));
 		hexdump(hexstrm,packet_get_raw_data_const(packet,0),packet_get_size(packet));
 	    }
-	    
+
 	    if (conn_get_class(c)==conn_class_bot ||
 		conn_get_class(c)==conn_class_telnet) /* NUL terminate the line to make life easier */
 	    {
 		char * const temp=packet_get_raw_data(packet,0);
-		
+
 		if (temp[currsize-1]=='\r' || temp[currsize-1]=='\n')
 		    temp[currsize-1] = '\0'; /* have to do it here instead of above so everything
 						is intact for the hexdump */
 	    }
-	    
+
 	    {
 		int ret;
-		
+
 		switch (conn_get_class(c))
 		{
 		case conn_class_bits:
@@ -740,11 +748,11 @@ static int sd_tcpinput(int csocket, t_connection * c)
 		    return -1;
 		}
 	    }
-	    
+
 	    conn_set_in_size(c,0);
 	}
     }
-    
+
     return 0;
 }
 
@@ -754,7 +762,7 @@ static int sd_tcpoutput(int csocket, t_connection * c)
     unsigned int currsize;
     unsigned int totsize;
     t_packet *   packet;
-    
+
     totsize = 0;
     for (;;)
     {
@@ -764,14 +772,14 @@ static int sd_tcpoutput(int csocket, t_connection * c)
 	case -1:
 	    conn_destroy(c);
 	    return -1;
-	    
+
 	case 0: /* still working on it */
 	    conn_set_out_size(c,currsize);
 	    return 0; /* bail out */
-	    
+
 	case 1: /* done sending */
 	    packet = queue_pull_packet(conn_get_out_queue(c));
-	    
+
 	    if (hexstrm)
 	    {
 		fprintf(hexstrm,"%d: send class=%s[0x%02x] type=%s[0x%04x] length=%u\n",
@@ -781,17 +789,17 @@ static int sd_tcpoutput(int csocket, t_connection * c)
 			packet_get_size(packet));
 		hexdump(hexstrm,packet_get_raw_data(packet,0),packet_get_size(packet));
 	    }
-	    
+
 	    packet_del_ref(packet);
 	    conn_set_out_size(c,0);
-	    
+
 	    /* stop at about 2KB (or until out of packets or EWOULDBLOCK) */
 	    if (totsize>2048 || queue_get_length((t_queue const * const *)conn_get_out_queue(c))<1)
 		return 0;
 	    totsize += currsize;
 	}
     }
-    
+
     /* not reached */
 }
 
@@ -808,7 +816,7 @@ extern void server_set_name(void)
 	free((void *)server_name); /* avoid warning */
 	server_name = NULL;
     }
-    
+
     sn = prefs_get_servername();
     if ((!sn)||(sn[0]=='\0')) {
     	if (gethostname(temp,sizeof(temp))<0) {
@@ -870,7 +878,7 @@ extern int server_process(void)
     t_addr_data     laddr_data;
     t_laddr_info *  laddr_info;
 #ifdef HAVE_POLL
-    struct pollfd * fds;
+    struct pollfd * fds = NULL;
     int             num_fd;
 #else
     struct timeval  tv;
@@ -896,7 +904,7 @@ extern int server_process(void)
     }
 
     server_set_name();
- 
+
     /* Start with the Battle.net address list */
     if (!(laddrs = addrlist_create(prefs_get_bnetdserv_addrs(),INADDR_ANY,BNETD_SERV_PORT)))
     {
@@ -936,7 +944,7 @@ extern int server_process(void)
 	    goto error_poll;
 	}
     }
-    
+
     /* Append list of addresses to listen for IRC connections */
     if (addrlist_append(laddrs,prefs_get_irc_addrs(),INADDR_ANY,BNETD_IRC_PORT)<0)
     {
@@ -945,7 +953,7 @@ extern int server_process(void)
     }
     /* Mark all new laddrs for being IRC service */
     LIST_TRAVERSE_CONST(laddrs,acurr)
-    { 
+    {
 	curr_laddr = elem_get_data(acurr);
 	if (addr_get_data(curr_laddr).p)
 	    continue;
@@ -974,7 +982,7 @@ extern int server_process(void)
 	    goto error_poll;
 	}
     }
-    
+
     /* Append list of addresses to listen for telnet connections */
     if (addrlist_append(laddrs,prefs_get_telnet_addrs(),INADDR_ANY,BNETD_TELNET_PORT)<0)
     {
@@ -983,7 +991,7 @@ extern int server_process(void)
     }
     /* Mark all new laddrs for being telnet service */
     LIST_TRAVERSE_CONST(laddrs,acurr)
-    { 
+    {
 	curr_laddr = elem_get_data(acurr);
 	if (addr_get_data(curr_laddr).p)
 	    continue;
@@ -1012,8 +1020,8 @@ extern int server_process(void)
 	    goto error_poll;
 	}
     }
-    
-    
+
+
 #ifdef HAVE_POLL
     eventlog(eventlog_level_debug,"server_process","setting up poll structures");
     if (!(fds = malloc(BNETD_MAX_SOCKETS * sizeof (struct pollfd))))
@@ -1022,7 +1030,7 @@ extern int server_process(void)
 	goto error_addr_list;
     }
 #endif
-    
+
     LIST_TRAVERSE_CONST(laddrs,acurr)
     {
 	curr_laddr = elem_get_data(acurr);
@@ -1031,7 +1039,7 @@ extern int server_process(void)
 	    eventlog(eventlog_level_error,"server_process","NULL address info");
 	    goto error_poll;
 	}
-	
+
 	if ((laddr_info->ssocket = psock_socket(PSOCK_PF_INET,PSOCK_SOCK_STREAM,PSOCK_IPPROTO_TCP))<0)
 	{
 	    eventlog(eventlog_level_error,"server_process","could not create a %s listening socket (psock_socket: %s)",laddr_type_get_str(laddr_info->type),strerror(psock_errno()));
@@ -1067,10 +1075,10 @@ extern int server_process(void)
 	    }
 #endif
 	}
-	
+
 	{
 	    int val;
-	    
+
 	    if (laddr_info->ssocket!=-1)
 	    {
 		val = 1;
@@ -1078,7 +1086,7 @@ extern int server_process(void)
 		    eventlog(eventlog_level_error,"server_process","could not set option SO_REUSEADDR on %s socket %d (psock_setsockopt: %s)",laddr_type_get_str(laddr_info->type),laddr_info->usocket,strerror(psock_errno()));
 		/* not a fatal error... */
 	    }
-	    
+
 	    if (laddr_info->usocket!=-1)
 	    {
 		val = 1;
@@ -1087,11 +1095,11 @@ extern int server_process(void)
 		/* not a fatal error... */
 	    }
 	}
-	
+
 	{
 	    char               tempa[32];
 	    struct sockaddr_in saddr;
-	    
+
 	    if (laddr_info->ssocket!=-1)
 	    {
 		memset(&saddr,0,sizeof(saddr));
@@ -1106,7 +1114,7 @@ extern int server_process(void)
 		    goto error_poll;
 		}
 	    }
-	    
+
 	    if (laddr_info->usocket!=-1)
 	    {
 		memset(&saddr,0,sizeof(saddr));
@@ -1121,7 +1129,7 @@ extern int server_process(void)
 		    goto error_poll;
 		}
 	    }
-	    
+
 	    if (laddr_info->ssocket!=-1)
 	    {
 		/* tell socket to listen for connections */
@@ -1131,12 +1139,12 @@ extern int server_process(void)
 		    goto error_poll;
 		}
 	    }
-	    
+
 	    if (!addr_get_addr_str(curr_laddr,tempa,sizeof(tempa)))
 		strcpy(tempa,"x.x.x.x:x");
 	    eventlog(eventlog_level_info,"server_process","listening for %s connections on %s TCP",laddr_type_get_str(laddr_info->type),tempa);
 	}
-	
+
 	if (laddr_info->ssocket!=-1)
 	    if (psock_ctl(laddr_info->ssocket,PSOCK_NONBLOCK)<0)
 		eventlog(eventlog_level_error,"server_process","could not set %s TCP listen socket to non-blocking mode (psock_ctl: %s)",laddr_type_get_str(laddr_info->type),strerror(psock_errno()));
@@ -1144,10 +1152,10 @@ extern int server_process(void)
 	    if (psock_ctl(laddr_info->usocket,PSOCK_NONBLOCK)<0)
 		eventlog(eventlog_level_error,"server_process","could not set %s UDP socket to non-blocking mode (psock_ctl: %s)",laddr_type_get_str(laddr_info->type),strerror(psock_errno()));
     }
-    
+
     /* setup signal handlers */
     prev_exittime = sigexittime;
-    
+
 #ifdef DO_POSIXSIG
     if (sigemptyset(&save_set)<0)
     {
@@ -1184,7 +1192,7 @@ extern int server_process(void)
 	eventlog(eventlog_level_error,"server_process","could not add signal to set (sigemptyset: %s)",strerror(errno));
 	goto error_poll;
     }
-    
+
     {
 	struct sigaction quit_action;
 	struct sigaction restart_action;
@@ -1193,34 +1201,34 @@ extern int server_process(void)
 # ifdef USE_CHECK_ALLOC
 	struct sigaction memstat_action;
 # endif
-	
+
 	quit_action.sa_handler = quit_sig_handle;
 	if (sigemptyset(&quit_action.sa_mask)<0)
 	    eventlog(eventlog_level_error,"server_process","could not initialize signal set (sigemptyset: %s)",strerror(errno));
 	quit_action.sa_flags = SA_RESTART;
-	
+
 	restart_action.sa_handler = restart_sig_handle;
 	if (sigemptyset(&restart_action.sa_mask)<0)
 	    eventlog(eventlog_level_error,"server_process","could not initialize signal set (sigemptyset: %s)",strerror(errno));
 	restart_action.sa_flags = SA_RESTART;
-	
+
 	save_action.sa_handler = save_sig_handle;
 	if (sigemptyset(&save_action.sa_mask)<0)
 	    eventlog(eventlog_level_error,"server_process","could not initialize signal set (sigemptyset: %s)",strerror(errno));
 	save_action.sa_flags = SA_RESTART;
-	
+
 # ifdef USE_CHECK_ALLOC
 	memstat_action.sa_handler = memstat_sig_handle;
 	if (sigemptyset(&memstat_action.sa_mask)<0)
 	    eventlog(eventlog_level_error,"server_process","could not initialize signal set (sigemptyset: %s)",strerror(errno));
 	memstat_action.sa_flags = SA_RESTART;
 # endif
-	
+
 	pipe_action.sa_handler = pipe_sig_handle;
 	if (sigemptyset(&pipe_action.sa_mask)<0)
 	    eventlog(eventlog_level_error,"server_process","could not initialize signal set (sigemptyset: %s)",strerror(errno));
 	pipe_action.sa_flags = SA_RESTART;
-	
+
 	if (sigaction(SIGINT,&quit_action,NULL)<0) /* control-c */
 	    eventlog(eventlog_level_error,"server_process","could not set SIGINT signal handler (sigaction: %s)",strerror(errno));
 	if (sigaction(SIGHUP,&restart_action,NULL)<0)
@@ -1237,20 +1245,20 @@ extern int server_process(void)
 	    eventlog(eventlog_level_error,"server_process","could not set SIGPIPE signal handler (sigaction: %s)",strerror(errno));
     }
 #endif
-    
+
     syncdelta = prefs_get_user_sync_timer();
-    
+
     track_time = time(NULL)-prefs_get_track();
     starttime=prev_savetime = time(NULL);
     count = 0;
-    
+
     for (;;)
     {
 #if defined(WIN32) && !defined(WIN32_GUI)
 	if (kbhit() && getch()=='q')
 	    server_quit_wraper();
 #endif
-	
+
 #ifdef DO_POSIXSIG
 	if (sigprocmask(SIG_SETMASK,&save_set,NULL)<0)
 	    eventlog(eventlog_level_error,"server_process","could not unblock signals");
@@ -1258,15 +1266,15 @@ extern int server_process(void)
 	if (sigprocmask(SIG_SETMASK,&block_set,NULL)<0)
 	    eventlog(eventlog_level_error,"server_process","could not block signals");
 #endif
-	
+
 	if (got_epipe)
 	{
 	    got_epipe = 0;
 	    eventlog(eventlog_level_info,"server_process","handled SIGPIPE");
 	}
-	
+
 	now = time(NULL);
-	
+
 	curr_exittime = sigexittime;
 	if (curr_exittime && (curr_exittime<=now || connlist_get_length()<1))
 	{
@@ -1277,11 +1285,11 @@ extern int server_process(void)
 	{
 	    t_message *  message;
 	    char const * tstr;
-	    
+
 	    if (curr_exittime!=0)
 	    {
 		char text[29+256+2+32+24+1]; /* "The ... in " + time + " (" num + " connection ...)." + NUL */
-	        
+
 		tstr = seconds_to_timestr(curr_exittime-now);
 		sprintf(text,"The server will shut down in %s (%d connections remaining).",tstr,connlist_get_length());
         	if ((message = message_create(message_type_error,NULL,NULL,text)))
@@ -1302,27 +1310,27 @@ extern int server_process(void)
 	    }
 	}
 	prev_exittime = curr_exittime;
-	
+
 	if (syncdelta && prev_savetime+(time_t)syncdelta<=now)
 	{
 	    accountlist_save(prefs_get_user_sync_timer());
             gamelist_check_voidgame();
 	    prev_savetime = now;
 	}
-	
+
 	if (prefs_get_track() && track_time+(time_t)prefs_get_track()<=now)
 	{
 	    track_time = now;
 	    tracker_send_report(laddrs);
 	}
-	
+
 	if (do_save)
 	{
 	    eventlog(eventlog_level_info,"server_process","saving accounts due to signal");
 	    accountlist_save(0);
 	    do_save = 0;
 	}
-	
+
 	if (do_restart)
 	{
 	    eventlog(eventlog_level_info,"server_process","reading configuration files");
@@ -1334,10 +1342,10 @@ extern int server_process(void)
 	    else
 		if (prefs_load(BNETD_DEFAULT_CONF_FILE)<0)
 		    eventlog(eventlog_level_error,"server_process","using default configuration");
-	    
+
 	    if (eventlog_open(prefs_get_logfile())<0)
 		eventlog(eventlog_level_error,"server_process","could not use the file \"%s\" for the eventlog",prefs_get_logfile());
-	    
+
 	    /* FIXME: load new network settings */
 	    /* FIXME: load new ad banners */
 
@@ -1345,7 +1353,7 @@ extern int server_process(void)
 	    server_set_name();
 
 	    accountlist_load_default(); /* FIXME: free old one */
-	    
+
 	    /* FIXME: reload channel list, need some tests, bits is disabled */
 	    #ifndef WITH_BITS
 	    channellist_reload();
@@ -1362,8 +1370,8 @@ extern int server_process(void)
 	    versioncheck_unload();
 	    if (versioncheck_load(prefs_get_versioncheck_file())<0)
 	      eventlog(eventlog_level_error,"main","could not load versioncheck list");
-	    
-	    if (ipbanlist_save(prefs_get_ipbanfile())<0)	    
+
+	    if (ipbanlist_save(prefs_get_ipbanfile())<0)
 		eventlog(eventlog_level_error,"server_process","could not save IP ban list");
 	    if (ipbanlist_destroy()<0)
 		eventlog(eventlog_level_error,"server_process","could not unload old IP ban list");
@@ -1371,25 +1379,25 @@ extern int server_process(void)
 		eventlog(eventlog_level_error,"server_process","could not create new IP ban list");
 	    if (ipbanlist_load(prefs_get_ipbanfile())<0)
 		eventlog(eventlog_level_error,"server_process","could not load IP ban list");
-		
-	    
+
+
 	    helpfile_unload();
 	    if (helpfile_init(prefs_get_helpfile())<0)
 		eventlog(eventlog_level_error,"server_process","could not load the helpfile");
-	    
+
 	    if (adbannerlist_destroy()<0)
 		eventlog(eventlog_level_error,"server_process","could not unload old adbanner list");
 	    if (adbannerlist_create(prefs_get_adfile())<0)
 		eventlog(eventlog_level_error,"server_process","could not new adbanner list");
-	    
+
 	    if (gametrans_unload()<0)
 		eventlog(eventlog_level_error,"server_process","could not unload old gametrans list");
 	    if (gametrans_load(prefs_get_transfile())<0)
 		eventlog(eventlog_level_error,"server_process","could not load new gametrans list");
-	    
+
 	    if (prefs_get_track())
 		tracker_set_servers(prefs_get_trackserv_addrs());
-		
+
 	    {				/* FIXME: move this code and almost same code from main.c to common place */
 		char const * levels;
 		char *       temp;
@@ -1414,18 +1422,18 @@ extern int server_process(void)
 			eventlog(eventlog_level_fatal,"main","could not allocate memory for temp (exiting)");
 		}
 	    }
-																																
+
 #ifdef WITH_BITS
 	    if (!bits_uplink_connection)
 		bits_motd_load_from_file();
 #endif
 	    syncdelta = prefs_get_user_sync_timer();
-	    
+
 	    eventlog(eventlog_level_info,"server_process","done reconfiguring");
-	    
+
 	    do_restart = 0;
 	}
-	
+
 #ifdef USE_CHECK_ALLOC
 	if (do_report_usage)
 	{
@@ -1433,14 +1441,14 @@ extern int server_process(void)
 	    do_report_usage = 0;
 	}
 #endif
-	
+
 	count += BNETD_POLL_INTERVAL;
 	if (count>=1000) /* only check timers once a second */
 	{
 	    timerlist_check_timers(now);
 	    count = 0;
 	}
-	
+
 #ifdef HAVE_POLL
 	num_fd = 0;
 #else
@@ -1449,7 +1457,7 @@ extern int server_process(void)
 	PSOCK_FD_ZERO(&wfds);
 	highest_fd = -1;
 #endif
-	
+
 	LIST_TRAVERSE_CONST(laddrs,acurr)
 	{
 	    curr_laddr = elem_get_data(acurr);
@@ -1458,7 +1466,7 @@ extern int server_process(void)
 		eventlog(eventlog_level_error,"server_process","NULL address info");
 		continue;
 	    }
-	    
+
 #ifdef HAVE_POLL
 	    if (laddr_info->ssocket!=-1)
 	    {
@@ -1489,17 +1497,17 @@ extern int server_process(void)
 	    }
 #endif
 	}
-	
+
 	LIST_TRAVERSE_CONST(connlist(),ccurr)
 	{
 	    c = elem_get_data(ccurr);
             csocket = conn_get_socket(c);
-	    
+
 #ifdef HAVE_POLL
  	    fds[num_fd].fd = csocket;
 	    fds[num_fd].events = POLLIN;
 	    if (queue_get_length((t_queue const * const *)conn_get_out_queue(c))>0)
-		fds[num_fd].events |= POLLOUT; 
+		fds[num_fd].events |= POLLOUT;
 	    fds[num_fd].revents = 0;
 	    num_fd++;
 #else
@@ -1510,7 +1518,7 @@ extern int server_process(void)
         	highest_fd = csocket;
 #endif
 	}
-	
+
 	/* find which sockets need servicing */
 #ifdef HAVE_POLL
 	switch (poll(fds,num_fd,BNETD_POLL_INTERVAL))
@@ -1536,7 +1544,7 @@ extern int server_process(void)
 	case 0: /* timeout... no sockets need checking */
 	    continue;
 	}
-	
+
 	/* check for incoming connection */
 	if (!curr_exittime) /* don't allow connections while exiting... */
 	    LIST_TRAVERSE_CONST(laddrs,acurr)
@@ -1547,7 +1555,7 @@ extern int server_process(void)
 		    eventlog(eventlog_level_error,"server_process","NULL address info");
 		    continue;
 		}
-		
+
 		if (laddr_info->ssocket!=-1)
 		{
 #ifdef HAVE_POLL
@@ -1557,7 +1565,7 @@ extern int server_process(void)
 #endif
 			sd_accept(curr_laddr,laddr_info,laddr_info->ssocket,laddr_info->usocket);
 		}
-		
+
 		if (laddr_info->usocket!=-1)
 		{
 #ifdef HAVE_POLL
@@ -1568,21 +1576,21 @@ extern int server_process(void)
 			sd_udpinput(curr_laddr,laddr_info,laddr_info->ssocket,laddr_info->usocket);
 		}
 	    }
-	
+
 	/* search connections for sockets that need service */
 	/* Uncomment the following line if you want to increase the size of your log :) */
 	/*eventlog(eventlog_level_debug,"server_process","Checking for connected sockets that need service");*/
 	LIST_TRAVERSE_CONST(connlist(),ccurr)
 	{
 	    c = elem_get_data(ccurr);
-	    
+
 	    if (conn_get_state(c)==conn_state_destroy)
 	    {
 			conn_destroy(c);
 			continue;
 	    }
         csocket = conn_get_socket(c);
-	    
+
 #ifdef HAVE_POLL
 	    if (poll_check(fds,num_fd,csocket,POLLNVAL))
 	    {
@@ -1591,7 +1599,7 @@ extern int server_process(void)
 			continue;
 	    }
 #endif
-	    
+
 #ifdef HAVE_POLL
 	    if (poll_check(fds,num_fd,csocket,POLLIN|POLLHUP|POLLERR))
 #else
@@ -1599,7 +1607,7 @@ extern int server_process(void)
 #endif
 		if (sd_tcpinput(csocket,c)<0)
 		    continue;
-	    
+
 #ifdef HAVE_POLL
 	    if (poll_check(fds,num_fd,csocket,POLLOUT|POLLERR))
 #else
@@ -1609,23 +1617,23 @@ extern int server_process(void)
 		    continue;
 	}
 	list_purge(connlist());
-	
+
 	/* check all pending queries */
 	query_tick();
     }
-    
+
     /* cleanup for server shutdown */
-    
+
 #ifdef HAVE_POLL
     free(fds);
 #endif
-    
+
     LIST_TRAVERSE_CONST(connlist(),ccurr)
     {
 		c = elem_get_data(ccurr);
 		conn_destroy(c);
     }
-    
+
     LIST_TRAVERSE_CONST(laddrs,acurr)
     {
 		curr_laddr = elem_get_data(acurr);
@@ -1642,19 +1650,19 @@ extern int server_process(void)
 
     if (psock_deinit()<0)
 		eventlog(eventlog_level_error,"server_process","could not deinitialize socket functions");
-    
+
     return 0;
-    
+
     /************************************************************************/
-    
+
     /* error cleanup */
-    
+
 error_poll:
-    
+
 #ifdef HAVE_POLL
     free(fds);
 #endif
-    
+
 error_addr_list:
     LIST_TRAVERSE_CONST(laddrs,acurr)
     {
@@ -1669,7 +1677,7 @@ error_addr_list:
 		}
     }
     addrlist_destroy(laddrs);
-	
+
     if (psock_deinit()<0)
 		eventlog(eventlog_level_error,"server_process","could not deinitialize socket functions");
 

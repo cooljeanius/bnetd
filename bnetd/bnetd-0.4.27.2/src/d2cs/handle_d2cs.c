@@ -384,10 +384,10 @@ static int on_client_joingamereq(t_connection * c, t_packet * packet)
 	} else if (!(gs=game_get_d2gs(game))) {
 		eventlog(eventlog_level_error, __FUNCTION__, "missing game server for game %s",gamename);
 		reply=D2CS_CLIENT_JOINGAMEREPLY_NOT_EXIST;
-	} else { 
+	} else {
 		reply=d2cs_try_joingame(c,game,gamepass);
 	}
-	
+
 	seqno=bn_short_get(packet->u.client_d2cs_joingamereq.seqno);
 	if (reply!=D2CS_CLIENT_JOINGAMEREPLY_SUCCEED) {
 		t_packet	* rpacket;
@@ -407,7 +407,7 @@ static int on_client_joingamereq(t_connection * c, t_packet * packet)
 	} else {
 		t_packet	* gspacket;
 		t_sq		* sq;
-		
+
 		if ((gspacket=packet_create(packet_class_d2gs))) {
 			if ((sq=sq_create(conn_get_sessionnum(c),packet,game_get_id(game)))) {
 				packet_set_size(gspacket,sizeof(t_d2cs_d2gs_joingamereq));
@@ -704,7 +704,7 @@ static int d2cs_send_client_ladder(t_connection * c, unsigned char type, unsigne
 
 static int on_client_motdreq(t_connection * c, t_packet * packet)
 {
-	t_packet	* rpacket;
+	t_packet *rpacket = packet;
 
 	if ((rpacket=packet_create(packet_class_d2cs))) {
 		packet_set_size(rpacket,sizeof(t_d2cs_client_motdreply));
@@ -719,14 +719,18 @@ static int on_client_motdreq(t_connection * c, t_packet * packet)
 
 static int on_client_cancelcreategame(t_connection * c, t_packet * packet)
 {
-	t_gq	* gq;
+  t_gq *gq;
 
-	if (!(gq=conn_get_gamequeue(c))) {
-		return 0;
-	}
-	conn_set_gamequeue(c,NULL);
-	gq_destroy(gq);
-	return 0;
+  if (packet == NULL) {
+    ; /* ??? */
+  }
+
+  if (!(gq=conn_get_gamequeue(c))) {
+    return 0;
+  }
+  conn_set_gamequeue(c,NULL);
+  gq_destroy(gq);
+  return 0;
 }
 
 static int on_client_charladderreq(t_connection * c, t_packet * packet)
@@ -775,7 +779,7 @@ static int on_client_charlistreq(t_connection * c, t_packet * packet)
 {
 	t_packet		* rpacket;
 	t_pdir			* dir;
-	char const		* account; 
+	char const		* account;
 	t_d2charinfo_file       charinfo;
 	unsigned int	n, maxchar;
 	char const		* charname;
@@ -817,13 +821,15 @@ static int on_client_charlistreq(t_connection * c, t_packet * packet)
 #else
 			db_d2char_acccharlist(prefs_get_db_char_table(),account,prefs_get_realmname(),&accchars);
 			while ((charname=db_d2char_accchargetnext(&accchars))) {
-#endif				
+#endif
 				if (d2charinfo_load(account,charname,&charinfo)<0) {
 					eventlog(eventlog_level_error, __FUNCTION__, "error loading charinfo for %s(*%s)",charname,account);
 					continue;
 				}
-				packet_append_string(rpacket,charinfo.header.charname);
-				packet_append_string(rpacket,(char *)&charinfo.portrait);
+				packet_append_string(rpacket,
+						     (const char *)charinfo.header.charname);
+				packet_append_string(rpacket,
+						     (char *)&charinfo.portrait);
 				n++;
 				if (n>=maxchar) break;
 			}
@@ -842,6 +848,7 @@ static int on_client_charlistreq(t_connection * c, t_packet * packet)
 #ifndef WITH_STORAGE_DB
 	free(path);
 #endif
+	(void)packet;
 	return 0;
 }
 

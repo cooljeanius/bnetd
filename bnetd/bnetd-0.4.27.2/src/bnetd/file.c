@@ -68,7 +68,7 @@ static char const * file_get_info(char const * rawname, unsigned int * len, bn_l
     char *       filename;
     struct stat  sfile;
     t_bnettime   bt;
-    
+
     if (!rawname)
     {
 	eventlog(eventlog_level_error,"file_get_info","got NULL rawname");
@@ -84,7 +84,7 @@ static char const * file_get_info(char const * rawname, unsigned int * len, bn_l
 	eventlog(eventlog_level_error,"file_get_info","got NULL modtime");
 	return NULL;
     }
-    
+
     if (strchr(rawname,'/'))
     {
 	eventlog(eventlog_level_warn,"file_get_info","got rawname containing '/' \"%s\"",rawname);
@@ -96,7 +96,7 @@ static char const * file_get_info(char const * rawname, unsigned int * len, bn_l
 	return NULL;
     }
     sprintf(filename,"%s/%s",prefs_get_filedir(),rawname);
-    
+
     if (stat(filename,&sfile)<0) /* doesn't exist */
     {
 	/* FIXME: check for lower-case version of filename */
@@ -106,11 +106,11 @@ static char const * file_get_info(char const * rawname, unsigned int * len, bn_l
 	bnettime_to_bn_long(bt,modtime);
 	return NULL;
     }
-    
+
     *len = (unsigned int)sfile.st_size;
     bt = time_to_bnettime(sfile.st_mtime,0);
     bnettime_to_bn_long(bt,modtime);
-    
+
     return filename;
 }
 
@@ -119,7 +119,7 @@ extern int file_to_mod_time(char const * rawname, bn_long * modtime)
 {
     char const * filename;
     unsigned int len;
-    
+
     if (!rawname)
     {
 	eventlog(eventlog_level_error,"file_to_mod_time","got NULL rawname");
@@ -130,12 +130,12 @@ extern int file_to_mod_time(char const * rawname, bn_long * modtime)
 	eventlog(eventlog_level_error,"file_to_mod_time","got NULL modtime");
 	return -1;
     }
-    
+
     if (!(filename = file_get_info(rawname, &len, modtime)))
 	return -1;
-    
+
     free((void *)filename); /* avoid warning */
-    
+
     return 0;
 }
 
@@ -151,7 +151,7 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
     FILE *       fp;
     unsigned int filelen;
     int          nbytes;
-    
+
     if (!c)
     {
 	eventlog(eventlog_level_error,"file_send","got NULL connection");
@@ -162,7 +162,7 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
 	eventlog(eventlog_level_error,"file_send","got NULL rawname");
 	return -1;
     }
-    
+
     if (!(rpacket = packet_create(packet_class_file)))
     {
 	eventlog(eventlog_level_error,"file_send","could not create file packet");
@@ -170,7 +170,7 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
     }
     packet_set_size(rpacket,sizeof(t_server_file_reply));
     packet_set_type(rpacket,SERVER_FILE_REPLY);
-    
+
     if ((filename = file_get_info(rawname,&filelen,&rpacket->u.server_file_reply.timestamp)))
     {
 	if (!(fp = fopen(filename,"rb")))
@@ -187,8 +187,9 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
 	filelen = 0;
 	bn_long_set_a_b(&rpacket->u.server_file_reply.timestamp,0,0);
     }
-    
+
     if (fp)
+    {
 	if (startoffset<filelen) {
 	    fseek(fp,startoffset,SEEK_SET);
 	} else {
@@ -197,6 +198,7 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
 	    fclose(fp);
 	    fp = NULL;
 	}
+    }
 
     if (need_header)
     {
@@ -218,7 +220,7 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
 	eventlog(eventlog_level_warn,"file_send","[%d] sending no data for file \"%s\"",conn_get_socket(c),rawname);
 	return -1;
     }
-    
+
     eventlog(eventlog_level_info,"file_send","[%d] sending file \"%s\" of length %d",conn_get_socket(c),rawname,filelen);
     for (;;)
     {
@@ -245,7 +247,7 @@ extern int file_send(t_connection * c, char const * rawname, unsigned int adid, 
 	queue_push_packet(conn_get_out_queue(c),rpacket);
 	packet_del_ref(rpacket);
     }
-    
+
     if (fclose(fp)<0)
 	eventlog(eventlog_level_error,"file_send","could not close file \"%s\" after reading (fclose: %s)",rawname,strerror(errno));
     return 0;

@@ -662,7 +662,7 @@ extern char const * account_get_strattr(t_account * account, char const * key)
 #endif /* DEBUG_ACCOUNT */
 {
     t_attribute * curr;
-    t_attribute * prev;
+    t_attribute * prev = NULL;
     char const *  newkey;
 
     if (!account)

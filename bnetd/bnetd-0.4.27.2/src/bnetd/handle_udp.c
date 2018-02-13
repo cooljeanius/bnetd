@@ -40,64 +40,64 @@ extern int handle_udp_packet(int usock, unsigned int src_addr, unsigned short sr
         eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad packet (class %d)",usock,(int)packet_get_class(packet));
         return -1;
     }
-    
+
     switch (packet_get_type(packet))
     {
     case SERVER_UDPTEST: /* we might get these if a client is running on the same machine as us */
 	if (packet_get_size(packet)<sizeof(t_server_udptest))
 	{
-	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad UDPTEST packet (expected %u bytes, got %u)",usock,sizeof(t_server_udptest),packet_get_size(packet));
+	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad UDPTEST packet (expected %zu bytes, got %u)",usock,sizeof(t_server_udptest),packet_get_size(packet));
 	    return -1;
 	}
 	eventlog(eventlog_level_debug,"handle_udp_packet","[%d] got UDPTEST packet from %s (myself?)",usock,addr_num_to_addr_str(src_addr,src_port));
 	return 0;
-	
+
     case CLIENT_UDPPING:
 	if (packet_get_size(packet)<sizeof(t_client_udpping))
 	{
-	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad UDPPING packet (expected %u bytes, got %u)",usock,sizeof(t_client_udpping),packet_get_size(packet));
+	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad UDPPING packet (expected %zu bytes, got %u)",usock,sizeof(t_client_udpping),packet_get_size(packet));
 	    return -1;
 	}
 	eventlog(eventlog_level_debug,"handle_udp_packet","[%d] got udpping unknown1=%u",usock,bn_int_get(packet->u.client_udpping.unknown1));
 	return 0;
-	
+
     case CLIENT_SESSIONADDR1:
 	if (packet_get_size(packet)<sizeof(t_client_sessionaddr1))
 	{
-	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad SESSIONADDR1 packet (expected %u bytes, got %u)",usock,sizeof(t_client_sessionaddr1),packet_get_size(packet));
+	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad SESSIONADDR1 packet (expected %zu bytes, got %u)",usock,sizeof(t_client_sessionaddr1),packet_get_size(packet));
 	    return -1;
 	}
-	
+
 	{
 	    t_connection * c;
-	    
+
 	    if (!(c = connlist_find_connection_by_sessionkey(bn_int_get(packet->u.client_sessionaddr1.sessionkey))))
 	    {
 		eventlog(eventlog_level_error,"handle_udp_packet","[%d] address not set (no connection with session key 0x%08x)",usock,bn_int_get(packet->u.client_sessionaddr1.sessionkey));
 		return -1;
 	    }
-	    
+
 	    if (conn_get_game_addr(c)!=src_addr || conn_get_game_port(c)!=src_port)
 		eventlog(eventlog_level_info,"handle_udp_packet","[%d][%d] SESSIONADDR1 set new UDP address to %s",conn_get_socket(c),usock,addr_num_to_addr_str(src_addr,src_port));
-	    
+
 	    conn_set_game_socket(c,usock);
 	    conn_set_game_addr(c,src_addr);
 	    conn_set_game_port(c,src_port);
-	    
+
 	    udptest_send(c);
 	}
 	return 0;
-	
+
     case CLIENT_SESSIONADDR2:
 	if (packet_get_size(packet)<sizeof(t_client_sessionaddr2))
 	{
-	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad SESSIONADDR2 packet (expected %u bytes, got %u)",usock,sizeof(t_client_sessionaddr2),packet_get_size(packet));
+	    eventlog(eventlog_level_error,"handle_udp_packet","[%d] got bad SESSIONADDR2 packet (expected %zu bytes, got %u)",usock,sizeof(t_client_sessionaddr2),packet_get_size(packet));
 	    return -1;
 	}
-	
+
 	{
 	    t_connection * c;
-	    
+
 	    if (!(c = connlist_find_connection_by_sessionnum(bn_int_get(packet->u.client_sessionaddr2.sessionnum))))
 	    {
 		eventlog(eventlog_level_error,"handle_udp_packet","[%d] address not set (no connection with session number %u)",usock,bn_int_get(packet->u.client_sessionaddr2.sessionnum));
@@ -108,21 +108,21 @@ extern int handle_udp_packet(int usock, unsigned int src_addr, unsigned short sr
 		eventlog(eventlog_level_error,"handle_udp_packet","[%d][%d] address not set (expected session key 0x%08x, got 0x%08x)",conn_get_socket(c),usock,conn_get_sessionkey(c),bn_int_get(packet->u.client_sessionaddr2.sessionkey));
 		return -1;
 	    }
-	    
+
 	    if (conn_get_game_addr(c)!=src_addr || conn_get_game_port(c)!=src_port)
 		eventlog(eventlog_level_info,"handle_udp_packet","[%d][%d] SESSIONADDR2 set new UDP address to %s",conn_get_socket(c),usock,addr_num_to_addr_str(src_addr,src_port));
-	    
+
 	    conn_set_game_socket(c,usock);
 	    conn_set_game_addr(c,src_addr);
 	    conn_set_game_port(c,src_port);
-	    
+
 	    udptest_send(c);
 	}
 	return 0;
-	
+
     default:
 	eventlog(eventlog_level_error,"handle_udp_packet","[%d] got unknown udp packet type 0x%04x, len %u",usock,packet_get_type(packet),packet_get_size(packet));
     }
-    
+
     return 0;
 }

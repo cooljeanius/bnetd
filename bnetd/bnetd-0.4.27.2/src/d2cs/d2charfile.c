@@ -109,11 +109,12 @@ static int d2charinfo_init(t_d2charinfo_file * chardata, char const * account, c
 	bn_int_set(&chardata->header.create_time,now);
 	bn_int_set(&chardata->header.last_time,now);
 
-	strncpy(chardata->header.charname,charname,MAX_CHARNAME_LEN);
+	strncpy((char *)chardata->header.charname, charname, MAX_CHARNAME_LEN);
 	chardata->header.charname[MAX_CHARNAME_LEN-1]='\0';
-	strncpy(chardata->header.account,account,MAX_ACCTNAME_LEN);
+	strncpy((char *)chardata->header.account, account, MAX_ACCTNAME_LEN);
 	chardata->header.account[MAX_ACCTNAME_LEN-1]='\0';
-	strncpy(chardata->header.realmname,prefs_get_realmname(),MAX_REALMNAME_LEN);
+	strncpy((char *)chardata->header.realmname, prefs_get_realmname(),
+		MAX_REALMNAME_LEN);
 	chardata->header.realmname[MAX_REALMNAME_LEN-1]='\0';
 	bn_int_set(&chardata->header.checksum,0);
 	for (i=0; i<NELEMS(chardata->header.reserved); i++) {
@@ -196,7 +197,7 @@ extern int d2char_create(char const * account, char const * charname, unsigned c
 		free(savefile);
 		return -1;
 	}
-	
+
 	if (!(infofile=malloc(strlen(prefs_get_charinfo_dir())+1+strlen(account)+1+strlen(charname)+1))) {
 		eventlog(eventlog_level_error, __FUNCTION__, "error allocate memory for charinfo file");
 		free(savefile);
@@ -204,14 +205,14 @@ extern int d2char_create(char const * account, char const * charname, unsigned c
 	}
 	d2char_get_infofile_name(infofile,account,charname);
 #endif
-	
+
 	d2charsave_init(buffer,charname,class,status);
 	d2charinfo_init(&chardata,account,charname,class,status);
 
 #ifdef WITH_STORAGE_DB
 	if (!db_d2char_create(prefs_get_db_char_table(),account,charname,&chardata,buffer,size))
         return -1;
-#else    
+#else
 	if (file_write(infofile,&chardata,sizeof(chardata))<0) {
 		eventlog(eventlog_level_error, __FUNCTION__, "error writing info file \"%s\"",infofile);
 		unlink(infofile);
@@ -237,7 +238,7 @@ extern int d2char_create(char const * account, char const * charname, unsigned c
 
 
 /* JEBs20021020 Haven't found the use of this function, so i marked it as comment.
-	Is it needed anymore ?! 
+	Is it needed anymore ?!
 extern int d2char_find(char const * account, char const * charname)
 {
 	char		* file;
@@ -269,7 +270,7 @@ extern int d2char_convert(char const * account, char const * charname)
 #ifndef WITH_STORAGE_DB
 	FILE			* fp;
 	char			* file;
-#endif	
+#endif
 	unsigned char		buffer[MAX_SAVEFILE_SIZE];
 	unsigned int		status_offset;
 	unsigned char		status;
@@ -311,15 +312,15 @@ extern int d2char_convert(char const * account, char const * charname)
 		fclose(fp);
 		return -1;
 	}
-#endif	
+#endif
 	charstatus=bn_int_get(charinfo.summary.charstatus);
 	charstatus_set_expansion(charstatus,1);
 	bn_int_set(&charinfo.summary.charstatus,charstatus);
-	
+
 	status=bn_byte_get(charinfo.portrait.status);
 	charstatus_set_expansion(status,1);
 	bn_byte_set(&charinfo.portrait.status,status);
-	
+
 #ifndef WITH_STORAGE_DB
 	fseek(fp,0,SEEK_SET); /* FIXME: check return */
 	if (fwrite(&charinfo,1,sizeof(charinfo),fp)!=sizeof(charinfo)) {
@@ -331,7 +332,7 @@ extern int d2char_convert(char const * account, char const * charname)
 		eventlog(eventlog_level_error, __FUNCTION__, "could not close charinfo file for character \"%s\" after writing (fclose: %s)",charname,strerror(errno));
 		return -1;
 	}
-	
+
 	if (!(file=malloc(strlen(prefs_get_charsave_dir())+1+strlen(charname)+1))) {
 		eventlog(eventlog_level_error, __FUNCTION__, "error allocate memory for charsave file");
 		return -1;
@@ -545,7 +546,7 @@ extern int d2char_check_charname(char const * name)
 {
 	unsigned int	i;
 	unsigned char	ch;
-	
+
 	if (!name) return -1;
 	if (!isalpha(name[0])) return -1;
 
@@ -567,7 +568,7 @@ extern int d2char_check_acctname(char const * name)
 {
 	unsigned int	i;
 	unsigned char	ch;
-	
+
 	if (!name) return -1;
 	if (!isalnum(name[0])) return -1;
 

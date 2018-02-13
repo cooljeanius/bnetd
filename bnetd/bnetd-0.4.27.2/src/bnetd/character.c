@@ -84,7 +84,7 @@ static t_character_class bncharacter_class_to_character_class(t_uint8 class)
     }
 }
 
-
+/* FIXME: use this somewhere: */
 static t_uint8 character_class_to_bncharacter_class(t_character_class class)
 {
     switch (class)
@@ -232,6 +232,9 @@ static int load_initial_data (t_character * character, t_character_class class, 
 	case character_class_barbarian:
 	    data_in_hex = "84 80 FF FF FF FF FF FF FF FF FF FF FF 05 FF FF FF FF FF FF FF FF FF FF FF 01 81 80 80 80 FF FF FF";
 	    break;
+	default:
+	    data_in_hex = "";
+	    break;
 	}
 	break;
     case character_expansion_lod:
@@ -258,19 +261,25 @@ static int load_initial_data (t_character * character, t_character_class class, 
 	case character_class_assassin:
 	    data_in_hex = "84 80 FF FF FF FF FF FF FF FF FF FF FF 07 FF FF FF FF FF FF FF FF FF FF FF 01 A1 80 80 80 FF FF FF";
 	    break;
+	default:
+	    data_in_hex = "";
+	    break;
 	}
+    default:
+	break;
     }
 
-    character->datalen = hex_to_str(data_in_hex, character->data, 33);
+    character->datalen = hex_to_str(data_in_hex, (char *)character->data, 33);
 
     decode_character_data(character);
+    return 0;
 }
 
 
 extern int character_create(t_account * account, char const * clienttag, char const * realmname, char const * name, t_character_class class, t_character_expansion expansion)
 {
     t_character * ch;
-    
+
     if (!account)
     {
 	eventlog(eventlog_level_error,"character_create","got NULL account");
@@ -291,7 +300,7 @@ extern int character_create(t_account * account, char const * clienttag, char co
 	eventlog(eventlog_level_error,"character_create","got NULL name");
 	return -1;
     }
-    
+
     if (!(ch = malloc(sizeof(t_character))))
     {
 	eventlog(eventlog_level_error,"character_create","could not allocate memory for character");
@@ -331,7 +340,7 @@ extern int character_create(t_account * account, char const * clienttag, char co
     load_initial_data (ch, class, expansion);
 
     account_add_closed_character(account, clienttag, ch);
-    
+
     return 0;
 }
 
@@ -373,13 +382,13 @@ extern char const * character_get_playerinfo(t_character const * ch)
 {
     t_d2char_info d2char_info;
     static char   playerinfo[sizeof(t_d2char_info)+4];
-    
+
     if (!ch)
     {
 	eventlog(eventlog_level_error,"character_get_playerinfo","got NULL character");
 	return NULL;
     }
-    
+
 /*
                                               ff 0f 68 00                ..h.
 0x0040: 01 00 00 00 00 00 00 00   10 00 00 00 00 00 00 00    ................
@@ -415,17 +424,17 @@ extern char const * character_get_playerinfo(t_character const * ch)
     bn_int_set(&d2char_info.unknown3,ch->unknown3);
     bn_int_set(&d2char_info.unknown4,ch->unknown4);
     bn_byte_set(&d2char_info.level,ch->level);
-    bn_byte_set(&d2char_info.status,ch->status); 
+    bn_byte_set(&d2char_info.status,ch->status);
     bn_byte_set(&d2char_info.title,ch->title);
     bn_byte_set(&d2char_info.unknownb13,ch->unknownb13);
     bn_byte_set(&d2char_info.emblembgc,ch->emblembgc);
     bn_byte_set(&d2char_info.emblemfgc,ch->emblemfgc);
     bn_byte_set(&d2char_info.emblemnum,ch->emblemnum);
     bn_byte_set(&d2char_info.unknownb14,ch->unknownb14);
-    
+
     memcpy(playerinfo,&d2char_info,sizeof(d2char_info));
     strcpy(&playerinfo[sizeof(d2char_info)],ch->guildname);
-    
+
     return playerinfo;
 }
 
@@ -446,7 +455,7 @@ extern int character_verify_charlist(t_character const * ch, char const * charli
     char *       temp;
     char const * tok1;
     char const * tok2;
-    
+
     if (!ch)
     {
 	eventlog(eventlog_level_error,"character_verify_charlist","got NULL character");
@@ -457,13 +466,13 @@ extern int character_verify_charlist(t_character const * ch, char const * charli
 	eventlog(eventlog_level_error,"character_verify_charlist","got NULL character");
 	return -1;
     }
-    
+
     if (!(temp = strdup(charlist)))
     {
 	eventlog(eventlog_level_error,"character_verify_charlist","unable to allocate memory for characterlist");
         return -1;
     }
-    
+
     tok1 = (char const *)strtok(temp,","); /* strtok modifies the string it is passed */
     tok2 = strtok(NULL,",");
     while (tok1)
@@ -473,27 +482,29 @@ extern int character_verify_charlist(t_character const * ch, char const * charli
 	    eventlog(eventlog_level_error,"character_verify_charlist","bad character list \"%s\"",temp);
 	    break;
 	}
-	
+
 	if (strcasecmp(tok1,ch->realmname)==0 && strcasecmp(tok2,ch->name)==0)
 	{
 	    free(temp);
 	    return 0;
 	}
-	
+
         tok1 = strtok(NULL,",");
         tok2 = strtok(NULL,",");
     }
     free(temp);
-    
+
     return -1;
 }
 
 
 extern int characterlist_create(char const * dirname)
 {
-    if (!(characterlist_head = list_create()))
-        return -1;
-    return 0;
+  if (dirname == NULL)
+    return -1;
+  if (!(characterlist_head = list_create()))
+    return -1;
+  return 0;
 }
 
 
@@ -501,7 +512,7 @@ extern int characterlist_destroy(void)
 {
     t_elem *      curr;
     t_character * ch;
-    
+
     if (characterlist_head)
     {
         LIST_TRAVERSE(characterlist_head,curr)
@@ -512,7 +523,7 @@ extern int characterlist_destroy(void)
                 eventlog(eventlog_level_error,"characterlist_destroy","characterlist contains NULL item");
                 continue;
             }
-            
+
             if (list_remove_elem(characterlist_head,curr)<0)
                 eventlog(eventlog_level_error,"characterlist_destroy","could not remove item from list");
             free(ch);
@@ -522,7 +533,7 @@ extern int characterlist_destroy(void)
             return -1;
         characterlist_head = NULL;
     }
-    
+
     return 0;
 }
 
@@ -531,7 +542,7 @@ extern t_character * characterlist_find_character(char const * realmname, char c
 {
     t_elem *      curr;
     t_character * ch;
-    
+
     if (!realmname)
     {
 	eventlog(eventlog_level_error,"characterlist_find_character","got NULL realmname");
@@ -549,6 +560,6 @@ extern t_character * characterlist_find_character(char const * realmname, char c
         if (strcasecmp(ch->name,charname)==0 && strcasecmp(ch->realmname,realmname)==0)
             return ch;
     }
-    
+
     return NULL;
 }
