@@ -15,8 +15,19 @@ jobs:
     - name: Build
       run: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
     - name: Test
-      run: cd bnetd/bnetd-0.4.27.2/src && make check
       if: "${{ success() }}"
+      run: |
+        cd bnetd/bnetd-0.4.27.2/src
+        make check
+        mkdir build
+        cd build
+        ../configure --with-warn
+        make bnetd
+        make bntrackd
+        make d2cs
+        make d2dbs
+        make bnpass
+        make distcleancheck
     # TODO: get distcheck to work
     strategy:
       matrix:

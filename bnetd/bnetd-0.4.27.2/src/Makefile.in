@@ -1537,7 +1537,7 @@ SHARES = ad000001.pcx icons.bni tos.txt newbie.save IX86ver1.mpq bnserver.ini bn
 OTHERRM = ${bnproxy_SBIN} ${sbnetd_SBIN} ${timetest_BIN} ${listtest_BIN} ${hashtabletest_BIN} ${addrtest_BIN} ${hashtest_BIN} ${SRC_ACDIR}/ansi2knr ${SRC_ACDIR}/ansi2knr.o @ANSI2KNR_TMP@
 DIRS = ${SRC_BINDIR} ${SRC_SBINDIR}
 CLEANFILES = a.out
-DISTCLEANFILES = *~ autoscan.log
+DISTCLEANFILES = .DS_Store */.DS_Store *~ autoscan.log
 SUFFIXES = .ansic .ansio
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -3142,6 +3142,7 @@ distclean-local: clean-local
 	-${RMF} ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 	-${RMRF} ${SRC_SRCDIR}/autom4te.cache || ${RMDIR} autom4te.cache
 	-${RMRF} ${DIRS} || ${RMDIR} ${DIRS}
+	-find . -name .DS_Store -delete
 
 .PHONY: clean-compile
 clean-compile: clean-local all

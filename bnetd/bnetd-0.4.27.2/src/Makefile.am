@@ -889,8 +889,9 @@ distclean-local: clean-local
 	-${RMF} ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
 	-${RMRF} ${SRC_SRCDIR}/autom4te.cache || ${RMDIR} autom4te.cache
 	-${RMRF} ${DIRS} || ${RMDIR} ${DIRS}
+	-find . -name .DS_Store -delete
 
-DISTCLEANFILES = *~ autoscan.log
+DISTCLEANFILES = .DS_Store */.DS_Store *~ autoscan.log
 
 .PHONY: clean-compile
 clean-compile: clean-local all
