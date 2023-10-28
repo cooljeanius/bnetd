@@ -43,10 +43,10 @@ AM_SILENT_RULES([no])
 AM_PROG_AS
 AM_PROG_AR
 if test "x${AWK}" = "x"; then
-    test -z "${AWK}"
+    test -z "${AWK}" || unset AWK
     AC_PROG_AWK
 else
-    test ! -z "${AWK}" && export AWK
+    test -n "${AWK}" && export AWK
     AC_SUBST([AWK])
 fi
 AC_PROG_FGREP
@@ -83,10 +83,10 @@ LT_INIT([win32-dll])
 LT_LANG([C])
 LT_LANG([Windows Resource])
 if test "x${RANLIB}" = "x"; then
-	test -z "${RANLIB}"
+	test -z "${RANLIB}" || unset RANLIB
 	AC_PROG_RANLIB
 else
-	test ! -z "${RANLIB}" && export RANLIB
+	test -n "${RANLIB}" && export RANLIB
 	AC_SUBST([RANLIB])
 fi
 
@@ -262,6 +262,19 @@ AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h fcntl.h grp.h i386/_types.h \
                   sys/timeb.h sys/utsname.h sys/wait.h \
                   termio.h termios.h time.h varargs.h])dnl
 
+if test "x${ac_cv_header_stdint_h}" = "x"; then
+  test -z "${ac_cv_header_stdint_h}" || unset ac_cv_header_stdint_h
+  AC_CHECK_HEADERS([stdint.h])
+fi
+if test "x${ac_cv_header_strings_h}" = "x"; then
+  test -z "${ac_cv_header_strings_h}" || unset ac_cv_header_strings_h
+  AC_CHECK_HEADERS([strings.h])
+fi
+if test "x${ac_cv_header_unistd_h}" = "x"; then
+  test -z "${ac_cv_header_unistd_h}" || unset ac_cv_header_unistd_h
+  AC_CHECK_HEADERS([unistd.h])
+fi
+
 # Checks for typedefs and structures
 AC_C_BIGENDIAN
 AC_C_CONST
@@ -340,15 +353,17 @@ else
     ANSI2KNR_TMP=''
     ANSI2KNR_DEP=''
 fi
-AC_SUBST([COMPILEANSI1])
-AC_SUBST([COMPILEANSI2])
-AC_SUBST([COMPILEANSI3])
-AC_SUBST([ANSI2KNR_TMP])
-AC_SUBST([ANSI2KNR_DEP])
-AC_SUBST([INSTALLdir])
-AC_SUBST([install_sh])
-AC_SUBST([RMDIR])
+AC_SUBST([COMPILEANSI1])dnl
+AC_SUBST([COMPILEANSI2])dnl
+AC_SUBST([COMPILEANSI3])dnl
+AC_SUBST([ANSI2KNR_TMP])dnl
+AC_SUBST([ANSI2KNR_DEP])dnl
+AC_SUBST([INSTALLdir])dnl
+AC_SUBST([install_sh])dnl
+AC_SUBST([RMDIR])dnl
 AC_SUBST([ECHO])dnl
+
+AM_CONDITIONAL([SRCDIR_IS_ELSEWHERE],[test "x${srcdir}" != "x."])dnl
 
 # Output.
 AC_CONFIG_FILES([Makefile Makefile.bak])

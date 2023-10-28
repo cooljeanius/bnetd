@@ -12,9 +12,12 @@ jobs:
       uses: actions/checkout@v4
 #     # 'Transformers::TravisCI::Scripts::Dependencies' dependencies are currently unsupported
 #     # 'compiler' was not transformed because there is no suitable equivalent in GitHub Actions
-    - run: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
-    - run: pwd
+    - name: Build
+      run: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
+    - name: Test
+      run: cd bnetd/bnetd-0.4.27.2/src && make check
       if: "${{ success() }}"
+    # TODO: get distcheck to work
     strategy:
       matrix:
         compiler:

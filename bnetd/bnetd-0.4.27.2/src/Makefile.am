@@ -19,6 +19,8 @@
 
 ACLOCAL_AMFLAGS = -I m4 --install
 
+AM_DISTCHECK_CONFIGURE_FLAGS = --disable-dependency-tracking
+
 install_sh      = @install_sh@
 prefix		= @prefix@
 exec_prefix	= @exec_prefix@
@@ -895,6 +897,62 @@ clean-compile: clean-local all
 
 .PHONY: config
 config: ${SRC_SRCDIR}/Makefile ${SRC_SRCDIR}/config.h
+
+if SRCDIR_IS_ELSEWHERE
+${SRC_SRCDIR}/Makefile:
+	if test ! -e ${SRC_SRCDIR}/Makefile; then \
+	  if test -w ${SRC_SRCDIR}; then \
+	    if test -e $(srcdir)/Makefile; then \
+	      cp -v $(srcdir)/Makefile ${SRC_SRCDIR}; \
+	    elif test -e $(builddir)/Makefile; then \
+	      cp -v $(builddir)/Makefile ${SRC_SRCDIR}; \
+	    elif test -e $(top_srcdir)/Makefile; then \
+	      cp -v $(top_srcdir)/Makefile ${SRC_SRCDIR}; \
+	    elif test -e $(top_builddir)/Makefile; then \
+	      cp -v $(top_builddir)/Makefile ${SRC_SRCDIR}; \
+	    elif test -x ${SRC_SRCDIR}/config.status; then \
+	      pushd ${SRC_SRCDIR} && ./config.status && popd; \
+	    elif test -r Makefile && test -n "$(MAKE)"; then \
+	      $(MAKE) -f Makefile rebuild_Makefile; \
+	    else \
+	      ${ECHO} >> ${SRC_SRCDIR}/Makefile; \
+	    fi; \
+	  elif test -r ${SRC_SRCDIR}; then \
+	    ls ${SRC_SRCDIR}; \
+	  elif test -e ${SRC_SRCDIR}; then \
+	    stat ${SRC_SRCDIR}; \
+	  else \
+	    ls; \
+	  fi; \
+	fi
+
+${SRC_SRCDIR}/config.h:
+	if test ! -e ${SRC_SRCDIR}/config.h; then \
+	  if test -w ${SRC_SRCDIR}; then \
+	    if test -e $(srcdir)/config.h; then \
+	      cp -v $(srcdir)/config.h ${SRC_SRCDIR}; \
+	    elif test -e $(builddir)/config.h; then \
+	      cp -v $(builddir)/config.h ${SRC_SRCDIR}; \
+	    elif test -e $(top_srcdir)/config.h; then \
+	      cp -v $(top_srcdir)/config.h ${SRC_SRCDIR}; \
+	    elif test -e $(top_builddir)/config.h; then \
+	      cp -v $(top_builddir)/config.h ${SRC_SRCDIR}; \
+	    elif test -x ${SRC_SRCDIR}/config.status; then \
+	      pushd ${SRC_SRCDIR} && ./config.status && popd; \
+	    elif test -r Makefile && test -n "$(MAKE)"; then \
+	      $(MAKE) -f Makefile rebuild_config.h; \
+	    else \
+	      ${ECHO} >> ${SRC_SRCDIR}/config.h; \
+	    fi; \
+	  elif test -r ${SRC_SRCDIR}; then \
+	    ls ${SRC_SRCDIR}; \
+	  elif test -e ${SRC_SRCDIR}; then \
+	    stat ${SRC_SRCDIR}; \
+	  else \
+	    ls; \
+	  fi; \
+	fi
+endif
 
 .PHONY: rebuild_configure
 rebuild_configure: ${SRC_SRCDIR}/configure.ac

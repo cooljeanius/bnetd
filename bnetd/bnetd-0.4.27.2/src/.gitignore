@@ -38,6 +38,7 @@ conf*/*.awk
 *.tmp
 */.deps/*
 */.dirstamp
+bnetd-0.4.27/*
 
 # built executables:
 addrtest
