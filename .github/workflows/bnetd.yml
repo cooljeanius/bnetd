@@ -19,9 +19,10 @@ jobs:
       run: |
         cd bnetd/bnetd-0.4.27.2/src
         make check
+        make distclean
         mkdir build
         cd build
-        ../configure --with-warn
+        ../configure --with-warn-lite
         make bnetd
         make bntrackd
         make d2cs
@@ -30,6 +31,7 @@ jobs:
         make distcleancheck
     # TODO: get distcheck to work
     strategy:
+      fail-fast: false
       matrix:
         compiler:
         - clang
