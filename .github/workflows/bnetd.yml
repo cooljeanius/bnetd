@@ -1,38 +1,42 @@
+---
 name: cooljeanius/bnetd
 on:
   push:
     branches:
-    - "**/*"
+      - "**/*"
   pull_request:
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
-      uses: actions/checkout@v4
-#     # 'Transformers::TravisCI::Scripts::Dependencies' dependencies are currently unsupported
-#     # 'compiler' was not transformed because there is no suitable equivalent in GitHub Actions
-    - name: Build
-      run: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
-    - name: Test
-      if: "${{ success() }}"
-      run: |
-        cd bnetd/bnetd-0.4.27.2/src
-        make check
-        make distclean
-        mkdir build
-        cd build
-        ../configure --with-warn-lite
-        make bnetd
-        make bntrackd
-        make d2cs
-        make d2dbs
-        make bnpass
-        make distcleancheck
-    # TODO: get distcheck to work
+      - name: checkout
+        uses: actions/checkout@v4
+        # 'Transformers::TravisCI::Scripts::Dependencies' dependencies are
+        # currently unsupported
+        # 'compiler' was not transformed because there is no suitable equivalent
+        # in GitHub Actions
+      - name: Build
+        run: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
+      - name: Test
+        if: "${{ success() }}"
+        run: |
+          cd bnetd/bnetd-0.4.27.2/src
+          make check
+          make distclean
+          mkdir build
+          cd build
+          ../configure --with-warn-lite
+          make bnetd
+          make bntrackd
+          make d2cs
+          make d2dbs
+          make bnpass
+          make distcleancheck
+          # TODO: get distcheck to work
+
     strategy:
       fail-fast: false
       matrix:
         compiler:
-        - clang
-        - gcc
+          - clang
+          - gcc
