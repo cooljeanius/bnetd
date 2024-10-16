@@ -405,11 +405,11 @@ static struct maillist_struct * mailbox_get_list(t_mailbox *mailbox)
 		fclose(fd);
 		free(filename);
 		free(q);
+		continue;
 	    }
 	    fgets(sender,MAX_NICK_LEN,fd);
 	    clean_str(sender);
 	    fclose(fd);
-	    q->sender = sender;
 	    q->timestamp = atoi(dentry);
 	    q->next = NULL;
 	    if (p==NULL)
