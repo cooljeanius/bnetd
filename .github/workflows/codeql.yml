@@ -1,4 +1,5 @@
 ---
+# bnetd/.github/workflows/codeql.yml: GitHub Actions CodeQL workflow for bnetd
 # For most projects, this workflow file will not need changing; you simply need
 # to commit it to your repository.
 #
@@ -17,11 +18,15 @@ on:
     branches:
       - master
       - dependabot/*
+      - autofix*alert*
+      - alert*autofix*
   pull_request:
     # The branches below must be a subset of the branches above:
     branches:
       - master
       - dependabot/*
+      - autofix*alert*
+      - alert*autofix*
   schedule:
     - cron: '44 11 * * 0'
 
@@ -44,11 +49,12 @@ jobs:
       fail-fast: false
       matrix:
         language: ['c-cpp', 'python']
-        # CodeQL supports:
-        # ['c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift']
-        # Use only 'java-kotlin' to analyze code written in Java, Kotlin or both
-        # Use only 'javascript-typescript' to analyze code written in
-        # JavaScript, TypeScript or both
+        # CodeQL supports the following languages:
+        # 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript',
+        # 'python', 'ruby', 'swift'
+        # Use 'java-kotlin' to analyze code written in Java, Kotlin, or both
+        # Use 'javascript-typescript' to analyze code written in JavaScript,
+        # TypeScript, or both
         # Learn more about CodeQL language support at:
         # https://aka.ms/codeql-docs/language-support
 
