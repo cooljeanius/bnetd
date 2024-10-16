@@ -99,10 +99,10 @@ extern char const * vernum_to_verstr(unsigned long vernum)
 {
     static char verstr[16];
     
-    sprintf(verstr,"%lu.%lu.%lu.%lu",
-            (vernum>>24)     ,
-            (vernum>>16)&0xff,
-            (vernum>> 8)&0xff,
-            (vernum    )&0xff);
+    snprintf(verstr, sizeof(verstr), "%lu.%lu.%lu.%lu",
+             (vernum>>24)     ,
+             (vernum>>16)&0xff,
+             (vernum>> 8)&0xff,
+             (vernum    )&0xff);
     return verstr;
 }
