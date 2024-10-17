@@ -16,7 +16,10 @@ jobs:
         # 'compiler' was not transformed because there is no suitable equivalent
         # in GitHub Actions
       - name: Build
-        run: cd bnetd/bnetd-0.4.27.2/src && ./configure --with-warn && make
+        run: |
+          cd bnetd/bnetd-0.4.27.2/src
+          ./configure --with-warn CC=${{ matrix.compiler }}
+          make CC=${{ matrix.compiler }}
       - name: Test
         if: "${{ success() }}"
         run: |
