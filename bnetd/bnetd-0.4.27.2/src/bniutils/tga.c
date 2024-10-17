@@ -58,7 +58,7 @@ static int rotate_updown(t_tgaimg *img) {
 	for (y = 0; y < img->height; y++) {
 		memcpy(ndata + ((size_t)y * img->width * pixelsize),
 		       img->data + (((size_t)img->width * img->height * pixelsize) - ((size_t)(y + 1) * img->width * pixelsize)),
-		       img->width*pixelsize);
+		       (size_t)img->width * pixelsize);
 	}
 	free(img->data);
 	img->data = ndata;
