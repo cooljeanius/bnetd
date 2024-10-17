@@ -380,7 +380,7 @@ static int RLE_compress(FILE *f, t_tgaimg const *img) {
 	if (pixelsize == 0) return -1;
 
 	datap = img->data;
-	pktdata = malloc(img->width*img->height*pixelsize);
+	pktdata = malloc((size_t)img->width * (size_t)img->height * (size_t)pixelsize);
 	pktlen = 0;
 
 	for (i=0; i<img->width*img->height; ) {
