@@ -89,7 +89,7 @@ static t_tgaimg * area2img(t_tgaimg *src, int x, int y, int width, int height, t
 	destp = dst->data;
 	for (i = 0; i < height; i++) {
 		datap += x*pixelsize;
-		memcpy(destp,datap,width*pixelsize);
+		memcpy(destp,datap,(size_t)width*pixelsize);
 		destp += width*pixelsize;
 		datap += (src->width-x)*pixelsize;
 	}
