@@ -82,7 +82,7 @@ static t_tgaimg * area2img(t_tgaimg *src, int x, int y, int width, int height, t
 	if (pixelsize == 0) return NULL;
 	
 	dst = new_tgaimg(width,height,src->bpp,type);
-	dst->data = malloc(width*height*pixelsize);
+	dst->data = malloc((size_t)width * height * pixelsize);
 	
 	datap = src->data;
 	datap += y*src->width*pixelsize;
