@@ -54,10 +54,10 @@ static int rotate_updown(t_tgaimg *img) {
 	if (img->data == NULL) return -1;
 	pixelsize = getpixelsize(img);
 	if (pixelsize == 0) return -1;
-	ndata = malloc(img->width*img->height*pixelsize);
+	ndata = malloc((size_t)img->width * img->height * pixelsize);
 	for (y = 0; y < img->height; y++) {
-		memcpy(ndata + (y*img->width*pixelsize),
-		       img->data + ((img->width*img->height*pixelsize)-((y+1)*img->width*pixelsize)),
+		memcpy(ndata + ((size_t)y * img->width * pixelsize),
+		       img->data + (((size_t)img->width * img->height * pixelsize) - ((size_t)(y + 1) * img->width * pixelsize)),
 		       img->width*pixelsize);
 	}
 	free(img->data);
@@ -74,10 +74,10 @@ static int rotate_leftright(t_tgaimg *img) {
         if (img->data == NULL) return -1;
         pixelsize = getpixelsize(img);
         if (pixelsize == 0) return -1;
-        ndata = malloc(img->width*img->height*pixelsize);
+        ndata = malloc((size_t)img->width * img->height * pixelsize);
 	datap = img->data;
         for (y = 0; y < img->height; y++) {
-		unsigned char *linep = (ndata + (((y+1)*img->width*pixelsize)-pixelsize));
+		unsigned char *linep = (ndata + (((size_t)(y + 1) * img->width * pixelsize) - pixelsize));
 		for (x = 0; x < img->width; x++) {
 			memcpy(linep,datap,pixelsize);
 			linep -= pixelsize;
