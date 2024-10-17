@@ -155,8 +155,8 @@ static int img2area(t_tgaimg *dst, t_tgaimg *src, int x, int y) {
 	ddp = dst->data + (y * dst->width * pixelsize);
 	for (i = 0; i < src->height; i++) {
 		ddp += x*pixelsize;
-		memcpy(ddp,sdp,src->width*pixelsize);
-		sdp += src->width*pixelsize;
+		memcpy(ddp,sdp,(size_t)src->width*pixelsize);
+		sdp += (size_t)src->width*pixelsize;
 		ddp += (dst->width-x)*pixelsize;
 	}
 	return 0;
