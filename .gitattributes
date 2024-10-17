@@ -5,7 +5,9 @@ bnetd/bnetd-0.4.2*/src/autoconf/config.guess linguist-vendored
 bnetd/bnetd-0.4.2*/src/autoconf/config.sub linguist-vendored
 bnetd/bnetd-0.4.2*/src/autoconf/depcomp linguist-vendored
 bnetd/bnetd-0.4.2*/src/autoconf/install-sh linguist-vendored
+bnetd/bnetd-0.4.2*/src/autoconf/ltmain.sh linguist-vendored
 bnetd/bnetd-0.4.2*/src/autoconf/missing linguist-vendored
 bnetd/bnetd-0.4.2*/src/config.h.in linguist-generated
 bnetd/bnetd-0.4.2*/src/configure linguist-generated
+bnetd/bnetd-0.4.2*/src/configure.scan linguist-generated
 bnetd/bnetd-0.4.2*/src/Makefile.in linguist-generated
