@@ -43,6 +43,9 @@
 #include "compat/memcpy.h"
 #include <ctype.h>
 #include <errno.h>
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif /* HAVE_FCNTL_H */
 #include "compat/strerror.h"
 #ifdef TIME_WITH_SYS_TIME
 # include <sys/time.h>
