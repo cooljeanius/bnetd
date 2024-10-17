@@ -256,8 +256,8 @@ extern int write_tga(FILE *f, t_tgaimg *img) {
 
 		pixelsize = getpixelsize(img);
 		if (pixelsize == 0) return -1;
-		if (fwrite(img->data,pixelsize,img->width*img->height,f)<img->width*img->height) {
-			fprintf(stderr,"write_tga: could not write %d pixels (fwrite: %s)\n",img->width*img->height,strerror(errno));
+		if (fwrite(img->data, pixelsize, (size_t)img->width * img->height, f) < (size_t)img->width * img->height) {
+			fprintf(stderr,"write_tga: could not write %zu pixels (fwrite: %s)\n", (size_t)img->width * img->height, strerror(errno));
 			file_wpop();
 			return -1;
 		}
