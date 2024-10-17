@@ -54,11 +54,11 @@ static int rotate_updown(t_tgaimg *img) {
 	if (img->data == NULL) return -1;
 	pixelsize = getpixelsize(img);
 	if (pixelsize == 0) return -1;
-	ndata = malloc((size_t)img->width * img->height * pixelsize);
+	ndata = malloc((size_t)img->width * (size_t)img->height * (size_t)pixelsize);
 	for (y = 0; y < img->height; y++) {
-		memcpy(ndata + ((size_t)y * img->width * pixelsize),
-		       img->data + (((size_t)img->width * img->height * pixelsize) - ((size_t)(y + 1) * img->width * pixelsize)),
-		       (size_t)img->width * pixelsize);
+		memcpy(ndata + ((size_t)y * (size_t)img->width * (size_t)pixelsize),
+		       img->data + (((size_t)img->width * (size_t)img->height * (size_t)pixelsize) - ((size_t)(y + 1) * (size_t)img->width * (size_t)pixelsize)),
+		       (size_t)img->width * (size_t)pixelsize);
 	}
 	free(img->data);
 	img->data = ndata;
@@ -186,9 +186,9 @@ extern t_tgaimg * load_tga(FILE *f) {
 	}
 
 	/* Now, we can alloc img->data */
-	img->data = malloc(img->width*img->height*pixelsize);
+	img->data = malloc((size_t)img->width * (size_t)img->height * (size_t)pixelsize);
 	if (img->imgtype == tgaimgtype_uncompressed_truecolor) {
-		if (fread(img->data,pixelsize,img->width*img->height,f)<img->width*img->height) {
+		if (fread(img->data, (size_t)pixelsize, (size_t)img->width * (size_t)img->height, f) < (size_t)img->width * (size_t)img->height) {
 			fprintf(stderr,"load_tga: error while reading data!\n");
 			free(img->data);
 			free(img);
@@ -196,7 +196,7 @@ extern t_tgaimg * load_tga(FILE *f) {
 		}
 	}
 	else { /* == tgaimgtype_rlecompressed_truecolor */
-		if (RLE_decompress(f,img->data,img->width*img->height*pixelsize,pixelsize) < 0) {
+		if (RLE_decompress(f, img->data, (size_t)img->width * (size_t)img->height * (size_t)pixelsize, (size_t)pixelsize) < 0) {
 			fprintf(stderr,"load_tga: error while decompressing data!\n");
 			free(img->data);
 			free(img);
