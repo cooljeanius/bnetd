@@ -30,7 +30,7 @@ builtin(include,autoconf/mkdir.m4)
 
 AC_CANONICAL_TARGET dnl# also calls the "_BUILD" and "_HOST" versions
 AC_USE_SYSTEM_EXTENSIONS
-AM_INIT_AUTOMAKE([1.13 gnits subdir-objects])
+AM_INIT_AUTOMAKE([1.14 gnits subdir-objects])
 AM_MAINTAINER_MODE
 AM_DEP_TRACK
 AM_SANITY_CHECK
@@ -227,7 +227,6 @@ dnl# (autoconf already uses DEFS)
 AC_SUBST([DEFINES])dnl
 
 # Checks for compiler quirks.
-AC_PROG_GCC_TRADITIONAL
 dnl# AC\_C\_CONST has been moved below
 AM_SET_LEADING_DOT
 AC_EXEEXT

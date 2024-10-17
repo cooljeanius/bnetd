@@ -21,11 +21,14 @@ jobs:
         if: "${{ success() }}"
         run: |
           cd bnetd/bnetd-0.4.27.2/src
-          make check
+          if test -z "${CC}"; then \
+            export CC=${{ matrix.compiler }}; \
+          fi
+          make check CC=${{ matrix.compiler }}
           make distclean
           mkdir build
           cd build
-          ../configure --with-warn-lite
+          ../configure --with-warn-lite CC=${{ matrix.compiler }}
           make bnetd
           make bntrackd
           make d2cs
