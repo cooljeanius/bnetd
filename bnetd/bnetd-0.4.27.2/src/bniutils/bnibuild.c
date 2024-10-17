@@ -278,7 +278,7 @@ extern int main(int argc, char * argv[])
 		img->height += bni.icons->icon[i].y;
 	}
 	fprintf(stderr,"Info: Creating TGA with %ux%ux%ubpp.\n",img->width,img->height,img->bpp);
-	img->data = malloc(img->width*img->height*getpixelsize(img));
+	img->data = malloc((size_t)img->width * (size_t)img->height * (size_t)getpixelsize(img));
 	yline = 0;
 	for (i = 0; i < bni.numicons; i++) {
 		t_tgaimg *icon;
