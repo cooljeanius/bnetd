@@ -614,15 +614,23 @@ extern int main(int argc, char * argv[])
 		for (bnr=0; bnr<100; bnr++)
 		{
 		    sprintf(bakfile,"%s.%d",reqfile,bnr);
-		    if (stat(bakfile,&exist_buf)==0)
-			continue; /* backup exists */
-		    /* backup does not exist */
-		    if (rename(reqfile,bakfile)<0) /* just rename the existing file to the backup */
-			fprintf(stderr,"%s: could not create backup file \"%s\" (rename: %s)\n",argv[0],bakfile,strerror(errno));
-		    else
-		    {
-			renamed = 1;
-			printf("Renaming \"%s\" to \"%s\".\n",reqfile,bakfile);
+		    int bak_fd = open(bakfile, O_WRONLY | O_CREAT | O_EXCL, S_IRWXU);
+		    if (bak_fd < 0) {
+		        if (errno == EEXIST)
+		            continue; /* backup exists */
+		        fprintf(stderr, "%s: could not create backup file \"%s\" (open: %s)\n", argv[0], bakfile, strerror(errno));
+		    } else {
+		        close(bak_fd);
+		        if (link(reqfile, bakfile) < 0) {
+		            fprintf(stderr, "%s: could not create backup file \"%s\" (link: %s)\n", argv[0], bakfile, strerror(errno));
+		        } else {
+		            if (unlink(reqfile) < 0) {
+		                fprintf(stderr, "%s: could not remove original file \"%s\" (unlink: %s)\n", argv[0], reqfile, strerror(errno));
+		            } else {
+		                renamed = 1;
+		                printf("Renaming \"%s\" to \"%s\".\n", reqfile, bakfile);
+		            }
+		        }
 		    }
 		    break;
 		}
